@@ -35,7 +35,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 _globalCounterBySessionApp++;
 
                 // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
-                var accountsGuids = accounts.Select(e => e.Id);
+                var accountsGuids = accounts.Select(e => e.Id).Distinct();
 
                 var activityDeleter = new RelatedActivityDeleter(_serviceContext, accountsGuids);
                 activityDeleter.Process();
