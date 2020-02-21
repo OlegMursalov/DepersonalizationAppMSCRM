@@ -37,11 +37,21 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
                 var accountsGuids = accounts.Select(e => e.Id).Distinct();
 
-                var activityDeleter = new RelatedActivityDeleter(_serviceContext, accountsGuids);
-                activityDeleter.Process();
+                var taskRelatedActivityDeleter = new System.Threading.Tasks.Task(() =>
+                {
+                    var activityDeleter = new RelatedActivityDeleter(_serviceContext, accountsGuids);
+                    activityDeleter.Process();
+                });
+                taskRelatedActivityDeleter.Start();
 
-                var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, accountsGuids);
-                annotationDeleter.Process();
+                var taskRelatedAnnotationDeleter = new System.Threading.Tasks.Task(() =>
+                {
+                    var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, accountsGuids);
+                    annotationDeleter.Process();
+                });
+                taskRelatedAnnotationDeleter.Start();
+
+                System.Threading.Tasks.Task.WaitAll(taskRelatedActivityDeleter, taskRelatedAnnotationDeleter);
             }
         }
 

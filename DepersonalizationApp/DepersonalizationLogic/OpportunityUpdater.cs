@@ -50,29 +50,51 @@ namespace UpdaterApp.DepersonalizationLogic
             // C. Все что есть в примечаниях (Notes) и действиях (actions), связанных с проектами, удалить (сообщения, эл. почта, прикрепленный файлы)
             var opportunityGuids = opportunities.Select(e => e.Id).Distinct();
 
-            var activityDeleter = new RelatedActivityDeleter(_serviceContext, opportunityGuids);
-            activityDeleter.Process();
+            var taskActivityDeleter = new System.Threading.Tasks.Task(()=>
+            {
+                var activityDeleter = new RelatedActivityDeleter(_serviceContext, opportunityGuids);
+                activityDeleter.Process();
+            });
+            taskActivityDeleter.Start();
 
-            var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, opportunityGuids);
-            annotationDeleter.Process();
+            var taskAnnotationDeleter = new System.Threading.Tasks.Task(() =>
+            {
+                var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, opportunityGuids);
+                annotationDeleter.Process();
+            });
+            taskAnnotationDeleter.Start();
 
             // D. 2. Меняем связанные с изменяемыми проектами записи сущности «Доля ответственного» (cmdsoft_part_of_owner), 
             // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
             // В изменяемых записях меняем значения поля «Доля %»(cmdsoft_part) = Random(Тип - integer, 0 - 100), 
             // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
-            var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_serviceContext, opportunityGuids);
-            partOfOwnerUpdater.Process();
+            var taskCmdsoftPartOfOwnerUpdater = new System.Threading.Tasks.Task(() =>
+            {
+                var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_serviceContext, opportunityGuids);
+                partOfOwnerUpdater.Process();
+            });
+            taskCmdsoftPartOfOwnerUpdater.Start();
 
             // D. 3. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
             // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
             // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
-            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_serviceContext, opportunityGuids);
-            orderlineNavUpdater.Process();
+            var taskCmdsoftOrderlineNavUpdater = new System.Threading.Tasks.Task(() =>
+            {
+                var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_serviceContext, opportunityGuids);
+                orderlineNavUpdater.Process();
+            });
+            taskCmdsoftOrderlineNavUpdater.Start();
 
             // 4.	Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
             // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
-            var accountUpdater = new AccountUpdater(_serviceContext, opportunities);
-            accountUpdater.Process();
+            var taskAccountUpdater = new System.Threading.Tasks.Task(() =>
+            {
+                var accountUpdater = new AccountUpdater(_serviceContext, opportunities);
+                accountUpdater.Process();
+            });
+            taskAccountUpdater.Start();
+
+            System.Threading.Tasks.Task.WaitAll(taskActivityDeleter, taskAnnotationDeleter, taskCmdsoftPartOfOwnerUpdater, taskCmdsoftOrderlineNavUpdater, taskAccountUpdater);
         }
     }
 }
