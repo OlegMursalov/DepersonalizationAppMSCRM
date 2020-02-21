@@ -68,6 +68,15 @@
     <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedCampaignResponseDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedEmailDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedFaxDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedLetterDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedAppointmentDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedPhoneCallDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedServiceAppointmentDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedTaskDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedRecurringAppointmentMasterDeleter.cs" />
     <Compile Include="Helpers\RandomEmailByMaskHelper.cs" />
     <Compile Include="Helpers\RandomRangeHelper.cs" />
     <Compile Include="Helpers\RandomTelephoneByMaskHelper.cs" />
