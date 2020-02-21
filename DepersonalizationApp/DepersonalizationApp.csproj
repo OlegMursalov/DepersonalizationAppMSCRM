@@ -68,7 +68,7 @@
     <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
-    <Compile Include="Helpers\RandomEmailHelper.cs" />
+    <Compile Include="Helpers\RandomEmailByMaskHelper.cs" />
     <Compile Include="Helpers\RandomRangeHelper.cs" />
     <Compile Include="Helpers\RandomTelephoneByMaskHelper.cs" />
     <Compile Include="Logger\FileLogger.cs" />

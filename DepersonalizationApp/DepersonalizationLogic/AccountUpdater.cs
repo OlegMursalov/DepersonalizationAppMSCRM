@@ -21,11 +21,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override void ChangeByRules(IEnumerable<Account> accounts)
         {
             var randomTelephoneByMaskHelper = new RandomTelephoneByMaskHelper("+ХХ ХХХ ХХХ-ХХ-ХХ");
+            var randomEmailByMaskHelper = new RandomEmailByMaskHelper("XXXXX@XXXXX.XX");
             foreach (var account in accounts)
             {
                 account.Name = $"Организация №{_globalCounterBySessionApp}";
                 account.Telephone1 = randomTelephoneByMaskHelper.Get();
-                account.EMailAddress1 = RandomEmailHelper.Get();
+                account.EMailAddress1 = randomEmailByMaskHelper.Get();
                 account.WebSiteURL = null;
                 account.Address1_PostalCode = null;
                 account.Description = null;

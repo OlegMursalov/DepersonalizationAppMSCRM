@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DepersonalizationApp.Helpers
 {
-    public class RandomTelephoneByMaskHelper
+    public class RandomEmailByMaskHelper
     {
         private char[] _formatChars;
         private Random _random;
 
-        public RandomTelephoneByMaskHelper(string mask)
+        public RandomEmailByMaskHelper(string mask)
         {
             _formatChars = mask.ToCharArray();
             _random = new Random();
@@ -20,7 +24,7 @@ namespace DepersonalizationApp.Helpers
             {
                 if (_formatChars[i] == 'X')
                 {
-                    _formatChars[i] = _random.Next(0, 10).ToString()[0]; // from 0 to 9
+                    _formatChars[i] = Convert.ToChar(_random.Next(0, 26)); // from a to z
                 }
                 else
                 {
