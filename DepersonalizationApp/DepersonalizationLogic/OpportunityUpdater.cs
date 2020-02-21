@@ -1,8 +1,5 @@
 ﻿using CRMEntities;
 using DepersonalizationApp.DepersonalizationLogic;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +10,9 @@ namespace UpdaterApp.DepersonalizationLogic
     {
         public OpportunityUpdater(OrganizationServiceCtx serviceContext) : base(serviceContext)
         {
+            _mainQuery = (from opportunity in _serviceContext.OpportunitySet
+                          orderby opportunity.CreatedOn ascending
+                          select opportunity);
         }
 
         protected override void ChangeByRules(IEnumerable<Opportunity> opportunities)
@@ -57,10 +57,10 @@ namespace UpdaterApp.DepersonalizationLogic
             // C. Все что есть в примечаниях(Notes) и действиях(actions) связанных с проектами удалить (сообщения, эл. почта, прикрепленный файлы)
             var opportunityGuids = opportunities.Select(e => e.Id);
 
-            var activityDeleter = new ActivityDeleter(_serviceContext);
+            var activityDeleter = new ActivityDeleter(_serviceContext, opportunityGuids);
             activityDeleter.Process();
 
-            var annotationDeleter = new AnnotationDeleter(_serviceContext);
+            var annotationDeleter = new AnnotationDeleter(_serviceContext, opportunityGuids);
             annotationDeleter.Process();
         }
     }

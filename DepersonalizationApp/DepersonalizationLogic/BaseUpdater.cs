@@ -1,12 +1,9 @@
-﻿using UpdaterApp.Log;
+﻿using CRMEntities;
+using DepersonalizationApp.DepersonalizationLogic;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DepersonalizationApp.DepersonalizationLogic;
-using Microsoft.Xrm.Sdk.Client;
-using CRMEntities;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
@@ -44,7 +41,8 @@ namespace UpdaterApp.DepersonalizationLogic
                 {
                     try
                     {
-                        // _organizationService.Update(record);
+                        _serviceContext.UpdateObject(entity);
+                        _serviceContext.SaveChanges();
                         amountOfSuccessful++;
                     }
                     catch (Exception ex)
