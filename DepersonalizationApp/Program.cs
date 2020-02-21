@@ -1,4 +1,6 @@
-﻿using Microsoft.Xrm.Sdk.Query;
+﻿using CRMEntities;
+using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Sdk.Query;
 using System.Configuration;
 using UpdaterApp.DepersonalizationLogic;
 using UpdaterApp.LogicOfConnection;
@@ -18,10 +20,12 @@ namespace UpdaterApp
             if (connectState.IsConnect)
             {
                 var organizationService = connectState.OrganizationService;
-
-                // Обезличивание проектов
-                var opportunityUpdater = new OpportunityUpdater(organizationService);
-                opportunityUpdater.Process();
+                using (var serviceContext = new OrganizationServiceCtx(organizationService))
+                {
+                    // Обезличивание проектов
+                    var opportunityUpdater = new OpportunityUpdater(serviceContext);
+                    opportunityUpdater.Process();
+                }
             }
         }
     }

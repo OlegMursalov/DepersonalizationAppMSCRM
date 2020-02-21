@@ -1,17 +1,15 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using CRMEntities;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class ActivityDeleter : BaseDeleter
+    public class ActivityDeleter : BaseDeleter<ActivityPointer>
     {
-        public ActivityDeleter(IOrganizationService organizationService, IEnumerable<Guid> Ids) : base(organizationService)
+        public ActivityDeleter(OrganizationServiceCtx serviceContext) : base(serviceContext)
         {
-            var mainQuery = new QueryExpression("activity");
-            mainQuery.Criteria.AddCondition("regardingobjectid", ConditionOperator.In, Ids);
-            _mainQuery = mainQuery;
         }
     }
 }

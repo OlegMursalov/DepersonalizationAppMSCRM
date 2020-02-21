@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using CRMEntities;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// <summary>
     /// Удаляет записи по QueryExpression
     /// </summary>
-    public class BaseDeleter : Base
+    public class BaseDeleter<T> : Base<T> where T : Entity
     {
-        public BaseDeleter(IOrganizationService organizationService, QueryExpression mainQuery) : base(organizationService, mainQuery)
-        {
-        }
-
-        public BaseDeleter(IOrganizationService organizationService) : base(organizationService)
+        public BaseDeleter(OrganizationServiceCtx serviceContext) : base(serviceContext)
         {
         }
 
@@ -27,23 +24,28 @@ namespace DepersonalizationApp.DepersonalizationLogic
             });
         }
 
-        private void AllDelete(IEnumerable<Entity> records)
+        private void AllDelete(IEnumerable<T> entities)
         {
-            var amountOfSuccessful = 0;
-            var entityName = _mainQuery.EntityName;
-            foreach (var record in records)
+            var firstRecord = entities.FirstOrDefault();
+            if (firstRecord != null)
             {
-                try
+                var entityName = firstRecord.LogicalName;
+                var amountOfSuccessful = 0;
+                foreach (var entity in entities)
                 {
-                    // _organizationService.Delete(entityName, record.Id);
-                    amountOfSuccessful++;
+                    try
+                    {
+                        _serviceContext.DeleteObject(entity);
+                        _serviceContext.SaveChanges();
+                        amountOfSuccessful++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not deleted", ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Record '{entityName}' with Id = '{record.Id}' is not deleted", ex);
-                }
+                _logger.Info($"Successful deleted '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
             }
-            _logger.Info($"Successful deleted '{amountOfSuccessful}' and '{records.Count() - amountOfSuccessful}' are failed records '{entityName}'");
         }
     }
 }

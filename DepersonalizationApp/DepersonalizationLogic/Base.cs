@@ -1,88 +1,39 @@
 ﻿using CRMEntities;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using UpdaterApp.Log;
 using System.Linq;
+using UpdaterApp.Log;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class Base
+    public class Base<T> where T : Entity
     {
-        // fields for retrieving records
-        protected IOrganizationService _organizationService;
-        protected QueryExpression _mainQuery;
-        protected int _maxAmountOfRecords;
+        protected IQueryable<T> _mainQuery;
+        protected OrganizationServiceCtx _serviceContext;
+        protected ILogger _logger = new FileLogger();
 
-        // system fields
-        protected const int AmountOnPage = 500;
-        protected readonly ILogger _logger = new FileLogger();
-
-        public Base(IOrganizationService organizationService)
+        public Base(OrganizationServiceCtx serviceContext)
         {
-            _organizationService = organizationService;
-            _maxAmountOfRecords = int.MaxValue;
-        }
-
-        public Base(IOrganizationService organizationService, QueryExpression mainQuery)
-        {
-            _organizationService = organizationService;
-            _mainQuery = mainQuery;
-            _maxAmountOfRecords = int.MaxValue;
-        }
-
-        public Base(IOrganizationService organizationService, QueryExpression mainQuery, int maxAmountOfRecords)
-        {
-            _organizationService = organizationService;
-            _mainQuery = mainQuery;
-            _maxAmountOfRecords = maxAmountOfRecords;
+            _serviceContext = serviceContext;
         }
 
         /// <summary>
         /// Метод извлекает из CRM записи и для каждой пачки выполняет действие
         /// </summary>
-        protected void RetrieveAll(Action<IEnumerable<Entity>> action)
+        protected void RetrieveAll(Action<IEnumerable<T>> action)
         {
-            using (var serviceContext = new OrganizationServiceCtx(_organizationService))
-            {
-                var oppportunities = from opportunity in serviceContext.OpportunitySet
-                                     orderby opportunity.CreatedOn ascending
-                                     select opportunity;
-            }
-
             if (action == null)
             {
                 throw new ArgumentException("RetrieveAll is failed. Action is null");
             }
 
-            int amountOfRecords = 0;
-
-            _mainQuery.PageInfo = new PagingInfo();
-            _mainQuery.PageInfo.Count = AmountOnPage;
-            _mainQuery.PageInfo.PageNumber = 1;
-            _mainQuery.PageInfo.PagingCookie = null;
-
-            while (true)
+            var amountRecordsOnPage = 500;
+            var maxAmountOfRecords = 1000;
+            for (int i = 0; i * amountRecordsOnPage < maxAmountOfRecords; i++)
             {
-                var collection = _organizationService.RetrieveMultiple(_mainQuery);
-
-                if (collection.Entities != null)
-                {
-                    var entities = collection.Entities;
-                    amountOfRecords += entities.Count;
-                    action(entities);
-                }
-
-                if (collection.MoreRecords && amountOfRecords <= _maxAmountOfRecords)
-                {
-                    _mainQuery.PageInfo.PageNumber++;
-                    _mainQuery.PageInfo.PagingCookie = collection.PagingCookie;
-                }
-                else
-                {
-                    break;
-                }
+                var records = _mainQuery.Skip(i * amountRecordsOnPage).Take(amountRecordsOnPage).AsEnumerable();
+                action(records);
             }
         }
     }

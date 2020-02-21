@@ -5,18 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DepersonalizationApp.DepersonalizationLogic;
+using Microsoft.Xrm.Sdk.Client;
+using CRMEntities;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
-    public abstract class BaseUpdater : Base
+    public abstract class BaseUpdater<T> : Base<T> where T : Entity
     {
         /// <summary>
         /// Каждый subclass пусть сам определяет, что ему сделать с пачкой записей
         /// </summary>
-        protected abstract void ChangeByRules(IEnumerable<Entity> records);
+        protected abstract void ChangeByRules(IEnumerable<T> records);
 
-        public BaseUpdater(IOrganizationService organizationService, QueryExpression mainQuery, int maxAmountOfRecords)
-            : base(organizationService, mainQuery, maxAmountOfRecords)
+        public BaseUpdater(OrganizationServiceCtx serviceContext) : base(serviceContext)
         {
         }
 
@@ -32,23 +33,27 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Обновить измененные записи
         /// </summary>
-        private void AllUpdate(IEnumerable<Entity> records)
+        private void AllUpdate(IEnumerable<T> entities)
         {
-            var amountOfSuccessful = 0;
-            var entityName = _mainQuery.EntityName;
-            foreach (var record in records)
+            var firstRecord = entities.FirstOrDefault();
+            if (firstRecord != null)
             {
-                try
+                var entityName = firstRecord.LogicalName;
+                var amountOfSuccessful = 0;
+                foreach (var entity in entities)
                 {
-                    // _organizationService.Update(record);
-                    amountOfSuccessful++;
+                    try
+                    {
+                        // _organizationService.Update(record);
+                        amountOfSuccessful++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not updated", ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _logger.Error($"Record '{entityName}' with Id = '{record.Id}' is not updated", ex);
-                }
+                _logger.Info($"Successful updated '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
             }
-            _logger.Info($"Successful updated '{amountOfSuccessful}' and '{records.Count() - amountOfSuccessful}' are failed records '{entityName}'");
         }
     }
 }
