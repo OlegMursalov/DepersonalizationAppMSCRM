@@ -15,15 +15,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
         }
 
-        public void Process()
-        {
-            RetrieveAll((entities) =>
-            {
-                AllDelete(entities);
-            });
-        }
-
-        private void AllDelete(IEnumerable<T> entities)
+        protected void AllDelete(IEnumerable<T> entities)
         {
             var firstRecord = entities.FirstOrDefault();
             if (firstRecord != null)

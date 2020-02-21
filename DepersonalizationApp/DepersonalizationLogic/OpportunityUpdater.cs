@@ -60,7 +60,7 @@ namespace UpdaterApp.DepersonalizationLogic
             var activityDeleter = new ActivityDeleter(_serviceContext, opportunityGuids);
             activityDeleter.Process();
 
-            var annotationDeleter = new AnnotationDeleter(_serviceContext, opportunityGuids);
+            var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, opportunityGuids);
             annotationDeleter.Process();
         }
     }

@@ -62,8 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRMEntities\Entities.cs" />
-    <Compile Include="DepersonalizationLogic\ActivityDeleter.cs" />
-    <Compile Include="DepersonalizationLogic\AnnotationDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
     <Compile Include="Logger\FileLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />

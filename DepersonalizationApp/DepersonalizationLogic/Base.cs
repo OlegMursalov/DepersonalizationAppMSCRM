@@ -36,5 +36,21 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 action(records);
             }
         }
+
+        /// <summary>
+        /// Метод извлекает из CRM записи по кастомному Query
+        /// </summary>
+        protected IEnumerable<T> RetrieveAll(IQueryable<T> customQuery)
+        {
+            var list = new List<T>();
+            var amountRecordsOnPage = 500;
+            var maxAmountOfRecords = 1000;
+            for (int i = 0; i * amountRecordsOnPage < maxAmountOfRecords; i++)
+            {
+                var records = customQuery.Skip(i * amountRecordsOnPage).Take(amountRecordsOnPage).ToArray();
+                list.AddRange(records);
+            }
+            return list;
+        }
     }
 }
