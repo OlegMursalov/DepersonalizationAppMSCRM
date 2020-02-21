@@ -15,6 +15,10 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
         }
 
+        public BaseDeleter(IOrganizationService organizationService) : base(organizationService)
+        {
+        }
+
         public void Process()
         {
             RetrieveAll((entities) =>

@@ -7,7 +7,7 @@ using System.Linq;
 namespace UpdaterApp.DepersonalizationLogic
 {
     /// <summary>
-    /// Класс для перетасовки значений полей сущнотей между собой
+    /// Класс для перетасовки значений полей сущностей между собой
     /// </summary>
     /// <typeparam name="T">Тип CRM поля</typeparam>
     public class ShuffleFieldValues<T>

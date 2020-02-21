@@ -1,7 +1,9 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using DepersonalizationApp.DepersonalizationLogic;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
@@ -66,12 +68,21 @@ namespace UpdaterApp.DepersonalizationLogic
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Record with Id = {record.Id} is not executed logic A or B", ex);
+                    _logger.Error($"Record with Id = {record.Id} is not changed by logic A or B", ex);
                 }
             }
 
             // B. Дополнение
             shuffleReasonsForTheLoss.Process();
+
+            // C. Все что есть в примечаниях(Notes) и действиях(actions) связанных с проектами удалить (сообщения, эл. почта, прикрепленный файлы)
+            var opportunityGuids = records.Select(e => e.Id);
+
+            var activityDeleter = new ActivityDeleter(_organizationService, opportunityGuids);
+            activityDeleter.Process();
+
+            var annotationDeleter = new AnnotationDeleter(_organizationService, opportunityGuids);
+            annotationDeleter.Process();
         }
     }
 }

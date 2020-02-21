@@ -17,6 +17,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected const int AmountOnPage = 500;
         protected readonly ILogger _logger = new FileLogger();
 
+        public Base(IOrganizationService organizationService)
+        {
+            _organizationService = organizationService;
+            _maxAmountOfRecords = int.MaxValue;
+        }
+
         public Base(IOrganizationService organizationService, QueryExpression mainQuery)
         {
             _organizationService = organizationService;
