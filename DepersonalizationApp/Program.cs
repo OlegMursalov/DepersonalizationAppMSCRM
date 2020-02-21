@@ -1,6 +1,6 @@
-﻿using UpdaterApp.Log;
-using UpdaterApp.LogicOfUpdater;
+﻿using Microsoft.Xrm.Sdk.Query;
 using System.Configuration;
+using UpdaterApp.DepersonalizationLogic;
 using UpdaterApp.LogicOfConnection;
 
 namespace UpdaterApp
@@ -20,7 +20,7 @@ namespace UpdaterApp
                 var organizationService = connectState.OrganizationService;
 
                 // Обезличивание проектов
-                var opportunityUpdater = new OpportunityUpdater(organizationService, amountOfLastCreated: 1000);
+                var opportunityUpdater = new OpportunityUpdater(organizationService);
                 opportunityUpdater.Process();
             }
         }

@@ -1,20 +1,35 @@
-﻿using UpdaterApp.Log;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace UpdaterApp.LogicOfUpdater
+namespace UpdaterApp.DepersonalizationLogic
 {
     public class OpportunityUpdater : BaseUpdater
     {
-        public OpportunityUpdater(IOrganizationService organizationService, int amountOfLastCreated) : base(organizationService)
+        /// <summary>
+        /// Получаем последние 1000 записей проектов
+        /// </summary>
+        private static readonly QueryExpression _opportunityMainQuery = new QueryExpression
         {
-            _entityName = "opportunity";
-            _amountOfLastCreated = amountOfLastCreated;
-            _columnSet = new ColumnSet("mcdsoft_discount", "cmdsoft_standartdiscount", "createdon",
-                "mcdsoft_standartdiscount_chiller", "cmdsoft_warranty", "cmdsoft_result", "mcdsoft_reason_for_the_loss");
+            EntityName = "opportunity",
+            ColumnSet = new ColumnSet("mcdsoft_discount", "cmdsoft_standartdiscount", "createdon", 
+                "mcdsoft_standartdiscount_chiller", "cmdsoft_warranty", "cmdsoft_result", "mcdsoft_reason_for_the_loss"),
+            Orders = 
+            {
+                new OrderExpression
+                {
+                    AttributeName = "createdon",
+                    OrderType = OrderType.Descending
+                }
+            }
+        };
+
+        private static readonly int _opportunityMaxAmountOfRecords = 1000;
+
+        public OpportunityUpdater(IOrganizationService organizationService)
+            : base(organizationService, _opportunityMainQuery, _opportunityMaxAmountOfRecords)
+        {
         }
 
         protected override void ChangeByRules(IEnumerable<Entity> records)

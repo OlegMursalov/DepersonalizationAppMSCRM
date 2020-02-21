@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UpdaterApp.LogicOfUpdater
+namespace UpdaterApp.DepersonalizationLogic
 {
     /// <summary>
     /// Класс для перетасовки значений полей сущнотей между собой

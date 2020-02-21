@@ -3,71 +3,34 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UpdaterApp.Log;
 
-namespace DepersonalizationApp.LogicOfDeleting
+namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class BaseDeleter
+    /// <summary>
+    /// Удаляет записи по QueryExpression
+    /// </summary>
+    public class BaseDeleter : Base
     {
-        private IOrganizationService _organizationService;
-        private QueryExpression _mainQuery;
-
-        private const int AmountOnPage = 500;
-
-        private readonly ILogger _logger = new FileLogger();
-
-        public BaseDeleter(IOrganizationService organizationService, QueryExpression mainQuery)
+        public BaseDeleter(IOrganizationService organizationService, QueryExpression mainQuery) : base(organizationService, mainQuery)
         {
-            _organizationService = organizationService;
-            _mainQuery = mainQuery;
         }
 
         public void Process()
         {
-            _mainQuery.PageInfo = new PagingInfo();
-            _mainQuery.PageInfo.Count = AmountOnPage;
-            _mainQuery.PageInfo.PageNumber = 1;
-            _mainQuery.PageInfo.PagingCookie = null;
-
-            while (true)
+            RetrieveAll((entities) =>
             {
-                var collection = _organizationService.RetrieveMultiple(_mainQuery);
-                if (collection.Entities != null)
-                {
-                    var entities = collection.Entities;
-                    AllDelete(entities);
-                }
-                if (collection.MoreRecords)
-                {
-                    _mainQuery.PageInfo.PageNumber++;
-                    _mainQuery.PageInfo.PagingCookie = collection.PagingCookie;
-                }
-                else
-                {
-                    break;
-                }
-            }
+                AllDelete(entities);
+            });
         }
 
         private void AllDelete(IEnumerable<Entity> records)
         {
             var amountOfSuccessful = 0;
-            var minCreatedOn = DateTime.MaxValue;
-            var maxCreatedOn = DateTime.MinValue;
             var entityName = _mainQuery.EntityName;
             foreach (var record in records)
             {
                 try
                 {
-                    var createdOn = (DateTime)record["createdon"];
-                    if (createdOn < minCreatedOn)
-                    {
-                        minCreatedOn = createdOn;
-                    }
-                    if (createdOn > maxCreatedOn)
-                    {
-                        maxCreatedOn = createdOn;
-                    }
                     _organizationService.Delete(entityName, record.Id);
                     amountOfSuccessful++;
                 }
@@ -76,7 +39,7 @@ namespace DepersonalizationApp.LogicOfDeleting
                     _logger.Error($"Record '{entityName}' with Id = '{record.Id}' is not deleted", ex);
                 }
             }
-            _logger.Info($"Successful deleted '{amountOfSuccessful}' and '{records.Count() - amountOfSuccessful}' are failed records '{entityName}' from '{minCreatedOn}' to '{maxCreatedOn}'");
+            _logger.Info($"Successful deleted '{amountOfSuccessful}' and '{records.Count() - amountOfSuccessful}' are failed records '{entityName}'");
         }
     }
 }

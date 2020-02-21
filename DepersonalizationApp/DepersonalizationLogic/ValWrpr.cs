@@ -1,4 +1,4 @@
-﻿namespace UpdaterApp.LogicOfUpdater
+﻿namespace UpdaterApp.DepersonalizationLogic
 {
     public class ValWrpr<T>
     {
