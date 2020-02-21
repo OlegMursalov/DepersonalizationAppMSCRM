@@ -23,9 +23,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 try
                 {
-                    _serviceContext.DeleteObject(entity);
-                    _serviceContext.SaveChanges();
-                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
+                    /*_serviceContext.DeleteObject(entity);
+                    _serviceContext.SaveChanges();*/
+                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
                     successfulAmount++;
                 }
                 catch (Exception ex)
@@ -33,7 +33,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not deleted", ex);
                 }
             }
-            // _logger.Info($"{successfulAmount} records '{entityName}' are deleted, {entities.Count() - successfulAmount} are failed");
+            _logger.Info($"{successfulAmount} records '{entityName}' are deleted, {entities.Count() - successfulAmount} are failed");
         }
     }
 }
