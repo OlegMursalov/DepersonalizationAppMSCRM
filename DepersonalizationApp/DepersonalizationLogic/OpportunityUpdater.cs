@@ -22,32 +22,25 @@ namespace UpdaterApp.DepersonalizationLogic
             
             foreach (var opportunity in opportunities)
             {
-                try
+                // А. Если значение поля «Ручной ввод скидки»(mcdsoft_discount) = «Да» [1], то 
+                // заполнить поля «Основная скидка СМ»(cmdsoft_standartdiscount), «% Основная скидка Чиллера»(mcdsoft_standartdiscount_chiller %), 
+                // «Гарантия, %»(cmdsoft_warranty) = Random(Тип - число в плавающей точкой, точность - 2, 0 - 100, 00)
+                if (opportunity.mcdsoft_discount != null && (bool)opportunity.mcdsoft_discount)
                 {
-                    // А. Если значение поля «Ручной ввод скидки»(mcdsoft_discount) = «Да» [1], то 
-                    // заполнить поля «Основная скидка СМ»(cmdsoft_standartdiscount), «% Основная скидка Чиллера»(mcdsoft_standartdiscount_chiller %), 
-                    // «Гарантия, %»(cmdsoft_warranty) = Random(Тип - число в плавающей точкой, точность - 2, 0 - 100, 00)
-                    if (opportunity.mcdsoft_discount != null && (bool)opportunity.mcdsoft_discount)
-                    {
-                        decimal i = random.Next(0, 100);
-                        decimal c = i + (decimal)random.NextDouble();
-                        opportunity.cmdsoft_standartdiscount = c;
-                        opportunity.mcdsoft_standartdiscount_chiller = c;
-                        opportunity.cmdsoft_warranty = c;
-                    }
-
-                    // B. В тех проектах, где значение поля «Результат»(cmdsoft_result) = «Проигран» [289 540 002], 
-                    // копировать в отдельную таблицу значения полей «Причина проигрыша» (mcdsoft_reason_for_the_loss), 
-                    // потом из этой таблицы случайным образом вставить(переписать) значения в другой проект(то есть перетасовать в проигранных проектах «Причины проигрыша»)
-                    if (opportunity.cmdsoft_Result != null && opportunity.cmdsoft_Result.Value == 289540002)
-                    {
-                        shuffleReasonsForTheLoss.AddEntity(opportunity);
-                        shuffleReasonsForTheLoss.AddValue(opportunity.mcdsoft_reason_for_the_loss);
-                    }
+                    decimal i = random.Next(0, 100);
+                    decimal c = i + (decimal)random.NextDouble();
+                    opportunity.cmdsoft_standartdiscount = c;
+                    opportunity.mcdsoft_standartdiscount_chiller = c;
+                    opportunity.cmdsoft_warranty = c;
                 }
-                catch (Exception ex)
+
+                // B. В тех проектах, где значение поля «Результат»(cmdsoft_result) = «Проигран» [289 540 002], 
+                // копировать в отдельную таблицу значения полей «Причина проигрыша» (mcdsoft_reason_for_the_loss), 
+                // потом из этой таблицы случайным образом вставить(переписать) значения в другой проект(то есть перетасовать в проигранных проектах «Причины проигрыша»)
+                if (opportunity.cmdsoft_Result != null && opportunity.cmdsoft_Result.Value == 289540002)
                 {
-                    _logger.Error($"Record with Id = {opportunity.Id} is not changed by logic A or B", ex);
+                    shuffleReasonsForTheLoss.AddEntity(opportunity);
+                    shuffleReasonsForTheLoss.AddValue(opportunity.mcdsoft_reason_for_the_loss);
                 }
             }
 

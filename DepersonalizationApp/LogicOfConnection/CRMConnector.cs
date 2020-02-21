@@ -44,9 +44,10 @@ namespace UpdaterApp.LogicOfConnection
                     using (var proxy = new OrganizationServiceProxy(serviceUri, null, credentials, null))
                     {
                         proxy.EnableProxyTypes();
-                        proxy.Execute(new WhoAmIRequest());
+                        var response = (WhoAmIResponse)proxy.Execute(new WhoAmIRequest());
                         organizationService = proxy;
                         isConnect = true;
+                        _logger.Info($"User '{response.UserId}' opened session for organization '{response.OrganizationId}', connect is succesful");
                     }
                 }
                 catch (Exception ex)

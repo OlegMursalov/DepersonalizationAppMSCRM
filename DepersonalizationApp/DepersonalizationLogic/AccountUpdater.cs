@@ -52,9 +52,17 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 if (opportunity.CustomerId != null)
                 {
-                    var account = (from acc in _serviceContext.AccountSet
+                    Account account = null;
+                    try
+                    {
+                        account = (from acc in _serviceContext.AccountSet
                                    where acc.Id == opportunity.CustomerId.Id
                                    select acc).FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error("AccountUpdater.Process query by CustomerId is failed", ex);
+                    }
                     if (account != null)
                     {
                         allAccounts.Add(account);
@@ -62,9 +70,17 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
                 if (opportunity.cmdsoft_project_agency != null)
                 {
-                    var account = (from acc in _serviceContext.AccountSet
+                    Account account = null;
+                    try
+                    {
+                        account = (from acc in _serviceContext.AccountSet
                                    where acc.Id == opportunity.cmdsoft_project_agency.Id
                                    select acc).FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error("AccountUpdater.Process query by cmdsoft_project_agency is failed", ex);
+                    }
                     if (account != null)
                     {
                         allAccounts.Add(account);
@@ -72,9 +88,17 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
                 if (opportunity.mcdsoft_ref_account != null)
                 {
-                    var account = (from acc in _serviceContext.AccountSet
-                                   where acc.Id == opportunity.mcdsoft_ref_account.Id
-                                   select acc).FirstOrDefault();
+                    Account account = null;
+                    try
+                    {
+                        account = (from acc in _serviceContext.AccountSet
+                                       where acc.Id == opportunity.mcdsoft_ref_account.Id
+                                       select acc).FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error("AccountUpdater.Process query by mcdsoft_ref_account is failed", ex);
+                    }
                     if (account != null)
                     {
                         allAccounts.Add(account);
@@ -82,16 +106,25 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
                 if (opportunity.cmdsoft_GeneralContractor != null)
                 {
-                    var account = (from acc in _serviceContext.AccountSet
+                    Account account = null;
+                    try
+                    {
+                        account = (from acc in _serviceContext.AccountSet
                                    where acc.Id == opportunity.cmdsoft_GeneralContractor.Id
                                    select acc).FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error("AccountUpdater.Process query by cmdsoft_GeneralContractor is failed", ex);
+                    }
                     if (account != null)
                     {
                         allAccounts.Add(account);
                     }
                 }
             }
-            var allAccountsDistinct = allAccounts.Distinct(new AccountComparer());
+            var accountComparer = new AccountComparer();
+            var allAccountsDistinct = allAccounts.Distinct(accountComparer);
             ChangeByRules(allAccountsDistinct);
             AllUpdate(allAccountsDistinct);
         }

@@ -21,10 +21,21 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             foreach (var regObjId in _regardingObjectIds)
             {
-                var activities = (from activityPointer in _serviceContext.ActivityPointerSet
+                ActivityPointer[] activities = null;
+                try
+                {
+                    activities = (from activityPointer in _serviceContext.ActivityPointerSet
                                   where activityPointer.RegardingObjectId != null && activityPointer.RegardingObjectId.Id == regObjId
                                   select activityPointer).ToArray();
-                AllDelete(activities);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("RelatedActivityDeleter.Process query is failed", ex);
+                }
+                if (activities != null)
+                {
+                    AllDelete(activities);
+                }
             }
         }
     }

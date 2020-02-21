@@ -21,10 +21,21 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             foreach (var objId in _objectIds)
             {
-                var annotations = (from annotation in _serviceContext.AnnotationSet
+                Annotation[] annotations = null;
+                try
+                {
+                    annotations = (from annotation in _serviceContext.AnnotationSet
                                    where annotation.ObjectId != null && annotation.ObjectId.Id == objId
                                    select annotation).ToArray();
-                AllDelete(annotations);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("RelatedAnnotationDeleter.Process query is failed", ex);
+                }
+                if (annotations != null)
+                {
+                    AllDelete(annotations);
+                }
             }
         }
     }

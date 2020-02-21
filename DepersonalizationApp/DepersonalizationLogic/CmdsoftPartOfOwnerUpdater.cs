@@ -31,11 +31,22 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             foreach (var opportunityId in _cmdsoftRefOpportunityIds)
             {
-                var cmdsoftPartOfOwners = (from partOfOwner in _serviceContext.cmdsoft_part_of_ownerSet
+                cmdsoft_part_of_owner[] cmdsoftPartOfOwners = null;
+                try
+                {
+                    cmdsoftPartOfOwners = (from partOfOwner in _serviceContext.cmdsoft_part_of_ownerSet
                                            where partOfOwner.cmdsoft_ref_opportunity != null && partOfOwner.cmdsoft_ref_opportunity.Id == opportunityId
                                            select partOfOwner).ToArray();
-                ChangeByRules(cmdsoftPartOfOwners);
-                AllUpdate(cmdsoftPartOfOwners);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("CmdsoftPartOfOwnerUpdater.Process query is failed", ex);
+                }
+                if (cmdsoftPartOfOwners != null)
+                {
+                    ChangeByRules(cmdsoftPartOfOwners);
+                    AllUpdate(cmdsoftPartOfOwners);
+                }
             }
         }
     }

@@ -47,11 +47,22 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             foreach (var opportunityId in _cmdsoftRefOpportunityIds)
             {
-                var cmdsoftOrderineNavs = (from orderineNav in _serviceContext.cmdsoft_orderlinenavSet
+                cmdsoft_orderlinenav[] cmdsoftOrderineNavs = null;
+                try
+                {
+                    cmdsoftOrderineNavs = (from orderineNav in _serviceContext.cmdsoft_orderlinenavSet
                                            where orderineNav.cmdsoft_ref_opportunity != null && orderineNav.cmdsoft_ref_opportunity.Id == opportunityId
                                            select orderineNav).ToArray();
-                ChangeByRules(cmdsoftOrderineNavs);
-                AllUpdate(cmdsoftOrderineNavs);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("CmdsoftOrderlineNavUpdater.Process query is failed", ex);
+                }
+                if (cmdsoftOrderineNavs != null)
+                {
+                    ChangeByRules(cmdsoftOrderineNavs);
+                    AllUpdate(cmdsoftOrderineNavs);
+                }
             }
         }
     }
