@@ -32,7 +32,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 return;
             }
 
-            
             for (int i = 0; i * AmountRecordsOnPage < MaxAmountOfRecords; i++)
             {
                 var records = _mainQuery.Skip(i * AmountRecordsOnPage).Take(AmountRecordsOnPage).ToArray();

@@ -32,14 +32,12 @@ namespace UpdaterApp.DepersonalizationLogic
         protected void AllUpdate(IEnumerable<T> entities)
         {
             var entityName = nameof(T);
-            var amountOfSuccessful = 0;
             foreach (var entity in entities)
             {
                 try
                 {
                     _serviceContext.UpdateObject(entity);
                     _serviceContext.SaveChanges();
-                    amountOfSuccessful++;
                 }
                 catch (Exception ex)
                 {

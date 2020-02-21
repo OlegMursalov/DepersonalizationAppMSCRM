@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Данный класс общий
+    /// </summary>
     public class RelatedActivityDeleter : BaseDeleter<ActivityPointer>
     {
         protected IEnumerable<Guid> _regardingObjectIds;

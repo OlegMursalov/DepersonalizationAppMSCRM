@@ -78,7 +78,8 @@ namespace UpdaterApp.DepersonalizationLogic
 
             // 4.	Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
             // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
-            
+            var accountUpdater = new AccountUpdater(_serviceContext, opportunities);
+            accountUpdater.Process();
         }
     }
 }

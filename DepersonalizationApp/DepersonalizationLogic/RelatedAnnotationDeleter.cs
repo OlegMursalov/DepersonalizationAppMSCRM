@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Данный класс общий
+    /// </summary>
     public class RelatedAnnotationDeleter : BaseDeleter<Annotation>
     {
         protected IEnumerable<Guid> _objectIds;
