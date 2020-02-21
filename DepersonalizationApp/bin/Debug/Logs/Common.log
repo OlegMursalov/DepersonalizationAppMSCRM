@@ -1,10 +1,9 @@
-2020-02-20 11:24:41,120  INFO  Connection [https://mitsubishidev.yolva-it.ru:5555/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 12:01:14,692  INFO  Connection [https://mitsubishidev.yolva-it.ru:5555/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:27:42,484  INFO  Connection [https://mitsubishidev.yolva-it.ru:5555/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:32:10,687  INFO  Connection [https://mitsubishidev.yolva-it.ru:5555/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:33:10,388  INFO  Connection [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:33:27,086  INFO  Connection [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:36:10,629  INFO  Connection [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:37:15,120  INFO  Connection [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:41:27,637  INFO  Connection [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
-2020-02-20 15:43:42,476  INFO  Connection [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 11:00:46,821  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 11:03:57,924  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 11:07:34,522  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 11:08:57,426  ERROR Record with Id = 78c902cf-88b7-e911-8199-00155d640b02 is not changed by logic A or B
+System.Collections.Generic.KeyNotFoundException: The given key was not present in the dictionary.
+   at System.Collections.Generic.Dictionary`2.get_Item(TKey key)
+   at Microsoft.Xrm.Sdk.DataCollection`2.get_Item(TKey key)
+   at Microsoft.Xrm.Sdk.Entity.get_Item(String attributeName)
+   at UpdaterApp.DepersonalizationLogic.OpportunityUpdater.ChangeByRules(IEnumerable`1 records) in C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\DepersonalizationLogic\OpportunityUpdater.cs:line 61

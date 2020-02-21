@@ -1,8 +1,10 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using CRMEntities;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using UpdaterApp.Log;
+using System.Linq;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
@@ -42,6 +44,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
         /// </summary>
         protected void RetrieveAll(Action<IEnumerable<Entity>> action)
         {
+            using (var serviceContext = new OrganizationServiceCtx(_organizationService))
+            {
+                var oppportunities = from opportunity in serviceContext.OpportunitySet
+                                     orderby opportunity.CreatedOn ascending
+                                     select opportunity;
+            }
+
             if (action == null)
             {
                 throw new ArgumentException("RetrieveAll is failed. Action is null");

@@ -17,14 +17,14 @@ namespace UpdaterApp.DepersonalizationLogic
             EntityName = "opportunity",
             ColumnSet = new ColumnSet("mcdsoft_discount", "cmdsoft_standartdiscount", "createdon", 
                 "mcdsoft_standartdiscount_chiller", "cmdsoft_warranty", "cmdsoft_result", "mcdsoft_reason_for_the_loss"),
-            Orders = 
+            /*Orders = 
             {
                 new OrderExpression
                 {
                     AttributeName = "createdon",
                     OrderType = OrderType.Descending
                 }
-            }
+            }*/
         };
 
         private static readonly int _opportunityMaxAmountOfRecords = 1000;

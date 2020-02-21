@@ -35,7 +35,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 try
                 {
-                    _organizationService.Delete(entityName, record.Id);
+                    // _organizationService.Delete(entityName, record.Id);
                     amountOfSuccessful++;
                 }
                 catch (Exception ex)

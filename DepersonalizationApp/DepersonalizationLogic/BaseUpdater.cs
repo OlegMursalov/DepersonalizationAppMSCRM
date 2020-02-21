@@ -40,7 +40,7 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 try
                 {
-                    _organizationService.Update(record);
+                    // _organizationService.Update(record);
                     amountOfSuccessful++;
                 }
                 catch (Exception ex)
