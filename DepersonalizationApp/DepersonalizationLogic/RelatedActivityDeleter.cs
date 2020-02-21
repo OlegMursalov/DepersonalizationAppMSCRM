@@ -92,6 +92,10 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     relatedRecurringAppointmentMasterDeleter.Process();
                 });
                 taskRelatedRecurringAppointmentMasterDeleter.Start();
+
+                System.Threading.Tasks.Task.WaitAll(taskRelatedEmailDeleter, taskRelatedEmailDeleter, taskCallRelatedPhoneDeleter, 
+                    taskRelatedEmailDeleter, taskRelatedLetterDeleter, taskRelatedAppointmentDeleter, taskRelatedServiceAppointmentDeleter, 
+                    taskRelatedCampaignResponseDeleter, taskRelatedRecurringAppointmentMasterDeleter);
             }
         }
     }

@@ -25,7 +25,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     /*_serviceContext.DeleteObject(entity);
                     _serviceContext.SaveChanges();*/
-                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
+                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
                     successfulAmount++;
                 }
                 catch (Exception ex)

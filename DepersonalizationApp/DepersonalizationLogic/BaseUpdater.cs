@@ -40,7 +40,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 {
                     /*_serviceContext.UpdateObject(entity);
                     _serviceContext.SaveChanges();*/
-                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
+                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
                     successfulAmount++;
                 }
                 catch (Exception ex)
