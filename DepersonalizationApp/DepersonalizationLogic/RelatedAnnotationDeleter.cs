@@ -18,10 +18,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             foreach (var objId in _objectIds)
             {
-                var relatedAnnotationsQuery = from annotation in _serviceContext.AnnotationSet
-                                              where annotation.ObjectId != null && annotation.ObjectId.Id == objId
-                                              select annotation;
-                var annotations = RetrieveAll(relatedAnnotationsQuery);
+                var annotations = (from annotation in _serviceContext.AnnotationSet
+                                   where annotation.ObjectId != null && annotation.ObjectId.Id == objId
+                                   select annotation).ToArray();
                 AllDelete(annotations);
             }
         }

@@ -18,10 +18,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             foreach (var regObjId in _regardingObjectIds)
             {
-                var relatedActivitiesQuery = from activityPointer in _serviceContext.ActivityPointerSet
-                                             where activityPointer.RegardingObjectId != null && activityPointer.RegardingObjectId.Id == regObjId
-                                             select activityPointer;
-                var activities = RetrieveAll(relatedActivitiesQuery);
+                var activities = (from activityPointer in _serviceContext.ActivityPointerSet
+                                  where activityPointer.RegardingObjectId != null && activityPointer.RegardingObjectId.Id == regObjId
+                                  select activityPointer).ToArray();
                 AllDelete(activities);
             }
         }

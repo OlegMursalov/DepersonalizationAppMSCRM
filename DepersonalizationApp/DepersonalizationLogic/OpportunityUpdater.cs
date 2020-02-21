@@ -57,7 +57,7 @@ namespace UpdaterApp.DepersonalizationLogic
             // C. Все что есть в примечаниях(Notes) и действиях(actions) связанных с проектами удалить (сообщения, эл. почта, прикрепленный файлы)
             var opportunityGuids = opportunities.Select(e => e.Id);
 
-            var activityDeleter = new ActivityDeleter(_serviceContext, opportunityGuids);
+            var activityDeleter = new RelatedActivityDeleter(_serviceContext, opportunityGuids);
             activityDeleter.Process();
 
             var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, opportunityGuids);
