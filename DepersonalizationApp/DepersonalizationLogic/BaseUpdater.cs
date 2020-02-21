@@ -3,7 +3,6 @@ using DepersonalizationApp.DepersonalizationLogic;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace UpdaterApp.DepersonalizationLogic
 {

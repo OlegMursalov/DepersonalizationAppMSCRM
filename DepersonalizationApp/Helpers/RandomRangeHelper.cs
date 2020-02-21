@@ -4,6 +4,9 @@ namespace DepersonalizationApp.Helpers
 {
     public static class RandomRangeHelper
     {
+        /// <summary>
+        /// Возвращает последовательность рандомных цифр, сумма которых равна maxSum
+        /// </summary>
         public static int[] Get(int amount, int maxSum)
         {
             var maxRandVal = maxSum;

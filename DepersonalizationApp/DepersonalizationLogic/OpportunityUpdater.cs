@@ -67,7 +67,18 @@ namespace UpdaterApp.DepersonalizationLogic
             // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
             // В изменяемых записях меняем значения поля «Доля %»(cmdsoft_part) = Random(Тип - integer, 0 - 100), 
             // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
-            var 
+            var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_serviceContext, opportunityGuids);
+            partOfOwnerUpdater.Process();
+
+            // D. 3. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
+            // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
+            // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
+            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_serviceContext, opportunityGuids);
+            orderlineNavUpdater.Process();
+
+            // 4.	Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
+            // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
+            
         }
     }
 }

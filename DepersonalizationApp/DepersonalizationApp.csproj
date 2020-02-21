@@ -62,7 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRMEntities\Entities.cs" />
-    <Compile Include="DepersonalizationLogic\CmdsoftPartOfOwner.cs" />
+    <Compile Include="DepersonalizationLogic\CmdsoftOrderlineNavUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\CmdsoftPartOfOwnerUpdater.cs" />
     <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />

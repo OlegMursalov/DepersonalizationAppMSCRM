@@ -1,37 +1,30 @@
 ﻿using CRMEntities;
-using Microsoft.Xrm.Sdk;
+using DepersonalizationApp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UpdaterApp.DepersonalizationLogic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class CmdsoftPartOfOwner : BaseUpdater<cmdsoft_part_of_owner>
+    public class CmdsoftPartOfOwnerUpdater : BaseUpdater<cmdsoft_part_of_owner>
     {
         protected IEnumerable<Guid> _cmdsoftRefOpportunityIds;
 
-        public CmdsoftPartOfOwner(OrganizationServiceCtx serviceContext, IEnumerable<Guid> cmdsoftRefOpportunityIds) : base(serviceContext)
+        public CmdsoftPartOfOwnerUpdater(OrganizationServiceCtx serviceContext, IEnumerable<Guid> cmdsoftRefOpportunityIds) : base(serviceContext)
         {
             _cmdsoftRefOpportunityIds = cmdsoftRefOpportunityIds;
         }
 
         protected override void ChangeByRules(IEnumerable<cmdsoft_part_of_owner> cmdsoftPartOfOwners)
         {
-            var random = new Random();
-            var newParts = new int[cmdsoftPartOfOwners.Count()];
-            var maxRandVal = newParts.Length / 100;
-            for (int i = 0; i < newParts.Length; i++)
+            int i = 0;
+            var array = RandomRangeHelper.Get(cmdsoftPartOfOwners.Count(), 100);
+            foreach (var partOfOwner in cmdsoftPartOfOwners)
             {
-                newParts[i] = random.Next(0, maxRandVal);
+                partOfOwner.cmdsoft_part = array[i];
+                i++;
             }
-        }
-
-        private void GetNewRandomizeParts(int amountOfParts)
-        {
-
         }
 
         public override void Process()
