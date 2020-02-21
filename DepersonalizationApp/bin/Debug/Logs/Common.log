@@ -14,3 +14,11 @@ System.Collections.Generic.KeyNotFoundException: The given key was not present i
 2020-02-21 11:46:12,401  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
 2020-02-21 11:46:46,928  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
 2020-02-21 11:48:44,487  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:01:57,868  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:05:00,017  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:09:43,547  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:14:28,398  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:16:58,759  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:23:30,476  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:25:59,703  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful
+2020-02-21 13:27:47,657  INFO  Connection to [http://localhost:5556/MitsubishiElectric/XRMServices/2011/Organization.svc] is successful

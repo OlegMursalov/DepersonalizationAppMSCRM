@@ -41,8 +41,8 @@ namespace UpdaterApp.DepersonalizationLogic
                 {
                     try
                     {
-                        _serviceContext.UpdateObject(entity);
-                        _serviceContext.SaveChanges();
+                        /*_serviceContext.UpdateObject(entity);
+                        _serviceContext.SaveChanges();*/
                         amountOfSuccessful++;
                     }
                     catch (Exception ex)

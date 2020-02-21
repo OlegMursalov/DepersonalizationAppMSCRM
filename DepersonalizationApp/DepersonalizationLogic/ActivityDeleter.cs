@@ -10,7 +10,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public ActivityDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
         {
             _mainQuery = from activityPointer in _serviceContext.ActivityPointerSet
-                         join regObjId in regardingObjectIds on activityPointer.RegardingObjectId.Id equals regObjId
+                         where activityPointer.RegardingObjectId != null &&  activityPointer.RegardingObjectId.Id == regardingObjectIds.First()
                          select activityPointer;
         }
     }

@@ -1,6 +1,5 @@
 ﻿using CRMEntities;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +34,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     try
                     {
-                        _serviceContext.DeleteObject(entity);
-                        _serviceContext.SaveChanges();
+                        /*_serviceContext.DeleteObject(entity);
+                        _serviceContext.SaveChanges();*/
                         amountOfSuccessful++;
                     }
                     catch (Exception ex)

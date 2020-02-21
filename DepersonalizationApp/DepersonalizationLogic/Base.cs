@@ -32,7 +32,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var maxAmountOfRecords = 1000;
             for (int i = 0; i * amountRecordsOnPage < maxAmountOfRecords; i++)
             {
-                var records = _mainQuery.Skip(i * amountRecordsOnPage).Take(amountRecordsOnPage).AsEnumerable();
+                var records = _mainQuery.Skip(i * amountRecordsOnPage).Take(amountRecordsOnPage).ToArray();
                 action(records);
             }
         }
