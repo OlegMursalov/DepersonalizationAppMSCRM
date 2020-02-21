@@ -18,7 +18,7 @@ namespace UpdaterApp.DepersonalizationLogic
         {
         }
 
-        public void Process()
+        public virtual void Process()
         {
             RetrieveAll((entities) =>
             {
@@ -30,28 +30,24 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Обновить измененные записи
         /// </summary>
-        private void AllUpdate(IEnumerable<T> entities)
+        protected void AllUpdate(IEnumerable<T> entities)
         {
-            var firstRecord = entities.FirstOrDefault();
-            if (firstRecord != null)
+            var entityName = nameof(T);
+            var amountOfSuccessful = 0;
+            foreach (var entity in entities)
             {
-                var entityName = firstRecord.LogicalName;
-                var amountOfSuccessful = 0;
-                foreach (var entity in entities)
+                try
                 {
-                    try
-                    {
-                        /*_serviceContext.UpdateObject(entity);
-                        _serviceContext.SaveChanges();*/
-                        amountOfSuccessful++;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not updated", ex);
-                    }
+                    /*_serviceContext.UpdateObject(entity);
+                    _serviceContext.SaveChanges();*/
+                    amountOfSuccessful++;
                 }
-                _logger.Info($"Successful updated '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
+                catch (Exception ex)
+                {
+                    _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not updated", ex);
+                }
             }
+            // _logger.Info($"Successful updated '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
         }
     }
 }

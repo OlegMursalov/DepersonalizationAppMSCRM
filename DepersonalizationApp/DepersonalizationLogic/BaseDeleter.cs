@@ -17,26 +17,22 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected void AllDelete(IEnumerable<T> entities)
         {
-            var firstRecord = entities.FirstOrDefault();
-            if (firstRecord != null)
+            var entityName = nameof(T);
+            var amountOfSuccessful = 0;
+            foreach (var entity in entities)
             {
-                var entityName = firstRecord.LogicalName;
-                var amountOfSuccessful = 0;
-                foreach (var entity in entities)
+                try
                 {
-                    try
-                    {
-                        /*_serviceContext.DeleteObject(entity);
-                        _serviceContext.SaveChanges();*/
-                        amountOfSuccessful++;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not deleted", ex);
-                    }
+                    /*_serviceContext.DeleteObject(entity);
+                    _serviceContext.SaveChanges();*/
+                    amountOfSuccessful++;
                 }
-                _logger.Info($"Successful deleted '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
+                catch (Exception ex)
+                {
+                    _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not deleted", ex);
+                }
             }
+            // _logger.Info($"Successful deleted '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
         }
     }
 }

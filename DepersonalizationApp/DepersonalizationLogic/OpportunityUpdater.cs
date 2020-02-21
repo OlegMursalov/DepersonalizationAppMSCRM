@@ -62,6 +62,12 @@ namespace UpdaterApp.DepersonalizationLogic
 
             var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, opportunityGuids);
             annotationDeleter.Process();
+
+            // D. 2. Меняем связанные с изменяемыми проектами записи сущности «Доля ответственного» (cmdsoft_part_of_owner), 
+            // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
+            // В изменяемых записях меняем значения поля «Доля %»(cmdsoft_part) = Random(Тип - integer, 0 - 100), 
+            // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
+            var 
         }
     }
 }

@@ -47,7 +47,7 @@ namespace UpdaterApp.LogicOfConnection
                         proxy.Execute(new WhoAmIRequest());
                         organizationService = proxy;
                         isConnect = true;
-                        _logger.Info($"Connection to [{serviceUri}] is successful");
+                        // _logger.Info($"Connection to [{serviceUri}] is successful");
                     }
                 }
                 catch (Exception ex)
