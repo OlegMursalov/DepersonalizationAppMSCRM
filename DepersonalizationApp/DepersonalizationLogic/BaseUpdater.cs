@@ -36,8 +36,9 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 try
                 {
-                    _serviceContext.UpdateObject(entity);
-                    _serviceContext.SaveChanges();
+                    /*_serviceContext.UpdateObject(entity);
+                    _serviceContext.SaveChanges();*/
+                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
                 }
                 catch (Exception ex)
                 {
