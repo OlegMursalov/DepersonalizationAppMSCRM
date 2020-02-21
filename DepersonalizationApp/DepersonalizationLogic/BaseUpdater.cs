@@ -37,8 +37,8 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 try
                 {
-                    /*_serviceContext.UpdateObject(entity);
-                    _serviceContext.SaveChanges();*/
+                    _serviceContext.UpdateObject(entity);
+                    _serviceContext.SaveChanges();
                     amountOfSuccessful++;
                 }
                 catch (Exception ex)
@@ -46,7 +46,6 @@ namespace UpdaterApp.DepersonalizationLogic
                     _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not updated", ex);
                 }
             }
-            // _logger.Info($"Successful updated '{amountOfSuccessful}' and '{entities.Count() - amountOfSuccessful}' are failed records '{entityName}'");
         }
     }
 }

@@ -53,9 +53,8 @@ namespace UpdaterApp.DepersonalizationLogic
 
             if (valueArray.Length != _needEntities.Count)
             {
-                var errorMsg = "ShuffleFieldValues.Process - amount of values aren't equal amount of need entitites";
-                _logger.Error(errorMsg);
-                throw new Exception(errorMsg);
+                _logger.Error("ShuffleFieldValues.Process - amount of values aren't equal amount of need entitites");
+                return;
             }
 
             var i = 0;

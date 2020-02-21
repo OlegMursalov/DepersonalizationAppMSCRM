@@ -19,7 +19,7 @@ namespace UpdaterApp.DepersonalizationLogic
         {
             var random = new Random();
             var shuffleReasonsForTheLoss = new ShuffleFieldValues<string>("mcdsoft_reason_for_the_loss");
-
+            
             foreach (var opportunity in opportunities)
             {
                 try
@@ -51,10 +51,10 @@ namespace UpdaterApp.DepersonalizationLogic
                 }
             }
 
-            // B. Дополнение
+            // B. Дополнение (см. выше)
             shuffleReasonsForTheLoss.Process();
 
-            // C. Все что есть в примечаниях(Notes) и действиях(actions) связанных с проектами удалить (сообщения, эл. почта, прикрепленный файлы)
+            // C. Все что есть в примечаниях (Notes) и действиях (actions), связанных с проектами, удалить (сообщения, эл. почта, прикрепленный файлы)
             var opportunityGuids = opportunities.Select(e => e.Id);
 
             var activityDeleter = new RelatedActivityDeleter(_serviceContext, opportunityGuids);

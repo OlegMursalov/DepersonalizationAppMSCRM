@@ -13,6 +13,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected OrganizationServiceCtx _serviceContext;
         protected ILogger _logger = new FileLogger();
 
+        private const int AmountRecordsOnPage = 500;
+        private const int MaxAmountOfRecords = 1000;
+
         public Base(OrganizationServiceCtx serviceContext)
         {
             _serviceContext = serviceContext;
@@ -25,14 +28,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             if (action == null)
             {
-                throw new ArgumentException("RetrieveAll is failed. Action is null");
+                _logger.Error("RetrieveAll is failed. Action is null");
+                return;
             }
 
-            var amountRecordsOnPage = 500;
-            var maxAmountOfRecords = 1000;
-            for (int i = 0; i * amountRecordsOnPage < maxAmountOfRecords; i++)
+            
+            for (int i = 0; i * AmountRecordsOnPage < MaxAmountOfRecords; i++)
             {
-                var records = _mainQuery.Skip(i * amountRecordsOnPage).Take(amountRecordsOnPage).ToArray();
+                var records = _mainQuery.Skip(i * AmountRecordsOnPage).Take(AmountRecordsOnPage).ToArray();
                 action(records);
             }
         }

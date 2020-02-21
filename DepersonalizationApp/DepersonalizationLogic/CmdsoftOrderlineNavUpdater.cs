@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UpdaterApp.DepersonalizationLogic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
@@ -19,7 +17,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override void ChangeByRules(IEnumerable<cmdsoft_orderlinenav> cmdsoftOrderineNavs)
         {
-            var randN = new Random().Next(1, 9);
+            var randN = new Random().Next(1, 10);
             foreach (var orderineNav in cmdsoftOrderineNavs)
             {
                 if (orderineNav.mcdsoft_price_discount_with_VAT != null)
