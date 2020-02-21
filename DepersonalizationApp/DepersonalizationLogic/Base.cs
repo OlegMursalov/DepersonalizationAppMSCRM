@@ -34,8 +34,19 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
             for (int i = 0; i * AmountRecordsOnPage < MaxAmountOfRecords; i++)
             {
-                var records = _mainQuery.Skip(i * AmountRecordsOnPage).Take(AmountRecordsOnPage).ToArray();
-                action(records);
+                T[] records = null;
+                try
+                {
+                    records = _mainQuery.Skip(i * AmountRecordsOnPage).Take(AmountRecordsOnPage).ToArray();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Base<{nameof(T)}>.RetrieveAll query is failed", ex);
+                }
+                if (records != null)
+                {
+                    action(records);
+                }
             }
         }
     }
