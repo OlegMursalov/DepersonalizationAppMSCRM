@@ -1,9 +1,6 @@
 ﻿using CRMEntities;
-using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk.Query;
 using System.Configuration;
 using UpdaterApp.DepersonalizationLogic;
-using UpdaterApp.Log;
 using UpdaterApp.LogicOfConnection;
 
 namespace UpdaterApp

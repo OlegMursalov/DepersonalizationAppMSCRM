@@ -123,10 +123,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     }
                 }
             }
-            var accountComparer = new AccountComparer();
-            var allAccountsDistinct = allAccounts.Distinct(accountComparer);
-            ChangeByRules(allAccountsDistinct);
-            AllUpdate(allAccountsDistinct);
+
+            if (allAccounts.Count > 0)
+            {
+                var accountComparer = new AccountComparer();
+                var allAccountsDistinct = allAccounts.Distinct(accountComparer);
+                ChangeByRules(allAccountsDistinct);
+                AllUpdate(allAccountsDistinct);
+            }
         }
 
         private class AccountComparer : IEqualityComparer<Account>

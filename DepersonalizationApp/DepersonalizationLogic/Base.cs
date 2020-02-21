@@ -41,7 +41,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Base<{nameof(T)}>.RetrieveAll query is failed", ex);
+                    _logger.Error($"Base<{typeof(T).Name}>.RetrieveAll query is failed", ex);
                 }
                 if (records != null)
                 {

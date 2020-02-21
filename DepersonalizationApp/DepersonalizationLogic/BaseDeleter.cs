@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
@@ -16,20 +17,23 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected void AllDelete(IEnumerable<T> entities)
         {
-            var entityName = nameof(T);
+            int successfulAmount = 0;
+            var entityName = typeof(T).Name;
             foreach (var entity in entities)
             {
                 try
                 {
                     /*_serviceContext.DeleteObject(entity);
                     _serviceContext.SaveChanges();*/
-                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
+                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
+                    successfulAmount++;
                 }
                 catch (Exception ex)
                 {
                     _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not deleted", ex);
                 }
             }
+            _logger.Info($"{successfulAmount} records '{entityName}' are deleted, {entities.Count() - successfulAmount} are failed");
         }
     }
 }

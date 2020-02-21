@@ -42,7 +42,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     _logger.Error("CmdsoftPartOfOwnerUpdater.Process query is failed", ex);
                 }
-                if (cmdsoftPartOfOwners != null)
+                if (cmdsoftPartOfOwners != null && cmdsoftPartOfOwners.Count() > 0)
                 {
                     ChangeByRules(cmdsoftPartOfOwners);
                     AllUpdate(cmdsoftPartOfOwners);

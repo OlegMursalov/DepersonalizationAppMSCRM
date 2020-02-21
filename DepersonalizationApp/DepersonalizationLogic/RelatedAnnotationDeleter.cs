@@ -32,7 +32,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     _logger.Error("RelatedAnnotationDeleter.Process query is failed", ex);
                 }
-                if (annotations != null)
+                if (annotations != null && annotations.Length > 0)
                 {
                     AllDelete(annotations);
                 }

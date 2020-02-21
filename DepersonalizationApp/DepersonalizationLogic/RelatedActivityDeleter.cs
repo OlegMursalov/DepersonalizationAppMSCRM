@@ -32,7 +32,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     _logger.Error("RelatedActivityDeleter.Process query is failed", ex);
                 }
-                if (activities != null)
+                if (activities != null && activities.Length > 0)
                 {
                     AllDelete(activities);
                 }

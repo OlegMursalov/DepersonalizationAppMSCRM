@@ -3,6 +3,7 @@ using DepersonalizationApp.DepersonalizationLogic;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
@@ -31,20 +32,23 @@ namespace UpdaterApp.DepersonalizationLogic
         /// </summary>
         protected void AllUpdate(IEnumerable<T> entities)
         {
-            var entityName = nameof(T);
+            int successfulAmount = 0;
+            var entityName = typeof(T).Name;
             foreach (var entity in entities)
             {
                 try
                 {
                     /*_serviceContext.UpdateObject(entity);
                     _serviceContext.SaveChanges();*/
-                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
+                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
+                    successfulAmount++;
                 }
                 catch (Exception ex)
                 {
                     _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not updated", ex);
                 }
             }
+            _logger.Info($"{successfulAmount} records '{entityName}' are updated, {entities.Count() - successfulAmount} are failed");
         }
     }
 }

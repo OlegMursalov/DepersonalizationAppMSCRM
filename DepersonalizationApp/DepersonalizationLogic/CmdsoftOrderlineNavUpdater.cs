@@ -58,7 +58,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     _logger.Error("CmdsoftOrderlineNavUpdater.Process query is failed", ex);
                 }
-                if (cmdsoftOrderineNavs != null)
+                if (cmdsoftOrderineNavs != null && cmdsoftOrderineNavs.Count() > 0)
                 {
                     ChangeByRules(cmdsoftOrderineNavs);
                     AllUpdate(cmdsoftOrderineNavs);

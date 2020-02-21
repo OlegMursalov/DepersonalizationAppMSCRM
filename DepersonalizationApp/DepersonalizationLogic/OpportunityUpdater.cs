@@ -11,7 +11,7 @@ namespace UpdaterApp.DepersonalizationLogic
         public OpportunityUpdater(OrganizationServiceCtx serviceContext) : base(serviceContext)
         {
             _mainQuery = (from opportunity in _serviceContext.OpportunitySet
-                          orderby opportunity.CreatedOn ascending
+                          orderby opportunity.CreatedOn descending
                           select opportunity);
         }
 
