@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace DepersonalizationApp.DepersonalizationLogic
@@ -11,7 +12,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class BaseDeleter<T> : Base<T> where T : Entity
     {
-        public BaseDeleter(OrganizationServiceCtx serviceContext) : base(serviceContext)
+        public BaseDeleter(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
         }
 
@@ -23,9 +24,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 try
                 {
-                    /*_serviceContext.DeleteObject(entity);
-                    _serviceContext.SaveChanges();*/
-                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
+                    _orgService.Delete(entity.LogicalName, entity.Id);
+                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is deleted");
                     successfulAmount++;
                 }
                 catch (Exception ex)
@@ -34,6 +34,11 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
             }
             _logger.Info($"{successfulAmount} records '{entityName}' are deleted, {entities.Count() - successfulAmount} are failed");
+        }
+
+        protected override T ConvertSqlDataReaderToEntity(SqlDataReader sqlReader)
+        {
+            
         }
     }
 }

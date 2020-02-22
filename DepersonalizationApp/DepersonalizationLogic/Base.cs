@@ -1,53 +1,67 @@
-﻿using CRMEntities;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 using UpdaterApp.Log;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class Base<T> where T : Entity
+    public abstract class Base<T> where T : Entity
     {
-        protected IQueryable<T> _mainQuery;
-        protected OrganizationServiceCtx _serviceContext;
+        protected IOrganizationService _orgService;
+        protected SqlConnection _sqlConnection;
+        protected string _retrieveSqlQuery;
+
         protected ILogger _logger = new FileLogger();
 
-        private const int AmountRecordsOnPage = 500;
-        private const int MaxAmountOfRecords = 1000;
-
-        public Base(OrganizationServiceCtx serviceContext)
+        public Base(IOrganizationService orgService, SqlConnection sqlConnection)
         {
-            _serviceContext = serviceContext;
+            _orgService = orgService;
+            _sqlConnection = sqlConnection;
         }
 
-        /// <summary>
-        /// Метод извлекает из CRM записи и для каждой пачки выполняет действие
-        /// </summary>
-        protected void RetrieveAll(Action<IEnumerable<T>> action)
-        {
-            if (action == null)
-            {
-                _logger.Error("RetrieveAll is failed. Action is null");
-                return;
-            }
+        protected abstract T ConvertSqlDataReaderToEntity(SqlDataReader sqlReader);
 
-            for (int i = 0; i * AmountRecordsOnPage < MaxAmountOfRecords; i++)
+        protected IEnumerable<T> FastRetrieveAll(string query)
+        {
+            var entities = new List<T>();
+            using (var sqlCommand = new SqlCommand())
             {
-                T[] records = null;
+                sqlCommand.CommandText = query;
+                sqlCommand.Connection = _sqlConnection;
+                SqlDataReader sqlReader = null;
+
                 try
                 {
-                    records = _mainQuery.Skip(i * AmountRecordsOnPage).Take(AmountRecordsOnPage).ToArray();
+                    sqlReader = sqlCommand.ExecuteReader();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Base<{typeof(T).Name}>.RetrieveAll query is failed", ex);
+                    _logger.Error("ExecuteReader is crushed", ex);
                 }
-                if (records != null)
+
+                if (sqlReader != null && sqlReader.HasRows)
                 {
-                    action(records);
+                    while (sqlReader.Read())
+                    {
+                        try
+                        {
+                            var entity = ConvertSqlDataReaderToEntity(sqlReader);
+                            entities.Add(entity);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error("Converting SQL column is crushed", ex);
+                        }
+                    }
+                }
+
+                if (sqlCommand != null)
+                {
+                    sqlCommand.Dispose();
                 }
             }
+            return entities;
         }
     }
 }

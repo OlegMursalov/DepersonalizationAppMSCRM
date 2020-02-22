@@ -1,19 +1,20 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using DepersonalizationApp.LogicOfConnection;
+using Microsoft.Xrm.Sdk.Client;
 using System;
 
 namespace UpdaterApp.LogicOfConnection
 {
-    public class CRMConnectState
+    public class CRMConnectionState : IConnectionState
     {
-        public IOrganizationService OrganizationService { get; }
+        public OrganizationServiceProxy Proxy { get; }
         public bool IsConnect { get; }
-        public Exception ConnectException { get; }
+        public Exception Exception { get; }
 
-        public CRMConnectState(bool isConnect, IOrganizationService organizationService, Exception connectException)
+        public CRMConnectionState(bool isConnect, OrganizationServiceProxy proxy, Exception exception)
         {
             IsConnect = isConnect;
-            OrganizationService = organizationService;
-            ConnectException = connectException;
+            Proxy = proxy;
+            Exception = exception;
         }
     }
 }

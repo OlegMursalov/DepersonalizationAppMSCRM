@@ -3,28 +3,24 @@ using DepersonalizationApp.DepersonalizationLogic;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
     public abstract class BaseUpdater<T> : Base<T> where T : Entity
     {
-        /// <summary>
-        /// Каждый subclass пусть сам определяет, что ему сделать с пачкой записей
-        /// </summary>
         protected abstract void ChangeByRules(IEnumerable<T> records);
 
-        public BaseUpdater(OrganizationServiceCtx serviceContext) : base(serviceContext)
+        public BaseUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
         }
 
         public virtual void Process()
         {
-            RetrieveAll((entities) =>
-            {
-                ChangeByRules(entities);
-                AllUpdate(entities);
-            });
+            var entities = FastRetrieveAll(_retrieveSqlQuery);
+            ChangeByRules(entities);
+            AllUpdate(entities);
         }
 
         /// <summary>
@@ -38,9 +34,8 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 try
                 {
-                    /*_serviceContext.UpdateObject(entity);
-                    _serviceContext.SaveChanges();*/
-                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
+                    _orgService.Update(entity);
+                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
                     successfulAmount++;
                 }
                 catch (Exception ex)

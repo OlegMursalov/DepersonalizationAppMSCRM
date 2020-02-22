@@ -87,8 +87,12 @@
     <Compile Include="DepersonalizationLogic\OpportunityUpdater.cs" />
     <Compile Include="DepersonalizationLogic\ShuffleFieldValues.cs" />
     <Compile Include="DepersonalizationLogic\ValWrpr.cs" />
+    <Compile Include="LogicOfConnection\IConnectionState.cs" />
     <Compile Include="LogicOfConnection\CRMConnector.cs" />
     <Compile Include="LogicOfConnection\CRMConnectState.cs" />
+    <Compile Include="LogicOfConnection\IConnector.cs" />
+    <Compile Include="LogicOfConnection\SQLConnector.cs" />
+    <Compile Include="LogicOfConnection\SQLConnectionState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
