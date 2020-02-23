@@ -33,5 +33,27 @@ namespace DepersonalizationApp.Helpers
             sb.Append(")");
             return sb.ToString();
         }
+
+        public static int GetOffsetNumber(string query)
+        {
+            var array = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = array[array.Length - 2].Trim().Split(new[] { ' ' });
+            return int.Parse(parts[1]);
+        }
+
+        public static int GetFetchNumber(string query)
+        {
+            var array = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = array[array.Length - 1].Trim().Split(new[] { ' ' });
+            return int.Parse(parts[2]);
+        }
+
+        public static string ChangeSqlQueryPagination(string query, int offset, int fetchNext)
+        {
+            var parts = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            parts[parts.Length - 2] = $" offset {offset} rows";
+            parts[parts.Length - 1] = $" fetch next {fetchNext} rows only";
+            return string.Join(Environment.NewLine, parts);
+        }
     }
 }

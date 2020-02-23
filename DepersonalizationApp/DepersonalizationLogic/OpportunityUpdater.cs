@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
@@ -12,12 +13,15 @@ namespace UpdaterApp.DepersonalizationLogic
     {
         public OpportunityUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
-            _retrieveSqlQuery =
-                "select top(500) opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller," +
-                " opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency," +
-                " opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor" +
-                " from dbo.Opportunity as opp" +
-                " order by opp.CreatedOn desc";
+            var sb = new StringBuilder();
+            sb.AppendLine("select opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller,");
+            sb.AppendLine(" opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency,");
+            sb.AppendLine(" opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor");
+            sb.AppendLine(" from dbo.Opportunity as opp");
+            sb.AppendLine(" order by opp.CreatedOn desc");
+            sb.AppendLine(" offset 0 rows");
+            sb.AppendLine(" fetch next 500 rows only");
+            _retrieveSqlQuery = sb.ToString();
         }
 
         protected override Opportunity ConvertSqlDataReaderItem(SqlDataReader sqlReader)

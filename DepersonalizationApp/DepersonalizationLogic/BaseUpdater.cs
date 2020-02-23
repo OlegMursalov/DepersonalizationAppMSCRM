@@ -20,7 +20,7 @@ namespace UpdaterApp.DepersonalizationLogic
 
         public void Process()
         {
-            var entities = FastRetrieveAllItems(_retrieveSqlQuery);
+            var entities = FastRetrieveAllItems();
             ChangeByRules(entities);
             UpdateAll(entities);
         }

@@ -24,7 +24,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         public void Process()
         {
-            var guids = FastRetrieveAllItems(_retrieveSqlQuery);
+            var guids = FastRetrieveAllItems();
             DeleteAll(guids);
         }
 
