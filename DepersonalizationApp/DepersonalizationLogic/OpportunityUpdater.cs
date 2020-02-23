@@ -13,32 +13,49 @@ namespace UpdaterApp.DepersonalizationLogic
         public OpportunityUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
             _retrieveSqlQuery =
-                "top 1000" +
-                " select opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller," +
-                " opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss" +
+                "select top(100) opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller," +
+                " opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency," +
+                " opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor" +
                 " from dbo.Opportunity as opp" +
                 " order by opp.CreatedOn desc";
         }
 
         protected override Opportunity ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            var opportunityId = (Guid)sqlReader.GetValue(0);
-            var mcdsoft_discount = sqlReader.GetValue(1) as bool?;
-            var cmdsoft_standartdiscount = sqlReader.GetValue(2) as decimal?;
-            var mcdsoft_standartdiscount_chiller = sqlReader.GetValue(3) as decimal?;
-            var cmdsoft_warranty = sqlReader.GetValue(4) as decimal?;
-            var cmdsoft_Result = sqlReader.GetValue(5) as OptionSetValue;
-            var mcdsoft_reason_for_the_loss = sqlReader.GetValue(6) as string;
             var opportunity = new Opportunity
             {
-                Id = opportunityId,
-                mcdsoft_discount = mcdsoft_discount,
-                cmdsoft_standartdiscount = cmdsoft_standartdiscount,
-                mcdsoft_standartdiscount_chiller = mcdsoft_standartdiscount_chiller,
-                cmdsoft_warranty = cmdsoft_warranty,
-                cmdsoft_Result = cmdsoft_Result,
-                mcdsoft_reason_for_the_loss = mcdsoft_reason_for_the_loss
+                Id = (Guid)sqlReader.GetValue(0),
+                mcdsoft_discount = sqlReader.GetValue(1) as bool?,
+                cmdsoft_standartdiscount = sqlReader.GetValue(2) as decimal?,
+                mcdsoft_standartdiscount_chiller = sqlReader.GetValue(3) as decimal?,
+                cmdsoft_warranty = sqlReader.GetValue(4) as decimal?,
+                mcdsoft_reason_for_the_loss = sqlReader.GetValue(6) as string,
             };
+            var cmdsoft_ResultVal = sqlReader.GetValue(5) as int?;
+            if (cmdsoft_ResultVal != null)
+            {
+                opportunity.cmdsoft_Result = new OptionSetValue(cmdsoft_ResultVal.Value);
+            }
+            var customerId = sqlReader.GetValue(7) as Guid?;
+            if (customerId != null)
+            {
+                opportunity.CustomerId = new EntityReference("account", customerId.Value);
+            }
+            var cmdsoft_project_agencyId = sqlReader.GetValue(8) as Guid?;
+            if (cmdsoft_project_agencyId != null)
+            {
+                opportunity.cmdsoft_project_agency = new EntityReference("account", cmdsoft_project_agencyId.Value);
+            }
+            var mcdsoft_ref_accountId = sqlReader.GetValue(9) as Guid?;
+            if (mcdsoft_ref_accountId != null)
+            {
+                opportunity.mcdsoft_ref_account = new EntityReference("account", mcdsoft_ref_accountId.Value);
+            }
+            var cmdsoft_GeneralContractorId = sqlReader.GetValue(10) as Guid?;
+            if (cmdsoft_GeneralContractorId != null)
+            {
+                opportunity.cmdsoft_GeneralContractor = new EntityReference("account", cmdsoft_GeneralContractorId.Value);
+            }
             return opportunity;
         }
 

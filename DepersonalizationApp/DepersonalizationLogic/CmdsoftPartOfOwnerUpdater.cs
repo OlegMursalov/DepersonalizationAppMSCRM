@@ -36,12 +36,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override void ChangeByRules(IEnumerable<cmdsoft_part_of_owner> cmdsoftPartOfOwners)
         {
-            int i = 0;
-            var array = RandomRangeHelper.Get(cmdsoftPartOfOwners.Count(), 100);
-            foreach (var partOfOwner in cmdsoftPartOfOwners)
+            var amountOfPartOwners = cmdsoftPartOfOwners.Count();
+            if (amountOfPartOwners > 0)
             {
-                partOfOwner.cmdsoft_part = array[i];
-                i++;
+                int i = 0;
+                var array = RandomRangeHelper.Get(amountOfPartOwners, 100);
+                foreach (var partOfOwner in cmdsoftPartOfOwners)
+                {
+                    partOfOwner.cmdsoft_part = array[i];
+                    i++;
+                }
             }
         }
     }
