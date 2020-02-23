@@ -24,12 +24,10 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override cmdsoft_part_of_owner ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            var cmdsoft_part_of_ownerId = (Guid)sqlReader.GetValue(0);
-            var cmdsoft_part = sqlReader.GetValue(1) as decimal?;
             var cmdsoft_part_of_owner = new cmdsoft_part_of_owner
             {
-                Id = cmdsoft_part_of_ownerId,
-                cmdsoft_part = cmdsoft_part
+                Id = (Guid)sqlReader.GetValue(0),
+                cmdsoft_part = sqlReader.GetValue(1) as decimal?
             };
             return cmdsoft_part_of_owner;
         }

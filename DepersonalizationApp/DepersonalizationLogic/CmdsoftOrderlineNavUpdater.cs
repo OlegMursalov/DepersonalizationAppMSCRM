@@ -24,20 +24,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override cmdsoft_orderlinenav ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            var cmdsoft_orderlinenavId = (Guid)sqlReader.GetValue(0);
-            var mcdsoft_price_discount_with_VAT = sqlReader.GetValue(1) as decimal?;
-            var mcdsoft_price_discount_without_VAT = sqlReader.GetValue(2) as decimal?;
-            var mcdsoft_price_without_vat = sqlReader.GetValue(3) as decimal?;
-            var cmdsoft_amountsalesvat = sqlReader.GetValue(4) as decimal?;
-            var cmdsoft_amountsale = sqlReader.GetValue(5) as decimal?;
             var cmdsoft_orderlinenav = new cmdsoft_orderlinenav
             {
-                Id = cmdsoft_orderlinenavId,
-                mcdsoft_price_discount_with_VAT = mcdsoft_price_discount_with_VAT,
-                mcdsoft_price_discount_without_VAT = mcdsoft_price_discount_without_VAT,
-                mcdsoft_price_without_vat = mcdsoft_price_without_vat,
-                cmdsoft_amountsalesvat = cmdsoft_amountsalesvat,
-                cmdsoft_amountsale = cmdsoft_amountsale
+                Id = (Guid)sqlReader.GetValue(0),
+                mcdsoft_price_discount_with_VAT = sqlReader.GetValue(1) as decimal?,
+                mcdsoft_price_discount_without_VAT = sqlReader.GetValue(2) as decimal?,
+                mcdsoft_price_without_vat = sqlReader.GetValue(3) as decimal?,
+                cmdsoft_amountsalesvat = sqlReader.GetValue(4) as decimal?,
+                cmdsoft_amountsale = sqlReader.GetValue(5) as decimal?
             };
             return cmdsoft_orderlinenav;
         }

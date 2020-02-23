@@ -58,7 +58,7 @@ namespace UpdaterApp.DepersonalizationLogic
             }
             return opportunity;
         }
-
+        
         protected override void ChangeByRules(IEnumerable<Opportunity> opportunities)
         {
             var random = new Random();

@@ -51,27 +51,22 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override Account ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            var accountId = (Guid)sqlReader.GetValue(0);
-            var name = sqlReader.GetValue(1) as string;
-            var telephone1 = sqlReader.GetValue(2) as string;
-            var eMailAddress1 = sqlReader.GetValue(3) as string;
-            var webSiteURL = sqlReader.GetValue(4) as string;
-            var address1_PostalCode = sqlReader.GetValue(5) as string;
-            var description = sqlReader.GetValue(6) as string;
-            var cmdsoft_inn = sqlReader.GetValue(7) as string;
-            var parentAccountId = sqlReader.GetValue(8) as EntityReference;
             var account = new Account
             {
-                Id = accountId,
-                Name = name,
-                Telephone1 = telephone1,
-                EMailAddress1 = eMailAddress1,
-                WebSiteURL = webSiteURL,
-                Address1_PostalCode = address1_PostalCode,
-                Description = description,
-                cmdsoft_inn = cmdsoft_inn,
-                ParentAccountId = parentAccountId
+                Id = (Guid)sqlReader.GetValue(0),
+                Name = sqlReader.GetValue(1) as string,
+                Telephone1 = sqlReader.GetValue(2) as string,
+                EMailAddress1 = sqlReader.GetValue(3) as string,
+                WebSiteURL = sqlReader.GetValue(4) as string,
+                Address1_PostalCode = sqlReader.GetValue(5) as string,
+                Description = sqlReader.GetValue(6) as string,
+                cmdsoft_inn = sqlReader.GetValue(7) as string
             };
+            var parentAccountId = sqlReader.GetValue(8) as Guid?;
+            if (parentAccountId != null)
+            {
+                account.ParentAccountId = new EntityReference("account", parentAccountId.Value);
+            }
             return account;
         }
 
