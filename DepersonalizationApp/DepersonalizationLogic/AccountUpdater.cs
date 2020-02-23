@@ -85,50 +85,50 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 account.cmdsoft_inn = null;
                 account.ParentAccountId = null;
                 _globalCounterBySessionApp++;
-
-                // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
-                var accountIds = accounts.Select(e => e.Id).ToArray();
-
-                // Удаление задач
-                var relatedTaskDeleter = new RelatedTaskDeleter(_orgService, _sqlConnection, accountIds);
-                relatedTaskDeleter.Process();
-
-                // Удаление факсов
-                var relatedFaxDeleter = new RelatedFaxDeleter(_orgService, _sqlConnection, accountIds);
-                relatedFaxDeleter.Process();
-
-                // Удаление звонков
-                var relatedPhoneCallDeleter = new RelatedPhoneCallDeleter(_orgService, _sqlConnection, accountIds);
-                relatedPhoneCallDeleter.Process();
-
-                // Удаление эмеилов
-                var relatedEmailDeleter = new RelatedEmailDeleter(_orgService, _sqlConnection, accountIds);
-                relatedEmailDeleter.Process();
-
-                // Удаление писем
-                var relatedLetterDeleter = new RelatedLetterDeleter(_orgService, _sqlConnection, accountIds);
-                relatedLetterDeleter.Process();
-
-                // Удаление встреч
-                var relatedAppointmentDeleter = new RelatedAppointmentDeleter(_orgService, _sqlConnection, accountIds);
-                relatedAppointmentDeleter.Process();
-
-                // Удаление действий сервиса
-                var relatedServiceAppointmentDeleter = new RelatedServiceAppointmentDeleter(_orgService, _sqlConnection, accountIds);
-                relatedServiceAppointmentDeleter.Process();
-
-                // Удаление откликов от кампании
-                var relatedCampaignResponseDeleter = new RelatedCampaignResponseDeleter(_orgService, _sqlConnection, accountIds);
-                relatedCampaignResponseDeleter.Process();
-
-                // Удаление повторяющихся встреч
-                var relatedRecurringAppointmentMasterDeleter = new RelatedRecurringAppointmentMasterDeleter(_orgService, _sqlConnection, accountIds);
-                relatedRecurringAppointmentMasterDeleter.Process();
-
-                // Удаление примечаний
-                var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, accountIds);
-                annotationDeleter.Process();
             }
+
+            // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
+            var accountIds = accounts.Select(e => e.Id).ToArray();
+
+            // Удаление задач
+            var relatedTaskDeleter = new RelatedTaskDeleter(_orgService, _sqlConnection, accountIds);
+            relatedTaskDeleter.Process();
+
+            // Удаление факсов
+            var relatedFaxDeleter = new RelatedFaxDeleter(_orgService, _sqlConnection, accountIds);
+            relatedFaxDeleter.Process();
+
+            // Удаление звонков
+            var relatedPhoneCallDeleter = new RelatedPhoneCallDeleter(_orgService, _sqlConnection, accountIds);
+            relatedPhoneCallDeleter.Process();
+
+            // Удаление эмеилов
+            var relatedEmailDeleter = new RelatedEmailDeleter(_orgService, _sqlConnection, accountIds);
+            relatedEmailDeleter.Process();
+
+            // Удаление писем
+            var relatedLetterDeleter = new RelatedLetterDeleter(_orgService, _sqlConnection, accountIds);
+            relatedLetterDeleter.Process();
+
+            // Удаление встреч
+            var relatedAppointmentDeleter = new RelatedAppointmentDeleter(_orgService, _sqlConnection, accountIds);
+            relatedAppointmentDeleter.Process();
+
+            // Удаление действий сервиса
+            var relatedServiceAppointmentDeleter = new RelatedServiceAppointmentDeleter(_orgService, _sqlConnection, accountIds);
+            relatedServiceAppointmentDeleter.Process();
+
+            // Удаление откликов от кампании
+            var relatedCampaignResponseDeleter = new RelatedCampaignResponseDeleter(_orgService, _sqlConnection, accountIds);
+            relatedCampaignResponseDeleter.Process();
+
+            // Удаление повторяющихся встреч
+            var relatedRecurringAppointmentMasterDeleter = new RelatedRecurringAppointmentMasterDeleter(_orgService, _sqlConnection, accountIds);
+            relatedRecurringAppointmentMasterDeleter.Process();
+
+            // Удаление примечаний
+            var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, accountIds);
+            annotationDeleter.Process();
         }
     }
 }
