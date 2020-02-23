@@ -1,39 +1,17 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
     public class RelatedFaxDeleter : BaseDeleter<Fax>
     {
-        protected IEnumerable<Guid> _regardingObjectIds;
-
-        public RelatedFaxDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
+        public RelatedFaxDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
         {
-            _regardingObjectIds = regardingObjectIds;
-        }
-
-        public void Process()
-        {
-            Fax[] faxes = null;
-            foreach (var regObjId in _regardingObjectIds)
-            {
-                try
-                {
-                    faxes = (from fax in _serviceContext.FaxSet
-                             where fax.RegardingObjectId != null && fax.RegardingObjectId.Id == regObjId
-                             select fax).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("RelatedFaxDeleter.Process query is failed", ex);
-                }
-                if (faxes != null && faxes.Length > 0)
-                {
-                    AllDelete(faxes);
-                }
-            }
+            _entityLogicalName = "fax";
+            _retrieveSqlQuery = SqlQueryHelper.GetQueryOfActivityGuidsByRegardingObjectIds("dbo.Fax", regardingObjectIds);
         }
     }
 }

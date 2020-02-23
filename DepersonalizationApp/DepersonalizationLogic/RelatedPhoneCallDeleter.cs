@@ -1,39 +1,17 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
     public class RelatedPhoneCallDeleter : BaseDeleter<PhoneCall>
     {
-        protected IEnumerable<Guid> _regardingObjectIds;
-
-        public RelatedPhoneCallDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
+        public RelatedPhoneCallDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
         {
-            _regardingObjectIds = regardingObjectIds;
-        }
-
-        public void Process()
-        {
-            PhoneCall[] phoneCalls = null;
-            foreach (var regObjId in _regardingObjectIds)
-            {
-                try
-                {
-                    phoneCalls = (from phoneCall in _serviceContext.PhoneCallSet
-                                  where phoneCall.RegardingObjectId != null && phoneCall.RegardingObjectId.Id == regObjId
-                                  select phoneCall).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("RelatedPhoneCallDeleter.Process query is failed", ex);
-                }
-                if (phoneCalls != null && phoneCalls.Length > 0)
-                {
-                    AllDelete(phoneCalls);
-                }
-            }
+            _entityLogicalName = "phonecall";
+            _retrieveSqlQuery = SqlQueryHelper.GetQueryOfActivityGuidsByRegardingObjectIds("dbo.PhoneCall", regardingObjectIds);
         }
     }
 }

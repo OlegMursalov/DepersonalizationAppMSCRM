@@ -1,7 +1,9 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
@@ -9,31 +11,10 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         protected IEnumerable<Guid> _regardingObjectIds;
 
-        public RelatedLetterDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
+        public RelatedLetterDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
         {
-            _regardingObjectIds = regardingObjectIds;
-        }
-
-        public void Process()
-        {
-            Letter[] letters = null;
-            foreach (var regObjId in _regardingObjectIds)
-            {
-                try
-                {
-                    letters = (from letter in _serviceContext.LetterSet
-                               where letter.RegardingObjectId != null && letter.RegardingObjectId.Id == regObjId
-                               select letter).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("RelatedLetterDeleter.Process query is failed", ex);
-                }
-                if (letters != null && letters.Length > 0)
-                {
-                    AllDelete(letters);
-                }
-            }
+            _entityLogicalName = "letter";
+            _retrieveSqlQuery = SqlQueryHelper.GetQueryOfActivityGuidsByRegardingObjectIds("dbo.Letter", regardingObjectIds);
         }
     }
 }

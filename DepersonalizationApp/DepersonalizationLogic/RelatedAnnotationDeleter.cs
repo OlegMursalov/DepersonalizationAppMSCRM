@@ -1,7 +1,8 @@
 ﻿using CRMEntities;
+using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
+using System.Text;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
@@ -10,33 +11,28 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class RelatedAnnotationDeleter : BaseDeleter<Annotation>
     {
-        protected IEnumerable<Guid> _objectIds;
-
-        public RelatedAnnotationDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> objectIds) : base(serviceContext)
+        public RelatedAnnotationDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] objectIds) : base(orgService, sqlConnection)
         {
-            _objectIds = objectIds;
-        }
+            _entityLogicalName = "annotation";
 
-        public void Process()
-        {
-            foreach (var objId in _objectIds)
+            var sb = new StringBuilder();
+            sb.AppendLine("select distinct ann.AnnotationId");
+            sb.AppendLine(" from dbo.Annotation as ann");
+            sb.AppendLine(" where ann.ObjectId in (");
+            for (int i = 0; i < objectIds.Length; i++)
             {
-                Annotation[] annotations = null;
-                try
+                if (i == 0)
                 {
-                    annotations = (from annotation in _serviceContext.AnnotationSet
-                                   where annotation.ObjectId != null && annotation.ObjectId.Id == objId
-                                   select annotation).ToArray();
+                    sb.Append($"'{objectIds[i]}'");
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.Error("RelatedAnnotationDeleter.Process query is failed", ex);
-                }
-                if (annotations != null && annotations.Length > 0)
-                {
-                    AllDelete(annotations);
+                    sb.Append($", '{objectIds[i]}'");
                 }
             }
+            sb.Append(")");
+
+            _retrieveSqlQuery = sb.ToString();
         }
     }
 }

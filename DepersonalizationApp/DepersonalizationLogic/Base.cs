@@ -6,7 +6,7 @@ using UpdaterApp.Log;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public abstract class Base<T> where T : Entity
+    public abstract class Base<T>
     {
         protected IOrganizationService _orgService;
         protected SqlConnection _sqlConnection;
@@ -20,11 +20,11 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _sqlConnection = sqlConnection;
         }
 
-        protected abstract T ConvertSqlDataReaderToEntity(SqlDataReader sqlReader);
+        protected abstract T ConvertSqlDataReaderItem(SqlDataReader sqlReader);
 
-        protected IEnumerable<T> FastRetrieveAll(string query)
+        protected IEnumerable<T> FastRetrieveAllItems(string query)
         {
-            var entities = new List<T>();
+            var items = new List<T>();
             using (var sqlCommand = new SqlCommand())
             {
                 sqlCommand.CommandText = query;
@@ -46,8 +46,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     {
                         try
                         {
-                            var entity = ConvertSqlDataReaderToEntity(sqlReader);
-                            entities.Add(entity);
+                            var item = ConvertSqlDataReaderItem(sqlReader);
+                            items.Add(item);
                         }
                         catch (Exception ex)
                         {
@@ -61,7 +61,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     sqlCommand.Dispose();
                 }
             }
-            return entities;
+            return items;
         }
     }
 }

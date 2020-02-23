@@ -1,19 +1,48 @@
 ﻿using CRMEntities;
 using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using UpdaterApp.DepersonalizationLogic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
     public class CmdsoftPartOfOwnerUpdater : BaseUpdater<cmdsoft_part_of_owner>
     {
-        protected IEnumerable<Guid> _cmdsoftRefOpportunityIds;
-
-        public CmdsoftPartOfOwnerUpdater(OrganizationServiceCtx serviceContext, IEnumerable<Guid> cmdsoftRefOpportunityIds) : base(serviceContext)
+        public CmdsoftPartOfOwnerUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
         {
-            _cmdsoftRefOpportunityIds = cmdsoftRefOpportunityIds;
+            var sb = new StringBuilder();
+            sb.AppendLine("select partOwn.cmdsoft_part_of_ownerId, partOwn.cmdsoft_part");
+            sb.AppendLine(" from dbo.cmdsoft_part_of_owner as partOwn");
+            sb.AppendLine(" where partOwn.cmdsoft_ref_opportunity in (");
+            for (int i = 0; i < opprotunityIds.Length; i++)
+            {
+                if (i == 0)
+                {
+                    sb.Append($"'{opprotunityIds[i]}'");
+                }
+                else
+                {
+                    sb.Append($", '{opprotunityIds[i]}'");
+                }
+            }
+            sb.Append(")");
+            _retrieveSqlQuery = sb.ToString();
+        }
+
+        protected override cmdsoft_part_of_owner ConvertSqlDataReaderItem(SqlDataReader sqlReader)
+        {
+            var cmdsoft_part_of_ownerId = (Guid)sqlReader.GetValue(0);
+            var cmdsoft_part = sqlReader.GetValue(1) as decimal?;
+            var cmdsoft_part_of_owner = new cmdsoft_part_of_owner
+            {
+                Id = cmdsoft_part_of_ownerId,
+                cmdsoft_part = cmdsoft_part
+            };
+            return cmdsoft_part_of_owner;
         }
 
         protected override void ChangeByRules(IEnumerable<cmdsoft_part_of_owner> cmdsoftPartOfOwners)
@@ -24,29 +53,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 partOfOwner.cmdsoft_part = array[i];
                 i++;
-            }
-        }
-
-        public override void Process()
-        {
-            foreach (var opportunityId in _cmdsoftRefOpportunityIds)
-            {
-                cmdsoft_part_of_owner[] cmdsoftPartOfOwners = null;
-                try
-                {
-                    cmdsoftPartOfOwners = (from partOfOwner in _serviceContext.cmdsoft_part_of_ownerSet
-                                           where partOfOwner.cmdsoft_ref_opportunity != null && partOfOwner.cmdsoft_ref_opportunity.Id == opportunityId
-                                           select partOfOwner).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("CmdsoftPartOfOwnerUpdater.Process query is failed", ex);
-                }
-                if (cmdsoftPartOfOwners != null && cmdsoftPartOfOwners.Count() > 0)
-                {
-                    ChangeByRules(cmdsoftPartOfOwners);
-                    AllUpdate(cmdsoftPartOfOwners);
-                }
             }
         }
     }

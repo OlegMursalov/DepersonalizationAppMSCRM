@@ -20,7 +20,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 " order by opp.CreatedOn desc";
         }
 
-        protected override Opportunity ConvertSqlDataReaderToEntity(SqlDataReader sqlReader)
+        protected override Opportunity ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
             var opportunityId = (Guid)sqlReader.GetValue(0);
             var mcdsoft_discount = sqlReader.GetValue(1) as bool?;
@@ -75,53 +75,65 @@ namespace UpdaterApp.DepersonalizationLogic
             shuffleReasonsForTheLoss.Process();
 
             // C. Все что есть в примечаниях (Notes) и действиях (actions), связанных с проектами, удалить (сообщения, эл. почта, прикрепленный файлы)
-            var opportunityGuids = opportunities.Select(e => e.Id).Distinct();
+            var opportunityGuids = opportunities.Select(e => e.Id).ToArray();
 
-            var taskActivityDeleter = new System.Threading.Tasks.Task(() =>
-            {
-                var activityDeleter = new RelatedActivityDeleter(_serviceContext, opportunityGuids);
-                activityDeleter.Process();
-            });
-            taskActivityDeleter.Start();
+            // Удаление задач
+            var relatedTaskDeleter = new RelatedTaskDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedTaskDeleter.Process();
 
-            var taskAnnotationDeleter = new System.Threading.Tasks.Task(() =>
-            {
-                var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, opportunityGuids);
-                annotationDeleter.Process();
-            });
-            taskAnnotationDeleter.Start();
+            // Удаление факсов
+            var relatedFaxDeleter = new RelatedFaxDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedFaxDeleter.Process();
+
+            // Удаление звонков
+            var relatedPhoneCallDeleter = new RelatedPhoneCallDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedPhoneCallDeleter.Process();
+
+            // Удаление эмеилов
+            var relatedEmailDeleter = new RelatedEmailDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedEmailDeleter.Process();
+
+            // Удаление писем
+            var relatedLetterDeleter = new RelatedLetterDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedLetterDeleter.Process();
+
+            // Удаление встреч
+            var relatedAppointmentDeleter = new RelatedAppointmentDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedAppointmentDeleter.Process();
+
+            // Удаление действий сервиса
+            var relatedServiceAppointmentDeleter = new RelatedServiceAppointmentDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedServiceAppointmentDeleter.Process();
+
+            // Удаление откликов от кампании
+            var relatedCampaignResponseDeleter = new RelatedCampaignResponseDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedCampaignResponseDeleter.Process();
+
+            // Удаление повторяющихся встреч
+            var relatedRecurringAppointmentMasterDeleter = new RelatedRecurringAppointmentMasterDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedRecurringAppointmentMasterDeleter.Process();
+
+            // Удаление примечаний
+            var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, opportunityGuids);
+            annotationDeleter.Process();
 
             // D. 2. Меняем связанные с изменяемыми проектами записи сущности «Доля ответственного» (cmdsoft_part_of_owner), 
             // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
             // В изменяемых записях меняем значения поля «Доля %»(cmdsoft_part) = Random(Тип - integer, 0 - 100), 
             // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
-            var taskCmdsoftPartOfOwnerUpdater = new System.Threading.Tasks.Task(() =>
-            {
-                var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_serviceContext, opportunityGuids);
-                partOfOwnerUpdater.Process();
-            });
-            taskCmdsoftPartOfOwnerUpdater.Start();
+            var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, opportunityGuids);
+            partOfOwnerUpdater.Process();
 
             // D. 3. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
             // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
             // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
-            var taskCmdsoftOrderlineNavUpdater = new System.Threading.Tasks.Task(() =>
-            {
-                var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_serviceContext, opportunityGuids);
-                orderlineNavUpdater.Process();
-            });
-            taskCmdsoftOrderlineNavUpdater.Start();
+            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, opportunityGuids);
+            orderlineNavUpdater.Process();
 
             // 4.	Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
             // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
-            var taskAccountUpdater = new System.Threading.Tasks.Task(() =>
-            {
-                var accountUpdater = new AccountUpdater(_serviceContext, opportunities);
-                accountUpdater.Process();
-            });
-            taskAccountUpdater.Start();
-
-            System.Threading.Tasks.Task.WaitAll(taskActivityDeleter, taskAnnotationDeleter, taskCmdsoftPartOfOwnerUpdater, taskCmdsoftOrderlineNavUpdater, taskAccountUpdater);
+            var accountUpdater = new AccountUpdater(_orgService, _sqlConnection, opportunities);
+            accountUpdater.Process();
         }
     }
 }

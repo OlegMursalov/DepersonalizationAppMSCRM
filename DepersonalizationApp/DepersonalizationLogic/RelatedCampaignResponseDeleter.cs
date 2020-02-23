@@ -1,7 +1,9 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
@@ -9,31 +11,10 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         protected IEnumerable<Guid> _regardingObjectIds;
 
-        public RelatedCampaignResponseDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
+        public RelatedCampaignResponseDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
         {
-            _regardingObjectIds = regardingObjectIds;
-        }
-
-        public void Process()
-        {
-            CampaignResponse[] campaignResponses = null;
-            foreach (var regObjId in _regardingObjectIds)
-            {
-                try
-                {
-                    campaignResponses = (from campaignResponse in _serviceContext.CampaignResponseSet
-                                         where campaignResponse.RegardingObjectId != null && campaignResponse.RegardingObjectId.Id == regObjId
-                                         select campaignResponse).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("RelatedCampaignResponseDeleter.Process query is failed", ex);
-                }
-                if (campaignResponses != null && campaignResponses.Length > 0)
-                {
-                    AllDelete(campaignResponses);
-                }
-            }
+            _entityLogicalName = "campaignresponse";
+            _retrieveSqlQuery = SqlQueryHelper.GetQueryOfActivityGuidsByRegardingObjectIds("dbo.CampaignResponse", regardingObjectIds);
         }
     }
 }

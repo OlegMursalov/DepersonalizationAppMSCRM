@@ -1,7 +1,9 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
@@ -9,31 +11,10 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         protected IEnumerable<Guid> _regardingObjectIds;
 
-        public RelatedAppointmentDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
+        public RelatedAppointmentDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
         {
-            _regardingObjectIds = regardingObjectIds;
-        }
-
-        public void Process()
-        {
-            Appointment[] appointments = null;
-            foreach (var regObjId in _regardingObjectIds)
-            {
-                try
-                {
-                    appointments = (from appointment in _serviceContext.AppointmentSet
-                                    where appointment.RegardingObjectId != null && appointment.RegardingObjectId.Id == regObjId
-                                    select appointment).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("RelatedAppointmentDeleter.Process query is failed", ex);
-                }
-                if (appointments != null && appointments.Length > 0)
-                {
-                    AllDelete(appointments);
-                }
-            }
+            _entityLogicalName = "appointment";
+            _retrieveSqlQuery = SqlQueryHelper.GetQueryOfActivityGuidsByRegardingObjectIds("dbo.Appointment", regardingObjectIds);
         }
     }
 }

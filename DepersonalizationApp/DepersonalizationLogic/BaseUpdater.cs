@@ -1,5 +1,4 @@
-﻿using CRMEntities;
-using DepersonalizationApp.DepersonalizationLogic;
+﻿using DepersonalizationApp.DepersonalizationLogic;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -10,23 +9,26 @@ namespace UpdaterApp.DepersonalizationLogic
 {
     public abstract class BaseUpdater<T> : Base<T> where T : Entity
     {
+        /// <summary>
+        /// Каждый потомок определяет правила изменения экземпляра сущности
+        /// </summary>
         protected abstract void ChangeByRules(IEnumerable<T> records);
 
         public BaseUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
         }
 
-        public virtual void Process()
+        public void Process()
         {
-            var entities = FastRetrieveAll(_retrieveSqlQuery);
+            var entities = FastRetrieveAllItems(_retrieveSqlQuery);
             ChangeByRules(entities);
-            AllUpdate(entities);
+            UpdateAll(entities);
         }
 
         /// <summary>
         /// Обновить измененные записи
         /// </summary>
-        protected void AllUpdate(IEnumerable<T> entities)
+        protected void UpdateAll(IEnumerable<T> entities)
         {
             int successfulAmount = 0;
             var entityName = typeof(T).Name;

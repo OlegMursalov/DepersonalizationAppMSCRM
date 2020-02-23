@@ -32,8 +32,10 @@ namespace UpdaterApp
                         {
                             var orgService = (IOrganizationService)crmConnectionState.Proxy;
                             var sqlConnection = sqlConnectionState.SqlConnection;
+
                             var opportunityUpdater = new OpportunityUpdater(orgService, sqlConnection);
                             opportunityUpdater.Process();
+
                         }
                     }
                 }

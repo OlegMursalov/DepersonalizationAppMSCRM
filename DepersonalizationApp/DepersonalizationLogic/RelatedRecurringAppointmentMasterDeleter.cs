@@ -1,39 +1,17 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
     public class RelatedRecurringAppointmentMasterDeleter : BaseDeleter<RecurringAppointmentMaster>
     {
-        protected IEnumerable<Guid> _regardingObjectIds;
-
-        public RelatedRecurringAppointmentMasterDeleter(OrganizationServiceCtx serviceContext, IEnumerable<Guid> regardingObjectIds) : base(serviceContext)
+        public RelatedRecurringAppointmentMasterDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
         {
-            _regardingObjectIds = regardingObjectIds;
-        }
-
-        public void Process()
-        {
-            RecurringAppointmentMaster[] recurringAppointmentMasters = null;
-            foreach (var regObjId in _regardingObjectIds)
-            {
-                try
-                {
-                    recurringAppointmentMasters = (from recurringAppointmentMaster in _serviceContext.RecurringAppointmentMasterSet
-                                                   where recurringAppointmentMaster.RegardingObjectId != null && recurringAppointmentMaster.RegardingObjectId.Id == regObjId
-                                                   select recurringAppointmentMaster).ToArray();
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("RelatedRecurringAppointmentMasterDeleter.Process query is failed", ex);
-                }
-                if (recurringAppointmentMasters != null && recurringAppointmentMasters.Length > 0)
-                {
-                    AllDelete(recurringAppointmentMasters);
-                }
-            }
+            _entityLogicalName = "recurringappointmentmaster";
+            _retrieveSqlQuery = SqlQueryHelper.GetQueryOfActivityGuidsByRegardingObjectIds("dbo.RecurringAppointmentMaster", regardingObjectIds);
         }
     }
 }

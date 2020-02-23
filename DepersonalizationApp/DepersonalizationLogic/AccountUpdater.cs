@@ -1,8 +1,11 @@
 ﻿using CRMEntities;
 using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using UpdaterApp.DepersonalizationLogic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
@@ -11,11 +14,74 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         private static int _globalCounterBySessionApp = 1;
 
-        protected IEnumerable<Opportunity> _opportunities;
-
-        public AccountUpdater(OrganizationServiceCtx serviceContext, IEnumerable<Opportunity> opportunities) : base(serviceContext)
+        public AccountUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Opportunity> opportunities) : base(orgService, sqlConnection)
         {
-            _opportunities = opportunities;
+            var accountIds = new List<Guid>();
+            foreach (var opportunity in opportunities)
+            {
+                if (opportunity.CustomerId != null)
+                {
+                    accountIds.Add(opportunity.CustomerId.Id);
+                }
+                if (opportunity.cmdsoft_project_agency != null)
+                {
+                    accountIds.Add(opportunity.cmdsoft_project_agency.Id);
+                }
+                if (opportunity.mcdsoft_ref_account != null)
+                {
+                    accountIds.Add(opportunity.mcdsoft_ref_account.Id);
+                }
+                if (opportunity.cmdsoft_GeneralContractor != null)
+                {
+                    accountIds.Add(opportunity.cmdsoft_GeneralContractor.Id);
+                }
+            }
+            var accountIdsDistinct = accountIds.Distinct().ToArray();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("select acc.AccountId, acc.Name, acc.Telephone1, acc.EMailAddress1, acc.WebSiteURL,");
+            sb.AppendLine(" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId");
+            sb.AppendLine(" from dbo.Account as acc");
+            sb.AppendLine(" where acc.AccountId in (");
+            for (int i = 0; i < accountIdsDistinct.Length; i++)
+            {
+                if (i == 0)
+                {
+                    sb.Append($"'{accountIdsDistinct[i]}'");
+                }
+                else
+                {
+                    sb.Append($", '{accountIdsDistinct[i]}'");
+                }
+            }
+            sb.Append(")");
+            _retrieveSqlQuery = sb.ToString();
+        }
+
+        protected override Account ConvertSqlDataReaderItem(SqlDataReader sqlReader)
+        {
+            var accountId = (Guid)sqlReader.GetValue(0);
+            var name = sqlReader.GetValue(1) as string;
+            var telephone1 = sqlReader.GetValue(2) as string;
+            var eMailAddress1 = sqlReader.GetValue(3) as string;
+            var webSiteURL = sqlReader.GetValue(4) as string;
+            var address1_PostalCode = sqlReader.GetValue(5) as string;
+            var description = sqlReader.GetValue(6) as string;
+            var cmdsoft_inn = sqlReader.GetValue(7) as string;
+            var parentAccountId = sqlReader.GetValue(8) as EntityReference;
+            var account = new Account
+            {
+                Id = accountId,
+                Name = name,
+                Telephone1 = telephone1,
+                EMailAddress1 = eMailAddress1,
+                WebSiteURL = webSiteURL,
+                Address1_PostalCode = address1_PostalCode,
+                Description = description,
+                cmdsoft_inn = cmdsoft_inn,
+                ParentAccountId = parentAccountId
+            };
+            return account;
         }
 
         protected override void ChangeByRules(IEnumerable<Account> accounts)
@@ -35,124 +101,47 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 _globalCounterBySessionApp++;
 
                 // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
-                var accountsGuids = accounts.Select(e => e.Id).Distinct();
+                var accountIds = accounts.Select(e => e.Id).ToArray();
 
-                var taskRelatedActivityDeleter = new System.Threading.Tasks.Task(() =>
-                {
-                    var activityDeleter = new RelatedActivityDeleter(_serviceContext, accountsGuids);
-                    activityDeleter.Process();
-                });
-                taskRelatedActivityDeleter.Start();
+                // Удаление задач
+                var relatedTaskDeleter = new RelatedTaskDeleter(_orgService, _sqlConnection, accountIds);
+                relatedTaskDeleter.Process();
 
-                var taskRelatedAnnotationDeleter = new System.Threading.Tasks.Task(() =>
-                {
-                    var annotationDeleter = new RelatedAnnotationDeleter(_serviceContext, accountsGuids);
-                    annotationDeleter.Process();
-                });
-                taskRelatedAnnotationDeleter.Start();
+                // Удаление факсов
+                var relatedFaxDeleter = new RelatedFaxDeleter(_orgService, _sqlConnection, accountIds);
+                relatedFaxDeleter.Process();
 
-                System.Threading.Tasks.Task.WaitAll(taskRelatedActivityDeleter, taskRelatedAnnotationDeleter);
-            }
-        }
+                // Удаление звонков
+                var relatedPhoneCallDeleter = new RelatedPhoneCallDeleter(_orgService, _sqlConnection, accountIds);
+                relatedPhoneCallDeleter.Process();
 
-        public override void Process()
-        {
-            var allAccounts = new List<Account>();
-            foreach (var opportunity in _opportunities)
-            {
-                if (opportunity.CustomerId != null)
-                {
-                    Account account = null;
-                    try
-                    {
-                        account = (from acc in _serviceContext.AccountSet
-                                   where acc.Id == opportunity.CustomerId.Id
-                                   select acc).FirstOrDefault();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error("AccountUpdater.Process query by CustomerId is failed", ex);
-                    }
-                    if (account != null)
-                    {
-                        allAccounts.Add(account);
-                    }
-                }
-                if (opportunity.cmdsoft_project_agency != null)
-                {
-                    Account account = null;
-                    try
-                    {
-                        account = (from acc in _serviceContext.AccountSet
-                                   where acc.Id == opportunity.cmdsoft_project_agency.Id
-                                   select acc).FirstOrDefault();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error("AccountUpdater.Process query by cmdsoft_project_agency is failed", ex);
-                    }
-                    if (account != null)
-                    {
-                        allAccounts.Add(account);
-                    }
-                }
-                if (opportunity.mcdsoft_ref_account != null)
-                {
-                    Account account = null;
-                    try
-                    {
-                        account = (from acc in _serviceContext.AccountSet
-                                       where acc.Id == opportunity.mcdsoft_ref_account.Id
-                                       select acc).FirstOrDefault();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error("AccountUpdater.Process query by mcdsoft_ref_account is failed", ex);
-                    }
-                    if (account != null)
-                    {
-                        allAccounts.Add(account);
-                    }
-                }
-                if (opportunity.cmdsoft_GeneralContractor != null)
-                {
-                    Account account = null;
-                    try
-                    {
-                        account = (from acc in _serviceContext.AccountSet
-                                   where acc.Id == opportunity.cmdsoft_GeneralContractor.Id
-                                   select acc).FirstOrDefault();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error("AccountUpdater.Process query by cmdsoft_GeneralContractor is failed", ex);
-                    }
-                    if (account != null)
-                    {
-                        allAccounts.Add(account);
-                    }
-                }
-            }
+                // Удаление эмеилов
+                var relatedEmailDeleter = new RelatedEmailDeleter(_orgService, _sqlConnection, accountIds);
+                relatedEmailDeleter.Process();
 
-            if (allAccounts.Count > 0)
-            {
-                var accountComparer = new AccountComparer();
-                var allAccountsDistinct = allAccounts.Distinct(accountComparer);
-                ChangeByRules(allAccountsDistinct);
-                AllUpdate(allAccountsDistinct);
-            }
-        }
+                // Удаление писем
+                var relatedLetterDeleter = new RelatedLetterDeleter(_orgService, _sqlConnection, accountIds);
+                relatedLetterDeleter.Process();
 
-        private class AccountComparer : IEqualityComparer<Account>
-        {
-            public bool Equals(Account account1, Account account2)
-            {
-                return account1.Id == account2.Id;
-            }
+                // Удаление встреч
+                var relatedAppointmentDeleter = new RelatedAppointmentDeleter(_orgService, _sqlConnection, accountIds);
+                relatedAppointmentDeleter.Process();
 
-            public int GetHashCode(Account account)
-            {
-                return account.Id.GetHashCode();
+                // Удаление действий сервиса
+                var relatedServiceAppointmentDeleter = new RelatedServiceAppointmentDeleter(_orgService, _sqlConnection, accountIds);
+                relatedServiceAppointmentDeleter.Process();
+
+                // Удаление откликов от кампании
+                var relatedCampaignResponseDeleter = new RelatedCampaignResponseDeleter(_orgService, _sqlConnection, accountIds);
+                relatedCampaignResponseDeleter.Process();
+
+                // Удаление повторяющихся встреч
+                var relatedRecurringAppointmentMasterDeleter = new RelatedRecurringAppointmentMasterDeleter(_orgService, _sqlConnection, accountIds);
+                relatedRecurringAppointmentMasterDeleter.Process();
+
+                // Удаление примечаний
+                var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, accountIds);
+                annotationDeleter.Process();
             }
         }
     }
