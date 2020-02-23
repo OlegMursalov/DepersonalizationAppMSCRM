@@ -1,4 +1,5 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -16,19 +17,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId, orLnNav.mcdsoft_price_discount_with_VAT, orLnNav.mcdsoft_price_discount_without_VAT,");
             sb.AppendLine(" orLnNav.mcdsoft_price_without_vat, orLnNav.cmdsoft_amountsalesvat, orLnNav.cmdsoft_amountsale");
             sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
-            sb.AppendLine(" where orLnNav.cmdsoft_ref_opportunity in (");
-            for (int i = 0; i < opprotunityIds.Length; i++)
-            {
-                if (i == 0)
-                {
-                    sb.Append($"'{opprotunityIds[i]}'");
-                }
-                else
-                {
-                    sb.Append($", '{opprotunityIds[i]}'");
-                }
-            }
-            sb.Append(")");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_ref_opportunity", opprotunityIds);
+            sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
 

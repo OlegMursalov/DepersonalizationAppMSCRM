@@ -1,4 +1,5 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Data.SqlClient;
@@ -14,24 +15,11 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public RelatedAnnotationDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] objectIds) : base(orgService, sqlConnection)
         {
             _entityLogicalName = "annotation";
-
             var sb = new StringBuilder();
             sb.AppendLine("select distinct ann.AnnotationId");
             sb.AppendLine(" from dbo.Annotation as ann");
-            sb.AppendLine(" where ann.ObjectId in (");
-            for (int i = 0; i < objectIds.Length; i++)
-            {
-                if (i == 0)
-                {
-                    sb.Append($"'{objectIds[i]}'");
-                }
-                else
-                {
-                    sb.Append($", '{objectIds[i]}'");
-                }
-            }
-            sb.Append(")");
-
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ann.ObjectId", objectIds);
+            sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
     }

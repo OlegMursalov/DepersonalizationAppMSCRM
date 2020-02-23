@@ -17,6 +17,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public AccountUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Opportunity> opportunities) : base(orgService, sqlConnection)
         {
             var accountIds = new List<Guid>();
+
             foreach (var opportunity in opportunities)
             {
                 if (opportunity.CustomerId != null)
@@ -36,25 +37,15 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     accountIds.Add(opportunity.cmdsoft_GeneralContractor.Id);
                 }
             }
+
             var accountIdsDistinct = accountIds.Distinct().ToArray();
 
             var sb = new StringBuilder();
             sb.AppendLine("select acc.AccountId, acc.Name, acc.Telephone1, acc.EMailAddress1, acc.WebSiteURL,");
             sb.AppendLine(" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId");
             sb.AppendLine(" from dbo.Account as acc");
-            sb.AppendLine(" where acc.AccountId in (");
-            for (int i = 0; i < accountIdsDistinct.Length; i++)
-            {
-                if (i == 0)
-                {
-                    sb.Append($"'{accountIdsDistinct[i]}'");
-                }
-                else
-                {
-                    sb.Append($", '{accountIdsDistinct[i]}'");
-                }
-            }
-            sb.Append(")");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", accountIdsDistinct);
+            sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
 

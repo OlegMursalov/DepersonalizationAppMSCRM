@@ -36,7 +36,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 try
                 {
-                    _orgService.Delete(_entityLogicalName, id);
+                    // _orgService.Delete(_entityLogicalName, id);
                     _logger.Info($"Record '{entityName}' with Id = '{id}' is deleted");
                     successfulAmount++;
                 }

@@ -36,7 +36,7 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 try
                 {
-                    _orgService.Update(entity);
+                    // _orgService.Update(entity);
                     _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
                     successfulAmount++;
                 }
