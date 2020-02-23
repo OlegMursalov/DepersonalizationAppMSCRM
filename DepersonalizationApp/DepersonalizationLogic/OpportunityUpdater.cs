@@ -13,7 +13,7 @@ namespace UpdaterApp.DepersonalizationLogic
         public OpportunityUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
             _retrieveSqlQuery =
-                "select top(100) opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller," +
+                "select top(500) opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller," +
                 " opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency," +
                 " opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor" +
                 " from dbo.Opportunity as opp" +

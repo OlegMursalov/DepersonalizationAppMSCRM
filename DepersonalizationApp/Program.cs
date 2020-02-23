@@ -35,7 +35,6 @@ namespace UpdaterApp
 
                             var opportunityUpdater = new OpportunityUpdater(orgService, sqlConnection);
                             opportunityUpdater.Process();
-
                         }
                     }
                 }
