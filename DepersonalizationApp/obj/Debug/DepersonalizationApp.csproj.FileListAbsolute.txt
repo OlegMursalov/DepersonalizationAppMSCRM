@@ -10,3 +10,14 @@ C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\obj\De
 C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\obj\Debug\DepersonalizationApp.pdb
 C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\log4net.dll
 C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\log4net.xml
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.abstractions.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.assert.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.core.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.execution.desktop.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.assert.xml
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.core.xml
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.execution.desktop.xml
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\Microsoft.VisualStudio.CodeCoverage.Shim.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.runner.visualstudio.testadapter.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.runner.reporters.net452.dll
+C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.runner.utility.net452.dll

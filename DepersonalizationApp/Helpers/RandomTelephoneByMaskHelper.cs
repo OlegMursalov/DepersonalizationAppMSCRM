@@ -1,33 +1,9 @@
-﻿using System;
-
-namespace DepersonalizationApp.Helpers
+﻿namespace DepersonalizationApp.Helpers
 {
-    public class RandomTelephoneByMaskHelper
+    public class RandomTelephoneByMaskHelper : RandomByMaskHelper
     {
-        private char[] _formatChars;
-        private Random _random;
-
-        public RandomTelephoneByMaskHelper(string mask)
+        public RandomTelephoneByMaskHelper(string mask) : base(mask, 48, 58)
         {
-            _formatChars = mask.ToCharArray();
-            _random = new Random();
-        }
-
-        public string Get()
-        {
-            var newChars = new char[_formatChars.Length];
-            for (int i = 0; i < _formatChars.Length; i++)
-            {
-                if (_formatChars[i] == 'X')
-                {
-                    _formatChars[i] = _random.Next(0, 10).ToString()[0]; // from 0 to 9
-                }
-                else
-                {
-                    newChars[i] = _formatChars[i];
-                }
-            }
-            return newChars.ToString();
         }
     }
 }

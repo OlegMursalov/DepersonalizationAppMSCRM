@@ -72,8 +72,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override void ChangeByRules(IEnumerable<Account> accounts)
         {
-            var randomTelephoneByMaskHelper = new RandomTelephoneByMaskHelper("+ХХ ХХХ ХХХ-ХХ-ХХ");
-            var randomEmailByMaskHelper = new RandomEmailByMaskHelper("XXXXX@XXXXX.XX");
+            var randomTelephoneByMaskHelper = new RandomTelephoneByMaskHelper(CommonObjsHelper.TelephoneMask1);
+            var randomEmailByMaskHelper = new RandomEmailByMaskHelper(CommonObjsHelper.EmailMask1);
             foreach (var account in accounts)
             {
                 account.Name = $"Организация №{_globalCounterBySessionApp}";
