@@ -118,6 +118,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\RandomEmailByMaskHelperTest.cs" />
+    <Compile Include="Tests\RandomRangeHelperTest.cs" />
     <Compile Include="Tests\RandomTelephoneByMaskHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
