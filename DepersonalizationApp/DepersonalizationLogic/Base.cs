@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UpdaterApp.Log;
 
 namespace DepersonalizationApp.DepersonalizationLogic
@@ -15,7 +14,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected SqlConnection _sqlConnection;
         protected string _retrieveSqlQuery;
 
-        protected ILogger _logger = new FileLogger();
+        protected ILogger _logger = CommonObjsHelper.Logger;
 
         public Base(IOrganizationService orgService, SqlConnection sqlConnection)
         {

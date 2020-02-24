@@ -1,5 +1,6 @@
 ﻿using CRMEntities;
 using DepersonalizationApp.DepersonalizationLogic;
+using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ namespace UpdaterApp.DepersonalizationLogic
         protected override void ChangeByRules(IEnumerable<Opportunity> opportunities)
         {
             var random = new Random();
-            var shuffleReasonsForTheLoss = new ShuffleFieldValues<string>("mcdsoft_reason_for_the_loss");
+            var shuffleReasonsForTheLoss = new ShuffleFieldValuesHelper<string>("mcdsoft_reason_for_the_loss");
 
             foreach (var opportunity in opportunities)
             {

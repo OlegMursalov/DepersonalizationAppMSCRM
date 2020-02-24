@@ -1,4 +1,5 @@
-﻿using DepersonalizationApp.LogicOfConnection;
+﻿using DepersonalizationApp.Helpers;
+using DepersonalizationApp.LogicOfConnection;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Client;
 using System;
@@ -10,7 +11,7 @@ namespace UpdaterApp.LogicOfConnection
 {
     public class CRMConnector : IConnector
     {
-        private readonly ILogger _logger = new FileLogger();
+        private readonly ILogger _logger = CommonObjsHelper.Logger;
 
         private string _userName;
         private string _password;

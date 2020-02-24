@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DepersonalizationApp.Helpers;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using UpdaterApp.Log;
@@ -7,7 +8,7 @@ namespace DepersonalizationApp.LogicOfConnection
 {
     public class SQLConnector : IConnector
     {
-        private readonly ILogger _logger = new FileLogger();
+        private readonly ILogger _logger = CommonObjsHelper.Logger;
 
         private string _connectionString;
         private SQLConnectionState _connectState;

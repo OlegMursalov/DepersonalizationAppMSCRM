@@ -1,10 +1,6 @@
-﻿using CRMEntities;
-using DepersonalizationApp.LogicOfConnection;
+﻿using DepersonalizationApp.LogicOfConnection;
 using Microsoft.Xrm.Sdk;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Data.SqlClient;
 using UpdaterApp.DepersonalizationLogic;
 using UpdaterApp.LogicOfConnection;
 
