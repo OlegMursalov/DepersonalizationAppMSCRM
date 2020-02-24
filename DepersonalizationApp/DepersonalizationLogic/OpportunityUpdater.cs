@@ -18,10 +18,12 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine("select opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller,");
             sb.AppendLine(" opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency,");
             sb.AppendLine(" opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor");
-            sb.AppendLine(" from dbo.Opportunity as opp");
-            sb.AppendLine(" order by opp.CreatedOn desc");
-            sb.AppendLine(" offset 0 rows");
-            sb.AppendLine(" fetch next 500 rows only");
+            sb.AppendLine(" from Opportunity as opp");
+            sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
+            sb.AppendLine("  from dbo.Opportunity as oppIn");
+            sb.AppendLine("  order by oppIn.CreatedOn desc");
+            sb.AppendLine("  offset 0 rows");
+            sb.AppendLine("  fetch next 500 rows only)");
             _retrieveSqlQuery = sb.ToString();
         }
 

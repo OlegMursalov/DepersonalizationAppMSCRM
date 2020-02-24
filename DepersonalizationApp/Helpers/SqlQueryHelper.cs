@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DepersonalizationApp.Helpers
 {
@@ -51,8 +52,8 @@ namespace DepersonalizationApp.Helpers
         public static string ChangeSqlQueryPagination(string query, int offset, int fetchNext)
         {
             var parts = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            parts[parts.Length - 2] = $" offset {offset} rows";
-            parts[parts.Length - 1] = $" fetch next {fetchNext} rows only";
+            parts[parts.Length - 2] = Regex.Replace(parts[parts.Length - 2], "\\d+", offset.ToString());
+            parts[parts.Length - 1] = Regex.Replace(parts[parts.Length - 1], "\\d+", fetchNext.ToString());
             return string.Join(Environment.NewLine, parts);
         }
     }
