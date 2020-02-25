@@ -19,7 +19,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select ySlPrc.yolva_salespriceId, ySlPrc.yolva_description");
             sb.AppendLine(" from yolva_salesprice as ySlPrc");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("offer.mcdsoft_offer2", specificationIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ySlPrc.yolva_salespriceId", specificationIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

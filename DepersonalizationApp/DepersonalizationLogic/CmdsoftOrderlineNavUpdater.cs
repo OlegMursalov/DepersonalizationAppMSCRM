@@ -20,7 +20,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId, orLnNav.mcdsoft_price_discount_with_VAT, orLnNav.mcdsoft_price_discount_without_VAT,");
             sb.AppendLine(" orLnNav.mcdsoft_price_without_vat, orLnNav.cmdsoft_amountsalesvat, orLnNav.cmdsoft_amountsale");
             sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_ref_navid", orderNavUpdatedIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_navid", orderNavUpdatedIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
