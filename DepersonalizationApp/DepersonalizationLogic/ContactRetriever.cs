@@ -11,7 +11,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
     public class ContactSimple
     {
         public Guid ContactId { get; set; }
-        public Guid ParentCustomerId { get; set; }
+        public Guid? ParentCustomerId { get; set; }
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return new ContactSimple
             {
                 ContactId = (Guid)sqlReader.GetValue(0),
-                ParentCustomerId = (Guid)sqlReader.GetValue(1),
+                ParentCustomerId = sqlReader.GetValue(1) as Guid?
             };
         }
     }

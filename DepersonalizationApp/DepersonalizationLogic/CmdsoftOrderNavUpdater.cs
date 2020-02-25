@@ -22,7 +22,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("select ordNav.cmdsoft_ordernavId, ordNav.cmdsoft_namecustomotgr, ordNav.cmdsoft_namecustomsales, ordNav.cmdsoft_namecustomorder,");
             sb.AppendLine(" ordNav.cmdsoft_totalamount, ordNav.cmdsoft_totamontvat");
             sb.AppendLine(" from dbo.cmdsoft_ordernav as ordNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_navid in", opprotunityIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_navid", opprotunityIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

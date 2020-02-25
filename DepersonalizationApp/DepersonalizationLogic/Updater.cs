@@ -59,12 +59,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
             var accountGuids = new List<Guid>();
             accountGuids.AddRange(accountSimples.Select(accS => accS.AccountId));
-            accountGuids.AddRange(contactSimples.Select(conS => conS.ParentCustomerId));
+            accountGuids.AddRange(contactSimples.Where(conS => conS.ParentCustomerId != null).Select(conS => conS.ParentCustomerId.Value));
             var uniqueAccountGuids = accountGuids.Distinct().ToArray();
 
             var contactGuids = new List<Guid>();
             contactGuids.AddRange(contactSimples.Select(conS => conS.ContactId));
-            contactGuids.AddRange(accountSimples.Select(accS => accS.PrimaryContactId));
+            contactGuids.AddRange(accountSimples.Where(accS => accS.PrimaryContactId != null).Select(accS => accS.PrimaryContactId.Value));
             var uniqueContactGuids = contactGuids.Distinct().ToArray();
 
             // 5. Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
@@ -106,7 +106,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             // Меняем связанные с изменяемыми записями «спецификация» записи сущности «Состав спецификации»(cmdsoft_listspecification), 
             // связь по полю «Спецификация(Состав спецификации)» (cmdsoft_listspecification.cmdsoft_specification).
             // Меняем только поле «Описание» (yolva_salesprice.yolva_description) - стираем значение..
-            var yolvaSalespriceUpdater = new YolvaSalespriceUpdater(_orgService, _sqlConnection, null);
+            var yolvaSalespriceUpdater = new YolvaSalespriceUpdater(_orgService, _sqlConnection, updatedSpecificationIds);
             var updatedYolvaSalesprices = yolvaSalespriceUpdater.Process();
             var updatedYolvaSalespriceIds = updatedYolvaSalesprices.Select(e => e.Id).ToArray();
 
@@ -116,7 +116,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             // Меняем только поле «Сумма»(yolva_salespriceline.yolva_amount) = Random(число с плавающей точкой, точность – 2, значения 1000 - 1000)
             var yolvaSalespriceLineUpdater = new YolvaSalespriceLineUpdater(_orgService, _sqlConnection, updatedYolvaSalespriceIds);
             yolvaSalespriceLineUpdater.Process();
-
+            
             return allUpdated;
         }
     }

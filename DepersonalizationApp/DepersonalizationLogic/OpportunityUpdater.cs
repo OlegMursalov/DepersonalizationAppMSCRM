@@ -24,7 +24,7 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
             sb.AppendLine("  from dbo.Opportunity as oppIn");
             sb.AppendLine("  order by oppIn.CreatedOn desc");
-            sb.AppendLine("  offset 0 rows");
+            sb.AppendLine("  offset 7200 rows");
             sb.AppendLine("  fetch next 500 rows only)");
             _retrieveSqlQuery = sb.ToString();
         }

@@ -17,7 +17,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public CmdsoftSpecificationUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select sp.cmdsoft_specificationId");
+            sb.AppendLine("select sp.cmdsoft_specificationId, sp.yolva_salespricenav");
             sb.AppendLine(" from dbo.cmdsoft_specification as sp");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("sp.cmdsoft_spprojectnumber", opprotunityIds);
             sb.AppendLine(where);
@@ -26,10 +26,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
         
         protected override cmdsoft_specification ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            return new cmdsoft_specification
+            var cmdsoft_specification = new cmdsoft_specification
             {
                 Id = (Guid)sqlReader.GetValue(0)
             };
+            var yolva_salespricenavId = sqlReader.GetValue(1) as Guid?;
+            if (yolva_salespricenavId != null)
+            {
+                cmdsoft_specification.yolva_salespricenav = new EntityReference("yolva_salesprice", yolva_salespricenavId.Value);
+            }
+            return cmdsoft_specification;
         }
 
         protected override void ChangeByRules(IEnumerable<cmdsoft_specification> records)
