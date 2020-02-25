@@ -4,7 +4,6 @@ using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Text;
 using UpdaterApp.DepersonalizationLogic;
 
@@ -59,16 +58,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
             contacts = shuffleFirstName.Process();
             contacts = shuffleLastName.Process();
             contacts = shuffleMiddleName.Process();
-
-            // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
-            var contactIds = contacts.Select(e => e.Id).ToArray();
-
-            var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, contactIds);
-            relatedActivityDeleter.Process();
-
-            // Удаление примечаний
-            var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, contactIds);
-            annotationDeleter.Process();
         }
     }
 }

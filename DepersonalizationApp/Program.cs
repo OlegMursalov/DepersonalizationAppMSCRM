@@ -1,6 +1,8 @@
-﻿using DepersonalizationApp.LogicOfConnection;
+﻿using DepersonalizationApp.DepersonalizationLogic;
+using DepersonalizationApp.LogicOfConnection;
 using Microsoft.Xrm.Sdk;
 using System.Configuration;
+using System.Linq;
 using UpdaterApp.DepersonalizationLogic;
 using UpdaterApp.LogicOfConnection;
 
@@ -29,8 +31,13 @@ namespace UpdaterApp
                             var orgService = (IOrganizationService)crmConnectionState.Proxy;
                             var sqlConnection = sqlConnectionState.SqlConnection;
 
-                            var opportunityUpdater = new OpportunityUpdater(orgService, sqlConnection);
-                            opportunityUpdater.Process();
+                            // Обновление
+                            var updater = new Updater(orgService, sqlConnection);
+                            var allUpdated = updater.Execute();
+
+                            // Удаление
+                            var deleter = new Deleter(orgService, sqlConnection);
+                            deleter.Execute(allUpdated);
                         }
                     }
                 }

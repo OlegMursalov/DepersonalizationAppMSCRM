@@ -21,24 +21,24 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Обновляет записи через CRM сервис и возвращает IEnumerable<Guid> успшно обновленных записей
         /// </summary>
-        public IEnumerable<Guid> Process()
+        public IEnumerable<T> Process()
         {
             var entities = FastRetrieveAllItems();
             ChangeByRules(entities);
             return UpdateAll(entities);
         }
 
-        protected IEnumerable<Guid> UpdateAll(IEnumerable<T> entities)
+        protected IEnumerable<T> UpdateAll(IEnumerable<T> entities)
         {
             var entityName = typeof(T).Name;
-            var updatedList = new List<Guid>();
+            var updatedList = new List<T>();
             foreach (var entity in entities)
             {
                 try
                 {
                     // _orgService.Update(entity);
                     _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
-                    updatedList.Add(entity.Id);
+                    updatedList.Add(entity);
                 }
                 catch (Exception ex)
                 {

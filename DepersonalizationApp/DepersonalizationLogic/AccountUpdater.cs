@@ -62,16 +62,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 account.ParentAccountId = null;
                 _globalCounterBySessionApp++;
             }
-
-            // Все что есть в примечаниях (Notes) и действиях (actions), связанных с организациями, удалить (сообщения, эл. почта, прикрепленный файлы)
-            var accountIds = accounts.Select(e => e.Id).ToArray();
-
-            var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, accountIds);
-            relatedActivityDeleter.Process();
-
-            // Удаление примечаний
-            var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, accountIds);
-            annotationDeleter.Process();
         }
     }
 }

@@ -85,10 +85,12 @@
     <Compile Include="CRMEntities\Entities.cs" />
     <Compile Include="DepersonalizationLogic\AccountRetriever.cs" />
     <Compile Include="DepersonalizationLogic\AccountUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\CmdsoftOffer.cs" />
     <Compile Include="DepersonalizationLogic\CmdsoftOrderlineNavUpdater.cs" />
     <Compile Include="DepersonalizationLogic\CmdsoftPartOfOwnerUpdater.cs" />
     <Compile Include="DepersonalizationLogic\ContactRetriever.cs" />
     <Compile Include="DepersonalizationLogic\ContactUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\Deleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="DepersonalizationLogic\RelatedTaskDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedRecurringAppointmentMasterDeleter.cs" />
     <Compile Include="DepersonalizationLogic\CmdsoftOrderNavUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\Updater.cs" />
     <Compile Include="Helpers\CommonObjsHelper.cs" />
     <Compile Include="Helpers\RandomByMaskHelper.cs" />
     <Compile Include="Helpers\RandomEmailByMaskHelper.cs" />
