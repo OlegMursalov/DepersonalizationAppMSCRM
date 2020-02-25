@@ -89,6 +89,7 @@
     <Compile Include="DepersonalizationLogic\CmdsoftPartOfOwnerUpdater.cs" />
     <Compile Include="DepersonalizationLogic\ContactRetriever.cs" />
     <Compile Include="DepersonalizationLogic\ContactUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
     <Compile Include="DepersonalizationLogic\RelatedCampaignResponseDeleter.cs" />

@@ -123,41 +123,8 @@ namespace UpdaterApp.DepersonalizationLogic
             // C. Все что есть в примечаниях (Notes) и действиях (actions), связанных с проектами, удалить (сообщения, эл. почта, прикрепленный файлы)
             var opportunityGuids = opportunities.Select(e => e.Id).ToArray();
 
-            // Удаление задач
-            var relatedTaskDeleter = new RelatedTaskDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedTaskDeleter.Process();
-
-            // Удаление факсов
-            var relatedFaxDeleter = new RelatedFaxDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedFaxDeleter.Process();
-
-            // Удаление звонков
-            var relatedPhoneCallDeleter = new RelatedPhoneCallDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedPhoneCallDeleter.Process();
-
-            // Удаление эмеилов
-            var relatedEmailDeleter = new RelatedEmailDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedEmailDeleter.Process();
-
-            // Удаление писем
-            var relatedLetterDeleter = new RelatedLetterDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedLetterDeleter.Process();
-
-            // Удаление встреч
-            var relatedAppointmentDeleter = new RelatedAppointmentDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedAppointmentDeleter.Process();
-
-            // Удаление действий сервиса
-            var relatedServiceAppointmentDeleter = new RelatedServiceAppointmentDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedServiceAppointmentDeleter.Process();
-
-            // Удаление откликов от кампании
-            var relatedCampaignResponseDeleter = new RelatedCampaignResponseDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedCampaignResponseDeleter.Process();
-
-            // Удаление повторяющихся встреч
-            var relatedRecurringAppointmentMasterDeleter = new RelatedRecurringAppointmentMasterDeleter(_orgService, _sqlConnection, opportunityGuids);
-            relatedRecurringAppointmentMasterDeleter.Process();
+            var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, opportunityGuids);
+            relatedActivityDeleter.Process();
 
             // Удаление примечаний
             var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, opportunityGuids);
