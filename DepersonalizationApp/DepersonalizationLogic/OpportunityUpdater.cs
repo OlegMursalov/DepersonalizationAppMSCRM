@@ -68,8 +68,8 @@ namespace UpdaterApp.DepersonalizationLogic
         
         protected override void ChangeByRules(IEnumerable<Opportunity> opportunities)
         {
-            var random = new Random();
-            var shuffleReasonsForTheLoss = new ShuffleFieldValuesHelper<string>("mcdsoft_reason_for_the_loss");
+            var randomHelper = new RandomHelper();
+            var shuffleReasonsForTheLoss = new ShuffleFieldValuesHelper<Opportunity, string>("mcdsoft_reason_for_the_loss");
 
             foreach (var opportunity in opportunities)
             {
@@ -78,11 +78,9 @@ namespace UpdaterApp.DepersonalizationLogic
                 // «Гарантия, %»(cmdsoft_warranty) = Random(Тип - число в плавающей точкой, точность - 2, 0 - 100, 00)
                 if (opportunity.mcdsoft_discount != null && (bool)opportunity.mcdsoft_discount)
                 {
-                    decimal i = random.Next(0, 100);
-                    decimal c = i + (decimal)random.NextDouble();
-                    opportunity.cmdsoft_standartdiscount = c;
-                    opportunity.mcdsoft_standartdiscount_chiller = c;
-                    opportunity.cmdsoft_warranty = c;
+                    opportunity.cmdsoft_standartdiscount = randomHelper.GetDecimal(0, 100);
+                    opportunity.mcdsoft_standartdiscount_chiller = randomHelper.GetDecimal(0, 100);
+                    opportunity.cmdsoft_warranty = randomHelper.GetDecimal(0, 100);
                 }
 
                 // B. В тех проектах, где значение поля «Результат»(cmdsoft_result) = «Проигран» [289 540 002], 
@@ -96,7 +94,7 @@ namespace UpdaterApp.DepersonalizationLogic
             }
 
             // B. Дополнение (см. выше)
-            shuffleReasonsForTheLoss.Process();
+            opportunities = shuffleReasonsForTheLoss.Process();
 
             // C. Все что есть в примечаниях (Notes) и действиях (actions), связанных с проектами, удалить (сообщения, эл. почта, прикрепленный файлы)
             var opportunityGuids = opportunities.Select(e => e.Id).ToArray();
@@ -147,6 +145,10 @@ namespace UpdaterApp.DepersonalizationLogic
             // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
             var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, opportunityGuids);
             partOfOwnerUpdater.Process();
+
+            // 3.	Продажи
+            // Меняем связанные с изменяемыми проектами записи сущности «Продажи»(cmdsoft_ordernav)по полю «Название проекта»(cmdsoft_ordernav.cmdsoft_navid).
+            
 
             // D. 3. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
             // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 

@@ -100,6 +100,7 @@
     <Compile Include="Helpers\CommonObjsHelper.cs" />
     <Compile Include="Helpers\RandomByMaskHelper.cs" />
     <Compile Include="Helpers\RandomEmailByMaskHelper.cs" />
+    <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Helpers\RandomRangeHelper.cs" />
     <Compile Include="Helpers\RandomTelephoneByMaskHelper.cs" />
     <Compile Include="Helpers\ShuffleFieldValuesHelper.cs" />
@@ -118,8 +119,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\RandomEmailByMaskHelperTest.cs" />
+    <Compile Include="Tests\RandomHelperTest.cs" />
     <Compile Include="Tests\RandomRangeHelperTest.cs" />
     <Compile Include="Tests\RandomTelephoneByMaskHelperTest.cs" />
+    <Compile Include="Tests\ShuffleFieldValuesHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
