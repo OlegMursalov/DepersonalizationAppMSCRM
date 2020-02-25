@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Удаление связанных факсов
+    /// </summary>
     public class RelatedFaxDeleter : BaseDeleter<Fax>
     {
         public RelatedFaxDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)

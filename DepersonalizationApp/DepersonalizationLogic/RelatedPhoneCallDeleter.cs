@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Удаление связанных звонков
+    /// </summary>
     public class RelatedPhoneCallDeleter : BaseDeleter<PhoneCall>
     {
         public RelatedPhoneCallDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)

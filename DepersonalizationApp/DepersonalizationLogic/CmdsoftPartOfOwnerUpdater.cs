@@ -10,6 +10,9 @@ using UpdaterApp.DepersonalizationLogic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Обновление доль ответственных
+    /// </summary>
     public class CmdsoftPartOfOwnerUpdater : BaseUpdater<cmdsoft_part_of_owner>
     {
         public CmdsoftPartOfOwnerUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)

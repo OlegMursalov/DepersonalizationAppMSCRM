@@ -9,15 +9,18 @@ using UpdaterApp.DepersonalizationLogic;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Обновление составов продаж
+    /// </summary>
     public class CmdsoftOrderlineNavUpdater : BaseUpdater<cmdsoft_orderlinenav>
     {
-        public CmdsoftOrderlineNavUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
+        public CmdsoftOrderlineNavUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] orderNavIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId, orLnNav.mcdsoft_price_discount_with_VAT, orLnNav.mcdsoft_price_discount_without_VAT,");
             sb.AppendLine(" orLnNav.mcdsoft_price_without_vat, orLnNav.cmdsoft_amountsalesvat, orLnNav.cmdsoft_amountsale");
             sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_ref_opportunity", opprotunityIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_ref_navid", orderNavIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

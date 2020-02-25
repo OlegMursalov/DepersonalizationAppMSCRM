@@ -97,6 +97,7 @@
     <Compile Include="DepersonalizationLogic\RelatedServiceAppointmentDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedTaskDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedRecurringAppointmentMasterDeleter.cs" />
+    <Compile Include="DepersonalizationLogic\CmdsoftOrderNavUpdater.cs" />
     <Compile Include="Helpers\CommonObjsHelper.cs" />
     <Compile Include="Helpers\RandomByMaskHelper.cs" />
     <Compile Include="Helpers\RandomEmailByMaskHelper.cs" />

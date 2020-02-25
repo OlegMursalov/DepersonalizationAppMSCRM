@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Удаление связанных задач
+    /// </summary>
     public class RelatedTaskDeleter : BaseDeleter<Task>
     {
         public RelatedTaskDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)

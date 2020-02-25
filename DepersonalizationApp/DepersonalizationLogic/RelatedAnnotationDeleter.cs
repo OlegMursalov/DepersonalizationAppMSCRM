@@ -8,7 +8,7 @@ using System.Text;
 namespace DepersonalizationApp.DepersonalizationLogic
 {
     /// <summary>
-    /// Данный класс общий
+    /// Удаление связанных примечаний
     /// </summary>
     public class RelatedAnnotationDeleter : BaseDeleter<Annotation>
     {

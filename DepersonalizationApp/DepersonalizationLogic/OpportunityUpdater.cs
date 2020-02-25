@@ -10,6 +10,9 @@ using System.Text;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Обновление проектов
+    /// </summary>
     public class OpportunityUpdater : BaseUpdater<Opportunity>
     {
         public OpportunityUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
@@ -148,12 +151,13 @@ namespace UpdaterApp.DepersonalizationLogic
 
             // 3.	Продажи
             // Меняем связанные с изменяемыми проектами записи сущности «Продажи»(cmdsoft_ordernav)по полю «Название проекта»(cmdsoft_ordernav.cmdsoft_navid).
-            
+            var orderNavUpdater = new CmdsoftOrderNavUpdater(_orgService, _sqlConnection, opportunityGuids);
+            var orderNavGuids = orderNavUpdater.Process().ToArray();
 
             // D. 3. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
             // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
             // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
-            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, opportunityGuids);
+            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavGuids);
             orderlineNavUpdater.Process();
 
             // 4.	Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 

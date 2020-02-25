@@ -18,34 +18,35 @@ namespace UpdaterApp.DepersonalizationLogic
         {
         }
 
-        public void Process()
+        /// <summary>
+        /// Обновляет записи через CRM сервис и возвращает IEnumerable<Guid> успшно обновленных записей
+        /// </summary>
+        public IEnumerable<Guid> Process()
         {
             var entities = FastRetrieveAllItems();
             ChangeByRules(entities);
-            UpdateAll(entities);
+            return UpdateAll(entities);
         }
 
-        /// <summary>
-        /// Обновить измененные записи
-        /// </summary>
-        protected void UpdateAll(IEnumerable<T> entities)
+        protected IEnumerable<Guid> UpdateAll(IEnumerable<T> entities)
         {
-            int successfulAmount = 0;
             var entityName = typeof(T).Name;
+            var updatedList = new List<Guid>();
             foreach (var entity in entities)
             {
                 try
                 {
                     // _orgService.Update(entity);
                     _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
-                    successfulAmount++;
+                    updatedList.Add(entity.Id);
                 }
                 catch (Exception ex)
                 {
                     _logger.Error($"Record '{entityName}' with Id = '{entity.Id}' is not updated", ex);
                 }
             }
-            _logger.Info($"{successfulAmount} records '{entityName}' are updated, {entities.Count() - successfulAmount} are failed");
+            _logger.Info($"{updatedList.Count} records '{entityName}' are updated, {entities.Count() - updatedList.Count} are failed");
+            return updatedList;
         }
     }
 }

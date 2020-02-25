@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
+    /// <summary>
+    /// Удаление связанных recurringappointmentmasters
+    /// </summary>
     public class RelatedRecurringAppointmentMasterDeleter : BaseDeleter<RecurringAppointmentMaster>
     {
         public RelatedRecurringAppointmentMasterDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds) : base(orgService, sqlConnection)
