@@ -16,6 +16,11 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected ILogger _logger = CommonObjsHelper.Logger;
 
+        public Base(SqlConnection sqlConnection)
+        {
+            _sqlConnection = sqlConnection;
+        }
+
         public Base(IOrganizationService orgService, SqlConnection sqlConnection)
         {
             _orgService = orgService;
@@ -24,7 +29,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected abstract T ConvertSqlDataReaderItem(SqlDataReader sqlReader);
 
-        private IEnumerable<T> ExecuteRetrieveAllItems(string sqlQuery)
+        protected IEnumerable<T> ExecuteRetrieveAllItems(string sqlQuery)
         {
             var items = new List<T>();
             using (var sqlCommand = new SqlCommand())

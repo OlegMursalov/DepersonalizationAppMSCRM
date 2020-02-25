@@ -12,37 +12,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
 {
     public class ContactUpdater : BaseUpdater<Contact>
     {
-        public ContactUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Opportunity> opportunities) : base(orgService, sqlConnection)
+        public ContactUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] contactIds) : base(orgService, sqlConnection)
         {
-            var contactIds = new List<Guid>();
-
-            foreach (var opportunity in opportunities)
-            {
-                if (opportunity.cmdsoft_Managerproject != null)
-                {
-                    contactIds.Add(opportunity.cmdsoft_Managerproject.Id);
-                }
-                if (opportunity.cmdsoft_Dealer != null)
-                {
-                    contactIds.Add(opportunity.cmdsoft_Dealer.Id);
-                }
-                if (opportunity.cmdsoft_contact_project_agency != null)
-                {
-                    contactIds.Add(opportunity.cmdsoft_contact_project_agency.Id);
-                }
-                if (opportunity.mcdsoft_ref_contact != null)
-                {
-                    contactIds.Add(opportunity.mcdsoft_ref_contact.Id);
-                }
-            }
-
-            var contactIdsDistinct = contactIds.Distinct().ToArray();
-
             var sb = new StringBuilder();
             sb.AppendLine("select c.ContactId, c.FirstName, c.LastName, c.MiddleName");
             sb.AppendLine(" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId");
             sb.AppendLine(" from dbo.Contact as c");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", contactIdsDistinct);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", contactIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

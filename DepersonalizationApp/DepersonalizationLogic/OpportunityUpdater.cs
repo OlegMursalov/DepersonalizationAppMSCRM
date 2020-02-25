@@ -181,16 +181,33 @@ namespace UpdaterApp.DepersonalizationLogic
             var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavUpdatedGuids);
             orderlineNavUpdater.Process();
 
+            // Сущности Проекты (Opportunity), организации (Account) и контакты (Contact) перевязаны друг с другом, достаем разницу
+            var accountRetriever = new AccountRetriever(_sqlConnection, opportunities);
+            var accountSimples = accountRetriever.Process();
+
+            var contactRetriever = new ContactRetriever(_sqlConnection, opportunities);
+            var contactSimples = contactRetriever.Process();
+
+            var accountGuids = new List<Guid>();
+            accountGuids.AddRange(accountSimples.Select(accS => accS.AccountId));
+            accountGuids.AddRange(contactSimples.Select(conS => conS.ParentCustomerId));
+            var uniqueAccountGuids = accountGuids.Distinct().ToArray();
+
+            var contactGuids = new List<Guid>();
+            contactGuids.AddRange(contactSimples.Select(conS => conS.ContactId));
+            contactGuids.AddRange(accountSimples.Select(accS => accS.PrimaryContactId));
+            var uniqueContactGuids = contactGuids.Distinct().ToArray();
+
             // 5. Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
             // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
-            var accountUpdater = new AccountUpdater(_orgService, _sqlConnection, opportunities);
+            var accountUpdater = new AccountUpdater(_orgService, _sqlConnection, uniqueAccountGuids);
             var accountUpdatedGuids = accountUpdater.Process();
 
             // 6. Контакты(contact)
             // Меняем связанные с изменяемыми проектами и организациями записи сущности «Контакты», 
             // связи по полям «Менеджер заказчика(Проект)»(opportunity.cmdsoft_managerproject), «Дилер(Проект)» (opportunity.cmdsoft_dealer), 
             // Проектировщик(Проект)»(opportunity.cmdsoft_contact_project_agency) «Контакт эксплуатирующей организации(Проект)»(opportunity.mcdsoft_ref_contact)...
-            var contactUpdater = new ContactUpdater(_orgService, _sqlConnection, opportunities);
+            var contactUpdater = new ContactUpdater(_orgService, _sqlConnection, uniqueContactGuids);
             contactUpdater.Process();
         }
     }

@@ -14,37 +14,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         private static int _globalCounterBySessionApp = 1;
 
-        public AccountUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Opportunity> opportunities) : base(orgService, sqlConnection)
+        public AccountUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] accountIds) : base(orgService, sqlConnection)
         {
-            var accountIds = new List<Guid>();
-
-            foreach (var opportunity in opportunities)
-            {
-                if (opportunity.CustomerId != null)
-                {
-                    accountIds.Add(opportunity.CustomerId.Id);
-                }
-                if (opportunity.cmdsoft_project_agency != null)
-                {
-                    accountIds.Add(opportunity.cmdsoft_project_agency.Id);
-                }
-                if (opportunity.mcdsoft_ref_account != null)
-                {
-                    accountIds.Add(opportunity.mcdsoft_ref_account.Id);
-                }
-                if (opportunity.cmdsoft_GeneralContractor != null)
-                {
-                    accountIds.Add(opportunity.cmdsoft_GeneralContractor.Id);
-                }
-            }
-
-            var accountIdsDistinct = accountIds.Distinct().ToArray();
-
             var sb = new StringBuilder();
             sb.AppendLine("select acc.AccountId, acc.Name, acc.Telephone1, acc.EMailAddress1, acc.WebSiteURL,");
             sb.AppendLine(" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId");
             sb.AppendLine(" from dbo.Account as acc");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", accountIdsDistinct);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", accountIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
