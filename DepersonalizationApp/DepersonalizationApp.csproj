@@ -86,6 +86,7 @@
     <Compile Include="DepersonalizationLogic\AccountUpdater.cs" />
     <Compile Include="DepersonalizationLogic\CmdsoftOrderlineNavUpdater.cs" />
     <Compile Include="DepersonalizationLogic\CmdsoftPartOfOwnerUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\ContactUpdater.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
     <Compile Include="DepersonalizationLogic\RelatedCampaignResponseDeleter.cs" />

@@ -20,7 +20,8 @@ namespace UpdaterApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller,");
             sb.AppendLine(" opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency,");
-            sb.AppendLine(" opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor");
+            sb.AppendLine(" opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor, opp.cmdsoft_Managerproject, opp.cmdsoft_Dealer,");
+            sb.AppendLine(" opp.cmdsoft_contact_project_agency, opp.mcdsoft_ref_contact");
             sb.AppendLine(" from Opportunity as opp");
             sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
             sb.AppendLine("  from dbo.Opportunity as oppIn");
@@ -66,9 +67,29 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 opportunity.cmdsoft_GeneralContractor = new EntityReference("account", cmdsoft_GeneralContractorId.Value);
             }
+            var cmdsoft_ManagerprojectId = sqlReader.GetValue(11) as Guid?;
+            if (cmdsoft_ManagerprojectId != null)
+            {
+                opportunity.cmdsoft_Managerproject = new EntityReference("contact", cmdsoft_ManagerprojectId.Value);
+            }
+            var cmdsoft_DealerId = sqlReader.GetValue(12) as Guid?;
+            if (cmdsoft_DealerId != null)
+            {
+                opportunity.cmdsoft_Dealer = new EntityReference("contact", cmdsoft_DealerId.Value);
+            }
+            var cmdsoft_contact_project_agencyId = sqlReader.GetValue(13) as Guid?;
+            if (cmdsoft_contact_project_agencyId != null)
+            {
+                opportunity.cmdsoft_contact_project_agency = new EntityReference("contact", cmdsoft_contact_project_agencyId.Value);
+            }
+            var mcdsoft_ref_contactId = sqlReader.GetValue(14) as Guid?;
+            if (mcdsoft_ref_contactId != null)
+            {
+                opportunity.mcdsoft_ref_contact = new EntityReference("contact", mcdsoft_ref_contactId.Value);
+            }
             return opportunity;
         }
-        
+
         protected override void ChangeByRules(IEnumerable<Opportunity> opportunities)
         {
             var randomHelper = new RandomHelper();
@@ -149,21 +170,28 @@ namespace UpdaterApp.DepersonalizationLogic
             var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, opportunityGuids);
             partOfOwnerUpdater.Process();
 
-            // 3.	Продажи
+            // 3. Продажи
             // Меняем связанные с изменяемыми проектами записи сущности «Продажи»(cmdsoft_ordernav)по полю «Название проекта»(cmdsoft_ordernav.cmdsoft_navid).
             var orderNavUpdater = new CmdsoftOrderNavUpdater(_orgService, _sqlConnection, opportunityGuids);
-            var orderNavGuids = orderNavUpdater.Process().ToArray();
+            var orderNavUpdatedGuids = orderNavUpdater.Process().ToArray();
 
-            // D. 3. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
+            // 4. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
             // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
             // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
-            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavGuids);
+            var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavUpdatedGuids);
             orderlineNavUpdater.Process();
 
-            // 4.	Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
+            // 5. Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
             // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
             var accountUpdater = new AccountUpdater(_orgService, _sqlConnection, opportunities);
-            accountUpdater.Process();
+            var accountUpdatedGuids = accountUpdater.Process();
+
+            // 6. Контакты(contact)
+            // Меняем связанные с изменяемыми проектами и организациями записи сущности «Контакты», 
+            // связи по полям «Менеджер заказчика(Проект)»(opportunity.cmdsoft_managerproject), «Дилер(Проект)» (opportunity.cmdsoft_dealer), 
+            // Проектировщик(Проект)»(opportunity.cmdsoft_contact_project_agency) «Контакт эксплуатирующей организации(Проект)»(opportunity.mcdsoft_ref_contact)...
+            var contactUpdater = new ContactUpdater(_orgService, _sqlConnection, opportunities);
+            contactUpdater.Process();
         }
     }
 }
