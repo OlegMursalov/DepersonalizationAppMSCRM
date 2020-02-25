@@ -10,6 +10,11 @@ namespace UpdaterApp.DepersonalizationLogic
     public abstract class BaseUpdater<T> : Base<T> where T : Entity
     {
         /// <summary>
+        /// Состояние деперсонализации объекта
+        /// </summary>
+        private static readonly string _commonDepersonalizationNameField = "yolva_is_depersonalized";
+
+        /// <summary>
         /// Каждый потомок определяет правила изменения экземпляра сущности
         /// </summary>
         protected abstract void ChangeByRules(IEnumerable<T> records);
@@ -36,8 +41,9 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 try
                 {
-                    // _orgService.Update(entity);
-                    _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
+                    entity[_commonDepersonalizationNameField] = true;
+                    _orgService.Update(entity);
+                    // _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
                     updatedList.Add(entity);
                 }
                 catch (Exception ex)
