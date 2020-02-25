@@ -81,6 +81,42 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var updatedContacts = contactUpdater.Process();
             allUpdated.Add("contact", updatedContacts.Select(e => e.Id).ToArray());
 
+            // 7. Спецификация(cmdsoft_specification)
+            // Меняем связанные с изменяемыми проектами записи сущности «Спецификации», связь по полю «Проект(Спецификация)»(cmdsoft_specification.cmdsoft_spprojectnumber).
+            // Поля не меняем.
+            var specificationUpdater = new CmdsoftSpecificationUpdater(_orgService, _sqlConnection, updatedOpportunityIds);
+            var updatedSpecifications = specificationUpdater.Process();
+            var updatedSpecificationIds = updatedSpecifications.Select(e => e.Id).ToArray();
+
+            // 8. Состав спецификации»(cmdsoft_listspecification)
+            // Меняем связанные с изменяемыми записями «спецификация» записи сущности «Состав спецификации»(cmdsoft_listspecification), 
+            // связь по полю «Спецификация(Состав спецификации)» (cmdsoft_listspecification.cmdsoft_specification).
+            // Поля не меняем.
+            var listSpecificationUpdater = new CmdsoftListSpecificationUpdater(_orgService, _sqlConnection, updatedSpecificationIds);
+            listSpecificationUpdater.Process();
+
+            // 9. «Коммерческой предложение»(cmdsoft_offer)
+            // Меняем связанные с изменяемыми записями «спецификация» записи сущности «Коммерческой предложение»(cmdsoft_offer), 
+            // связь по полю «Спецификация(Коммерческой предложение)» (cmdsoft_offer.mcdsoft_offer2).
+            // Очистить поле «Прочие условия», все остальные поля не меняем.
+            var offerUpdater = new CmdsoftOfferUpdater(_orgService, _sqlConnection, updatedSpecificationIds);
+            offerUpdater.Process();
+
+            // 10. «Прайс-лист NAV»(yolva_salesprice)
+            // Меняем связанные с изменяемыми записями «спецификация» записи сущности «Состав спецификации»(cmdsoft_listspecification), 
+            // связь по полю «Спецификация(Состав спецификации)» (cmdsoft_listspecification.cmdsoft_specification).
+            // Меняем только поле «Описание» (yolva_salesprice.yolva_description) - стираем значение..
+            var yolvaSalespriceUpdater = new YolvaSalespriceUpdater(_orgService, _sqlConnection, null);
+            var updatedYolvaSalesprices = yolvaSalespriceUpdater.Process();
+            var updatedYolvaSalespriceIds = updatedYolvaSalesprices.Select(e => e.Id).ToArray();
+
+            // 11. «Строка Прайс-Листа»(yolva_salespriceline)
+            // Меняем связанные с изменяемыми записями «Прайс - лист NAV» записи сущности «Строка Прайс-Листа»(yolva_salespriceline), 
+            // связь по полю «Прайс - лист(Строка Прайс - Листа)»(yolva_salespriceline.yolva_salespriceid).
+            // Меняем только поле «Сумма»(yolva_salespriceline.yolva_amount) = Random(число с плавающей точкой, точность – 2, значения 1000 - 1000)
+            var yolvaSalespriceLineUpdater = new YolvaSalespriceLineUpdater(_orgService, _sqlConnection, updatedYolvaSalespriceIds);
+            yolvaSalespriceLineUpdater.Process();
+
             return allUpdated;
         }
     }
