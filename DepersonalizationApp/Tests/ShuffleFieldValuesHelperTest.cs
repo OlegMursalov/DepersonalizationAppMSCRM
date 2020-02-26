@@ -1,6 +1,8 @@
 ﻿using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace DepersonalizationApp.Tests
@@ -33,7 +35,7 @@ namespace DepersonalizationApp.Tests
         [Fact]
         public void Is_Random_Order()
         {
-            IEnumerable<TestEntity> oldEntities = new TestEntity[]
+            IEnumerable<TestEntity> entities = new TestEntity[]
             {
                 new TestEntity(23.3245F),
                 new TestEntity(56.12345F),
@@ -46,16 +48,17 @@ namespace DepersonalizationApp.Tests
                 new TestEntity(777.777F),
                 new TestEntity(-235.235325326464F),
             };
+            var oldEntities = entities.Select(e => new TestEntity(e.SomeField)).ToArray();
 
             var shuffleFieldValuesHelper = new ShuffleFieldValuesHelper<TestEntity>();
-            foreach (var oldEntity in oldEntities)
+            foreach (var entity in entities)
             {
-                shuffleFieldValuesHelper.AddEntity(oldEntity);
-                shuffleFieldValuesHelper.AddValue("SomeField", oldEntity.SomeField);
+                shuffleFieldValuesHelper.AddEntity(entity);
+                shuffleFieldValuesHelper.AddValue("SomeField", entity.SomeField);
             }
-            var newEntities = shuffleFieldValuesHelper.Process();
+            shuffleFieldValuesHelper.Process();
 
-            Assert.Equal(oldEntities, newEntities, new TestEntityComparer());
+            Assert.Equal(oldEntities, entities, new TestEntityComparer());
         }
     }
 }

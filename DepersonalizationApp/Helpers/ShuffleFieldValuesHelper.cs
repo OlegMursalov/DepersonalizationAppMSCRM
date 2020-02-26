@@ -48,22 +48,22 @@ namespace DepersonalizationApp.Helpers
         }
 
         /// <summary>
-        /// Выполняет перетасовку (разбрасывает значения полей в сущностях) и возвращает новый IEnumerable<Entity>
+        /// Выполняет перетасовку (разбрасывает значения полей в сущностях)
         /// </summary>
-        public IEnumerable<U> Process()
+        public void Process()
         {
-            var shuffledEntities = _needEntities.ToArray();
             foreach (var block in _fieldNameValWrps)
             {
                 var nameField = block.Key;
                 var valWrprs = block.Value;
                 var orderedValArr = valWrprs.OrderBy(e => e.Prefix).Select(e => e.Value).ToArray();
-                for (int i = 0; i < shuffledEntities.Length; i++)
+                int i = 0;
+                foreach (var entity in _needEntities)
                 {
-                    shuffledEntities[i][nameField] = orderedValArr[i];
+                    entity[nameField] = orderedValArr[i];
+                    i++;
                 }
             }
-            return shuffledEntities;
         }
 
         private class ValWrpr

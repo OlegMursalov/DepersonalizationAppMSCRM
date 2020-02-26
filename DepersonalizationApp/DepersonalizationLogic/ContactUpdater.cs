@@ -48,7 +48,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 contact.mcdsoft_contactnumber = random.Next(10000, 99999).ToString();
             }
 
-            contacts = shuffleFieldValues.Process();
+            shuffleFieldValues.Process();
 
             return contacts;
         }

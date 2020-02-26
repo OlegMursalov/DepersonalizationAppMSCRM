@@ -116,7 +116,7 @@ namespace UpdaterApp.DepersonalizationLogic
             }
 
             // B. Дополнение (см. выше)
-            opportunities = shuffleFieldValues.Process();
+            shuffleFieldValues.Process();
 
             return opportunities;
         }
