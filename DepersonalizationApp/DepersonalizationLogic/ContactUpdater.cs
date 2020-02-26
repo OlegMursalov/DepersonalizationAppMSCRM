@@ -43,13 +43,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 shuffleFieldValues.AddEntity(contact);
                 shuffleFieldValues.AddValue("firstname", contact.FirstName);
-
-                shuffleFieldValues.AddEntity(contact);
                 shuffleFieldValues.AddValue("lastname", contact.LastName);
-
-                shuffleFieldValues.AddEntity(contact);
                 shuffleFieldValues.AddValue("middlename", contact.MiddleName);
-
                 contact.mcdsoft_contactnumber = random.Next(10000, 99999).ToString();
             }
 
