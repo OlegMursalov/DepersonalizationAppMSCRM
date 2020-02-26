@@ -72,15 +72,22 @@ namespace UpdaterApp.DepersonalizationLogic
         /// </summary>
         private IEnumerable<T> GetOnlyUndepersonalizationEntities(IEnumerable<T> entities)
         {
+            var entityName = typeof(T).Name;
             foreach (var entity in entities)
             {
                 if (entity.Attributes.Contains(_isDepersonalizationFieldName))
                 {
                     var yolvaIsDepersonalized = entity.Attributes[_isDepersonalizationFieldName] as bool?;
-                    if (yolvaIsDepersonalized != null && yolvaIsDepersonalized.Value)
+                    if (yolvaIsDepersonalized == null || !yolvaIsDepersonalized.Value)
                     {
                         yield return entity;
                     }
+                }
+                else
+                {
+                    var errMsg = $"Entity {entityName} has no {_isDepersonalizationFieldName} field";
+                    _logger.Error(errMsg);
+                    throw new InvalidOperationException(errMsg);
                 }
             }
         }
