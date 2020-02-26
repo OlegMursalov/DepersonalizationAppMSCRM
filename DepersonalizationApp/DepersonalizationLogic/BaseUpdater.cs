@@ -107,6 +107,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 try
                 {
                     var entityForUpdate = GetEntityForUpdate(entity);
+                    entityForUpdate = SetIsDepersonalizationFlag(entityForUpdate);
                     _orgService.Update(entityForUpdate);
                     _logger.Info($"Record '{entityName}' with Id = '{entity.Id}' is updated");
                     updatedList.Add(entity);
