@@ -12,7 +12,7 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Состояние деперсонализации объекта
         /// </summary>
-        protected static readonly string _commonDepersonalizationNameField = "yolva_is_depersonalized";
+        protected static readonly string _isDepersonalizationFieldName = "yolva_is_depersonalized";
 
         /// <summary>
         /// Каждый потомок определяет правила изменения экземпляра сущности
@@ -22,7 +22,7 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Для корректного обновления
         /// </summary>
-        protected abstract Entity GetEntityForUpdate(T record);
+        protected abstract Entity GetEntityForUpdate(T recordForUpdate);
 
         protected IEnumerable<T> _allRetrievedEntities;
         protected IEnumerable<T> _allUpdatesEntities;
@@ -47,9 +47,23 @@ namespace UpdaterApp.DepersonalizationLogic
         public void Process()
         {
             _allRetrievedEntities = FastRetrieveAllItems();
-            var filteredEntities = GetOnlyUndepersonalizationEntities(_allRetrievedEntities);
-            var changedEntities = ChangeByRules(filteredEntities);
-            _allUpdatesEntities = UpdateAll(changedEntities);
+            if (_allRetrievedEntities != null && _allRetrievedEntities.Count() > 0)
+            {
+                var filteredEntities = GetOnlyUndepersonalizationEntities(_allRetrievedEntities);
+                if (filteredEntities != null && filteredEntities.Count() > 0)
+                {
+                    var changedEntities = ChangeByRules(filteredEntities);
+                    _allUpdatesEntities = UpdateAll(changedEntities);
+                }
+                else
+                {
+                    _logger.Info($"Undepersonalizated records '{typeof(T).Name}' are not found");
+                }
+            }
+            else
+            {
+                _logger.Info($"Records '{typeof(T).Name}' are not found");
+            }
         }
 
         /// <summary>
@@ -59,15 +73,21 @@ namespace UpdaterApp.DepersonalizationLogic
         {
             foreach (var entity in entities)
             {
-                if (entity.Attributes.Contains(_commonDepersonalizationNameField))
+                if (entity.Attributes.Contains(_isDepersonalizationFieldName))
                 {
-                    var yolvaIsDepersonalized = entity.Attributes[_commonDepersonalizationNameField] as bool?;
+                    var yolvaIsDepersonalized = entity.Attributes[_isDepersonalizationFieldName] as bool?;
                     if (yolvaIsDepersonalized != null && yolvaIsDepersonalized.Value)
                     {
                         yield return entity;
                     }
                 }
             }
+        }
+
+        private Entity SetIsDepersonalizationFlag(Entity entity)
+        {
+            entity[_isDepersonalizationFieldName] = true;
+            return entity;
         }
 
         protected IEnumerable<T> UpdateAll(IEnumerable<T> entities)

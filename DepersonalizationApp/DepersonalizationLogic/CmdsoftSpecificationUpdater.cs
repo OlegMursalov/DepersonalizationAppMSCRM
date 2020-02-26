@@ -17,7 +17,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public CmdsoftSpecificationUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select sp.cmdsoft_specificationId, sp.yolva_salespricenav");
+            sb.AppendLine($"select sp.cmdsoft_specificationId, sp.yolva_salespricenav, sp.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_specification as sp");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("sp.cmdsoft_spprojectnumber", opprotunityIds);
             sb.AppendLine(where);
@@ -28,7 +28,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             var cmdsoft_specification = new cmdsoft_specification
             {
-                Id = (Guid)sqlReader.GetValue(0)
+                Id = (Guid)sqlReader.GetValue(0),
+                yolva_is_depersonalized = sqlReader.GetValue(2) as bool?
             };
             var yolva_salespricenavId = sqlReader.GetValue(1) as Guid?;
             if (yolva_salespricenavId != null)
@@ -46,7 +47,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(cmdsoft_specification cmdsoftSpecification)
         {
             var entityForUpdate = new Entity(cmdsoftSpecification.LogicalName, cmdsoftSpecification.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             return entityForUpdate;
         }
     }

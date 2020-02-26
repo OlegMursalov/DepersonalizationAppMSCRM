@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             var sb = new StringBuilder();
             sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId, orLnNav.mcdsoft_price_discount_with_VAT, orLnNav.mcdsoft_price_discount_without_VAT,");
-            sb.AppendLine(" orLnNav.mcdsoft_price_without_vat, orLnNav.cmdsoft_amountsalesvat, orLnNav.cmdsoft_amountsale");
+            sb.AppendLine($" orLnNav.mcdsoft_price_without_vat, orLnNav.cmdsoft_amountsalesvat, orLnNav.cmdsoft_amountsale, orLnNav.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_navid", orderNavUpdatedIds);
             sb.AppendLine(where);
@@ -34,7 +34,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 mcdsoft_price_discount_without_VAT = sqlReader.GetValue(2) as decimal?,
                 mcdsoft_price_without_vat = sqlReader.GetValue(3) as decimal?,
                 cmdsoft_amountsalesvat = sqlReader.GetValue(4) as decimal?,
-                cmdsoft_amountsale = sqlReader.GetValue(5) as decimal?
+                cmdsoft_amountsale = sqlReader.GetValue(5) as decimal?,
+                yolva_is_depersonalized = sqlReader.GetValue(6) as bool?
             };
             return cmdsoft_orderlinenav;
         }
@@ -71,7 +72,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(cmdsoft_orderlinenav cmdsoftOrderineNav)
         {
             var entityForUpdate = new Entity(cmdsoftOrderineNav.LogicalName, cmdsoftOrderineNav.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["mcdsoft_price_discount_with_VAT"] = cmdsoftOrderineNav.mcdsoft_price_discount_with_VAT;
             entityForUpdate["mcdsoft_price_discount_without_VAT"] = cmdsoftOrderineNav.mcdsoft_price_discount_without_VAT;
             entityForUpdate["mcdsoft_price_without_vat"] = cmdsoftOrderineNav.mcdsoft_price_without_vat;

@@ -14,7 +14,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public ContactUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] contactIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select c.ContactId, c.FirstName, c.LastName, c.MiddleName, c.mcdsoft_contactnumber");
+            sb.AppendLine($"select c.ContactId, c.FirstName, c.LastName, c.MiddleName, c.mcdsoft_contactnumber, c.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.Contact as c");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", contactIds);
             sb.AppendLine(where);
@@ -29,7 +29,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 FirstName = sqlReader.GetValue(1) as string,
                 LastName = sqlReader.GetValue(2) as string,
                 MiddleName = sqlReader.GetValue(3) as string,
-                mcdsoft_contactnumber = sqlReader.GetValue(4) as string
+                mcdsoft_contactnumber = sqlReader.GetValue(4) as string,
+                yolva_is_depersonalized = sqlReader.GetValue(5) as bool?
             };
             return contact;
         }
@@ -56,7 +57,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(Contact contact)
         {
             var entityForUpdate = new Entity(contact.LogicalName, contact.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["firstname"] = contact.FirstName;
             entityForUpdate["lastname"] = contact.LastName;
             entityForUpdate["middlename"] = contact.MiddleName;

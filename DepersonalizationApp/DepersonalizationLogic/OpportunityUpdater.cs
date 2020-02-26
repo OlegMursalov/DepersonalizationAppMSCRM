@@ -19,7 +19,7 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine("select opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller,");
             sb.AppendLine(" opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.CustomerId, opp.cmdsoft_project_agency,");
             sb.AppendLine(" opp.mcdsoft_ref_account, opp.cmdsoft_GeneralContractor, opp.cmdsoft_Managerproject, opp.cmdsoft_Dealer,");
-            sb.AppendLine(" opp.cmdsoft_contact_project_agency, opp.mcdsoft_ref_contact");
+            sb.AppendLine($" opp.cmdsoft_contact_project_agency, opp.mcdsoft_ref_contact, opp.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from Opportunity as opp");
             sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
             sb.AppendLine("  from dbo.Opportunity as oppIn");
@@ -39,6 +39,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 mcdsoft_standartdiscount_chiller = sqlReader.GetValue(3) as decimal?,
                 cmdsoft_warranty = sqlReader.GetValue(4) as decimal?,
                 mcdsoft_reason_for_the_loss = sqlReader.GetValue(6) as string,
+                yolva_is_depersonalized = sqlReader.GetValue(15) as bool?
             };
             var cmdsoft_ResultVal = sqlReader.GetValue(5) as int?;
             if (cmdsoft_ResultVal != null)
@@ -124,7 +125,6 @@ namespace UpdaterApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(Opportunity opportunity)
         {
             var entityForUpdate = new Entity(opportunity.LogicalName, opportunity.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["cmdsoft_standartdiscount"] = opportunity.cmdsoft_standartdiscount;
             entityForUpdate["mcdsoft_standartdiscount_chiller"] = opportunity.mcdsoft_standartdiscount_chiller;
             entityForUpdate["cmdsoft_warranty"] = opportunity.cmdsoft_warranty;

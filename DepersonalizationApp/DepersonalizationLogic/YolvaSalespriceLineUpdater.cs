@@ -17,7 +17,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public YolvaSalespriceLineUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] yolvaSalespriceIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select ySlPrcLine.yolva_salespricelineId, ySlPrcLine.yolva_amount");
+            sb.AppendLine($"select ySlPrcLine.yolva_salespricelineId, ySlPrcLine.yolva_amount, ySlPrcLine.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from yolva_salespriceline as ySlPrcLine");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("ySlPrcLine.yolva_salespriceid", yolvaSalespriceIds);
             sb.AppendLine(where);
@@ -39,14 +39,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return new yolva_SalesPriceLine
             {
                 Id = (Guid)sqlReader.GetValue(0),
-                yolva_amount = sqlReader.GetValue(1) as decimal?
+                yolva_amount = sqlReader.GetValue(1) as decimal?,
+                yolva_is_depersonalized = sqlReader.GetValue(2) as bool?
             };
         }
 
         protected override Entity GetEntityForUpdate(yolva_SalesPriceLine yolvaSalesPriceLine)
         {
             var entityForUpdate = new Entity(yolvaSalesPriceLine.LogicalName, yolvaSalesPriceLine.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["yolva_amount"] = yolvaSalesPriceLine.yolva_amount;
             return entityForUpdate;
         }

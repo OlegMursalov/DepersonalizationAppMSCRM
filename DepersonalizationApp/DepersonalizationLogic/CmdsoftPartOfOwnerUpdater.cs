@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public CmdsoftPartOfOwnerUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select partOwn.cmdsoft_part_of_ownerId, partOwn.cmdsoft_part");
+            sb.AppendLine($"select partOwn.cmdsoft_part_of_ownerId, partOwn.cmdsoft_part, partOwn.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_part_of_owner as partOwn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("partOwn.cmdsoft_ref_opportunity", opprotunityIds);
             sb.AppendLine(where);
@@ -30,7 +30,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var cmdsoft_part_of_owner = new cmdsoft_part_of_owner
             {
                 Id = (Guid)sqlReader.GetValue(0),
-                cmdsoft_part = sqlReader.GetValue(1) as decimal?
+                cmdsoft_part = sqlReader.GetValue(1) as decimal?,
+                yolva_is_depersonalized = sqlReader.GetValue(2) as bool?
             };
             return cmdsoft_part_of_owner;
         }
@@ -54,7 +55,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(cmdsoft_part_of_owner partOfOwner)
         {
             var entityForUpdate = new Entity(partOfOwner.LogicalName, partOfOwner.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["cmdsoft_part"] = partOfOwner.cmdsoft_part;
             return entityForUpdate;
         }

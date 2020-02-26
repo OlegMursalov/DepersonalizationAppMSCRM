@@ -17,7 +17,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public CmdsoftOfferUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] specificationIds) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select offer.cmdsoft_offerId, offer.mcdsoft_other_conditions");
+            sb.AppendLine($"select offer.cmdsoft_offerId, offer.mcdsoft_other_conditions, offer.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_offer as offer");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("offer.mcdsoft_offer2", specificationIds);
             sb.AppendLine(where);
@@ -38,14 +38,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return new cmdsoft_offer
             {
                 Id = (Guid)sqlReader.GetValue(0),
-                mcdsoft_other_conditions = sqlReader.GetValue(1) as string
+                mcdsoft_other_conditions = sqlReader.GetValue(1) as string,
+                yolva_is_depersonalized = sqlReader.GetValue(2) as bool?
             };
         }
 
         protected override Entity GetEntityForUpdate(cmdsoft_offer offer)
         {
             var entityForUpdate = new Entity(offer.LogicalName, offer.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["mcdsoft_other_conditions"] = offer.mcdsoft_other_conditions;
             return entityForUpdate;
         }

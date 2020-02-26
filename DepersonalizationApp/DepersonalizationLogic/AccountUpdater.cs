@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             var sb = new StringBuilder();
             sb.AppendLine("select acc.AccountId, acc.Name, acc.Telephone1, acc.EMailAddress1, acc.WebSiteURL,");
-            sb.AppendLine(" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId");
+            sb.AppendLine($" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId, acc.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.Account as acc");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", accountIds);
             sb.AppendLine(where);
@@ -36,7 +36,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 WebSiteURL = sqlReader.GetValue(4) as string,
                 Address1_PostalCode = sqlReader.GetValue(5) as string,
                 Description = sqlReader.GetValue(6) as string,
-                cmdsoft_inn = sqlReader.GetValue(7) as string
+                cmdsoft_inn = sqlReader.GetValue(7) as string,
+                yolva_is_depersonalized = sqlReader.GetValue(8) as bool?
             };
             var parentAccountId = sqlReader.GetValue(8) as Guid?;
             if (parentAccountId != null)
@@ -68,7 +69,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(Account account)
         {
             var entityForUpdate = new Entity(account.LogicalName, account.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["name"] = account.Name;
             entityForUpdate["telephone1"] = account.Telephone1;
             entityForUpdate["emailaddress1"] = account.EMailAddress1;

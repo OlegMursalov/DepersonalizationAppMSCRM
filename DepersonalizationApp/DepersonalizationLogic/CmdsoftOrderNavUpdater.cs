@@ -20,7 +20,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         {
             var sb = new StringBuilder();
             sb.AppendLine("select ordNav.cmdsoft_ordernavId, ordNav.cmdsoft_namecustomotgr, ordNav.cmdsoft_namecustomsales, ordNav.cmdsoft_namecustomorder,");
-            sb.AppendLine(" ordNav.cmdsoft_totalamount, ordNav.cmdsoft_totamontvat");
+            sb.AppendLine($" ordNav.cmdsoft_totalamount, ordNav.cmdsoft_totamontvat, ordNav.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_ordernav as ordNav");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_navid", opprotunityIds);
             sb.AppendLine(where);
@@ -37,6 +37,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 cmdsoft_namecustomorder = sqlReader.GetValue(3) as string,
                 cmdsoft_totalamount = sqlReader.GetValue(4) as decimal?,
                 cmdsoft_totamontvat = sqlReader.GetValue(5) as decimal?,
+                yolva_is_depersonalized = sqlReader.GetValue(6) as bool?
             };
             return cmdsoft_ordernav;
         }
@@ -60,7 +61,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
         protected override Entity GetEntityForUpdate(cmdsoft_ordernav cmdsoftOrdernav)
         {
             var entityForUpdate = new Entity(cmdsoftOrdernav.LogicalName, cmdsoftOrdernav.Id);
-            entityForUpdate[_commonDepersonalizationNameField] = true;
             entityForUpdate["cmdsoft_namecustomotgr"] = cmdsoftOrdernav.cmdsoft_namecustomotgr;
             entityForUpdate["cmdsoft_namecustomsales"] = cmdsoftOrdernav.cmdsoft_namecustomsales;
             entityForUpdate["cmdsoft_namecustomorder"] = cmdsoftOrdernav.cmdsoft_namecustomorder;
