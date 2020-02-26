@@ -13,6 +13,19 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         protected string _entityLogicalName;
 
+        protected IEnumerable<Guid> _allRetrievedIds;
+        protected IEnumerable<Guid> _allDeletedIds;
+
+        /// <summary>
+        /// Возвращает все извлеченные записи после отработки Process
+        /// </summary>
+        public IEnumerable<Guid> AllRetrievedIds => _allRetrievedIds;
+
+        /// <summary>
+        /// Возвращает все удаленные идентификаторы записей после отработки Process
+        /// </summary>
+        public IEnumerable<Guid> AllDeletedIds => _allDeletedIds;
+
         public BaseDeleter(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
         }
@@ -24,8 +37,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         public void Process()
         {
-            var guids = FastRetrieveAllItems();
-            DeleteAll(guids);
+            var entityName = typeof(T).Name;
+            _allRetrievedIds = FastRetrieveAllItems();
+            if (_allRetrievedIds != null && _allRetrievedIds.Count() > 0)
+            {
+                DeleteAll(_allRetrievedIds);
+            }
+            else
+            {
+                _logger.Info($"Records '{entityName}' by guids are not found for deleting");
+            }
         }
 
         protected void DeleteAll(IEnumerable<Guid> guids)

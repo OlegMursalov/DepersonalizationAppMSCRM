@@ -46,6 +46,7 @@ namespace UpdaterApp.DepersonalizationLogic
         /// </summary>
         public void Process()
         {
+            var entityName = typeof(T).Name;
             _allRetrievedEntities = FastRetrieveAllItems();
             if (_allRetrievedEntities != null && _allRetrievedEntities.Count() > 0)
             {
@@ -57,12 +58,12 @@ namespace UpdaterApp.DepersonalizationLogic
                 }
                 else
                 {
-                    _logger.Info($"Undepersonalizated records '{typeof(T).Name}' are not found");
+                    _logger.Info($"Undepersonalizated records '{entityName}' are not found for updating");
                 }
             }
             else
             {
-                _logger.Info($"Records '{typeof(T).Name}' are not found");
+                _logger.Info($"Records '{entityName}' are not found for filtering by {_isDepersonalizationFieldName} field");
             }
         }
 
