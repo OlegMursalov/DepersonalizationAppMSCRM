@@ -49,5 +49,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
             }
         }
+
+        protected override Entity GetEntityForUpdate(cmdsoft_part_of_owner partOfOwner)
+        {
+            var entityForUpdate = new Entity(partOfOwner.LogicalName, partOfOwner.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["cmdsoft_part"] = partOfOwner.cmdsoft_part;
+            return entityForUpdate;
+        }
     }
 }

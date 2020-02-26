@@ -59,5 +59,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
             contacts = shuffleLastName.Process();
             contacts = shuffleMiddleName.Process();
         }
+
+        protected override Entity GetEntityForUpdate(Contact contact)
+        {
+            var entityForUpdate = new Entity(contact.LogicalName, contact.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["firstname"] = contact.FirstName;
+            entityForUpdate["lastname"] = contact.LastName;
+            entityForUpdate["middlename"] = contact.MiddleName;
+            entityForUpdate["mcdsoft_contactnumber"] = contact.mcdsoft_contactnumber;
+            return entityForUpdate;
+        }
     }
 }

@@ -26,10 +26,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         protected override void ChangeByRules(IEnumerable<yolva_salesprice> yolvaSalesprices)
         {
-            foreach (var yolvaSalesprice in yolvaSalesprices)
-            {
-
-            }
         }
 
         protected override yolva_salesprice ConvertSqlDataReaderItem(SqlDataReader sqlReader)
@@ -38,6 +34,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 Id = (Guid)sqlReader.GetValue(0)
             };
+        }
+
+        protected override Entity GetEntityForUpdate(yolva_salesprice yolvaSalesprice)
+        {
+            var entityForUpdate = new Entity(yolvaSalesprice.LogicalName, yolvaSalesprice.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            return entityForUpdate;
         }
     }
 }

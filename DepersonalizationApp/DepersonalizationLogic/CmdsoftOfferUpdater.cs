@@ -40,5 +40,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 mcdsoft_other_conditions = sqlReader.GetValue(1) as string
             };
         }
+
+        protected override Entity GetEntityForUpdate(cmdsoft_offer offer)
+        {
+            var entityForUpdate = new Entity(offer.LogicalName, offer.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["mcdsoft_other_conditions"] = offer.mcdsoft_other_conditions;
+            return entityForUpdate;
+        }
     }
 }

@@ -55,5 +55,17 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 _globalCounterBySessionApp++;
             }
         }
+
+        protected override Entity GetEntityForUpdate(cmdsoft_ordernav cmdsoftOrdernav)
+        {
+            var entityForUpdate = new Entity(cmdsoftOrdernav.LogicalName, cmdsoftOrdernav.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["cmdsoft_namecustomotgr"] = cmdsoftOrdernav.cmdsoft_namecustomotgr;
+            entityForUpdate["cmdsoft_namecustomsales"] = cmdsoftOrdernav.cmdsoft_namecustomsales;
+            entityForUpdate["cmdsoft_namecustomorder"] = cmdsoftOrdernav.cmdsoft_namecustomorder;
+            entityForUpdate["cmdsoft_totalamount"] = cmdsoftOrdernav.cmdsoft_totalamount;
+            entityForUpdate["cmdsoft_totamontvat"] = cmdsoftOrdernav.cmdsoft_totamontvat;
+            return entityForUpdate;
+        }
     }
 }

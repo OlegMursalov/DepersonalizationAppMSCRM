@@ -66,5 +66,17 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 }
             }
         }
+
+        protected override Entity GetEntityForUpdate(cmdsoft_orderlinenav cmdsoftOrderineNav)
+        {
+            var entityForUpdate = new Entity(cmdsoftOrderineNav.LogicalName, cmdsoftOrderineNav.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["mcdsoft_price_discount_with_VAT"] = cmdsoftOrderineNav.mcdsoft_price_discount_with_VAT;
+            entityForUpdate["mcdsoft_price_discount_without_VAT"] = cmdsoftOrderineNav.mcdsoft_price_discount_without_VAT;
+            entityForUpdate["mcdsoft_price_without_vat"] = cmdsoftOrderineNav.mcdsoft_price_without_vat;
+            entityForUpdate["cmdsoft_amountsalesvat"] = cmdsoftOrderineNav.cmdsoft_amountsalesvat;
+            entityForUpdate["cmdsoft_amountsale"] = cmdsoftOrderineNav.cmdsoft_amountsale;
+            return entityForUpdate;
+        }
     }
 }

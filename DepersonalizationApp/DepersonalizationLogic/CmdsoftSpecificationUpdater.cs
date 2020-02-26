@@ -38,9 +38,15 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return cmdsoft_specification;
         }
 
-        protected override void ChangeByRules(IEnumerable<cmdsoft_specification> records)
+        protected override void ChangeByRules(IEnumerable<cmdsoft_specification> cmdsoftSpecifications)
         {
-            
+        }
+
+        protected override Entity GetEntityForUpdate(cmdsoft_specification cmdsoftSpecification)
+        {
+            var entityForUpdate = new Entity(cmdsoftSpecification.LogicalName, cmdsoftSpecification.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            return entityForUpdate;
         }
     }
 }

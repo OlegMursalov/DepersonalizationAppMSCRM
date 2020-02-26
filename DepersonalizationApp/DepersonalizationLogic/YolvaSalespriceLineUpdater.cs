@@ -41,5 +41,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 yolva_amount = sqlReader.GetValue(1) as decimal?
             };
         }
+
+        protected override Entity GetEntityForUpdate(yolva_SalesPriceLine yolvaSalesPriceLine)
+        {
+            var entityForUpdate = new Entity(yolvaSalesPriceLine.LogicalName, yolvaSalesPriceLine.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["yolva_amount"] = yolvaSalesPriceLine.yolva_amount;
+            return entityForUpdate;
+        }
     }
 }

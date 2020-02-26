@@ -24,7 +24,7 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
             sb.AppendLine("  from dbo.Opportunity as oppIn");
             sb.AppendLine("  order by oppIn.CreatedOn desc");
-            sb.AppendLine("  offset 7200 rows");
+            sb.AppendLine("  offset 0 rows");
             sb.AppendLine("  fetch next 500 rows only)");
             _retrieveSqlQuery = sb.ToString();
         }
@@ -117,6 +117,17 @@ namespace UpdaterApp.DepersonalizationLogic
 
             // B. Дополнение (см. выше)
             opportunities = shuffleReasonsForTheLoss.Process();
+        }
+
+        protected override Entity GetEntityForUpdate(Opportunity opportunity)
+        {
+            var entityForUpdate = new Entity(opportunity.LogicalName, opportunity.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["cmdsoft_standartdiscount"] = opportunity.cmdsoft_standartdiscount;
+            entityForUpdate["mcdsoft_standartdiscount_chiller"] = opportunity.mcdsoft_standartdiscount_chiller;
+            entityForUpdate["cmdsoft_warranty"] = opportunity.cmdsoft_warranty;
+            entityForUpdate["mcdsoft_reason_for_the_loss"] = opportunity.mcdsoft_reason_for_the_loss;
+            return entityForUpdate;
         }
     }
 }

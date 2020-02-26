@@ -63,5 +63,20 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 _globalCounterBySessionApp++;
             }
         }
+
+        protected override Entity GetEntityForUpdate(Account account)
+        {
+            var entityForUpdate = new Entity(account.LogicalName, account.Id);
+            entityForUpdate[_commonDepersonalizationNameField] = true;
+            entityForUpdate["name"] = account.Name;
+            entityForUpdate["telephone1"] = account.Telephone1;
+            entityForUpdate["emailaddress1"] = account.EMailAddress1;
+            entityForUpdate["websiteurl"] = account.WebSiteURL;
+            entityForUpdate["address1_postalcode"] = account.Address1_PostalCode;
+            entityForUpdate["description"] = account.Description;
+            entityForUpdate["cmdsoft_inn"] = account.cmdsoft_inn;
+            entityForUpdate["parentaccountid"] = account.ParentAccountId;
+            return entityForUpdate;
+        }
     }
 }
