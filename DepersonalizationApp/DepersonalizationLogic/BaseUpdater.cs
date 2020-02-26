@@ -17,7 +17,7 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Каждый потомок определяет правила изменения экземпляра сущности
         /// </summary>
-        protected abstract void ChangeByRules(IEnumerable<T> records);
+        protected abstract IEnumerable<T> ChangeByRules(IEnumerable<T> records);
 
         /// <summary>
         /// Для корректного обновления
@@ -33,9 +33,10 @@ namespace UpdaterApp.DepersonalizationLogic
         /// </summary>
         public IEnumerable<T> Process()
         {
-            var entities = FastRetrieveAllItems();
-            ChangeByRules(entities);
-            return UpdateAll(entities);
+            var retrievedEntiies = FastRetrieveAllItems();
+            var changedEntities = ChangeByRules(retrievedEntiies);
+            var updatedEntities = UpdateAll(changedEntities);
+            return updatedEntities;
         }
 
         protected IEnumerable<T> UpdateAll(IEnumerable<T> entities)

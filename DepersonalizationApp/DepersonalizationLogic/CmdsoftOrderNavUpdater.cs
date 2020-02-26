@@ -41,7 +41,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return cmdsoft_ordernav;
         }
 
-        protected override void ChangeByRules(IEnumerable<cmdsoft_ordernav> cmdsoftOrdernavs)
+        protected override IEnumerable<cmdsoft_ordernav> ChangeByRules(IEnumerable<cmdsoft_ordernav> cmdsoftOrdernavs)
         {
             var random = new Random();
             foreach (var orderNav in cmdsoftOrdernavs)
@@ -53,6 +53,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 orderNav.cmdsoft_totalamount = orderNav.cmdsoft_totalamount + saleRandN;
                 orderNav.cmdsoft_totamontvat = orderNav.cmdsoft_totamontvat + saleRandN;
                 _globalCounterBySessionApp++;
+                yield return orderNav;
             }
         }
 

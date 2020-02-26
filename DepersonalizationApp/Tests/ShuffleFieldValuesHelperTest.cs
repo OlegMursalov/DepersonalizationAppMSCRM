@@ -47,11 +47,11 @@ namespace DepersonalizationApp.Tests
                 new TestEntity(-235.235325326464F),
             };
 
-            var shuffleFieldValuesHelper = new ShuffleFieldValuesHelper<TestEntity, float>("SomeField");
+            var shuffleFieldValuesHelper = new ShuffleFieldValuesHelper<TestEntity>();
             foreach (var oldEntity in oldEntities)
             {
                 shuffleFieldValuesHelper.AddEntity(oldEntity);
-                shuffleFieldValuesHelper.AddValue(oldEntity.SomeField);
+                shuffleFieldValuesHelper.AddValue("SomeField", oldEntity.SomeField);
             }
             var newEntities = shuffleFieldValuesHelper.Process();
 

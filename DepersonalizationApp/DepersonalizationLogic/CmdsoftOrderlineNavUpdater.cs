@@ -39,7 +39,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return cmdsoft_orderlinenav;
         }
 
-        protected override void ChangeByRules(IEnumerable<cmdsoft_orderlinenav> cmdsoftOrderineNavs)
+        protected override IEnumerable<cmdsoft_orderlinenav> ChangeByRules(IEnumerable<cmdsoft_orderlinenav> cmdsoftOrderineNavs)
         {
             var randN = new Random().Next(1, 10);
             foreach (var orderineNav in cmdsoftOrderineNavs)
@@ -64,6 +64,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 {
                     orderineNav.cmdsoft_amountsale /= randN;
                 }
+                yield return orderineNav;
             }
         }
 

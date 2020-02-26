@@ -24,8 +24,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _retrieveSqlQuery = sb.ToString();
         }
 
-        protected override void ChangeByRules(IEnumerable<yolva_salesprice> yolvaSalesprices)
+        protected override IEnumerable<yolva_salesprice> ChangeByRules(IEnumerable<yolva_salesprice> yolvaSalesprices)
         {
+            return yolvaSalesprices;
         }
 
         protected override yolva_salesprice ConvertSqlDataReaderItem(SqlDataReader sqlReader)

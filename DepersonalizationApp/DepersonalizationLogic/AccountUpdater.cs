@@ -46,7 +46,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return account;
         }
 
-        protected override void ChangeByRules(IEnumerable<Account> accounts)
+        protected override IEnumerable<Account> ChangeByRules(IEnumerable<Account> accounts)
         {
             var randomTelephoneByMaskHelper = new RandomTelephoneByMaskHelper(CommonObjsHelper.TelephoneMask1);
             var randomEmailByMaskHelper = new RandomEmailByMaskHelper(CommonObjsHelper.EmailMask1);
@@ -61,6 +61,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 account.cmdsoft_inn = null;
                 account.ParentAccountId = null;
                 _globalCounterBySessionApp++;
+                yield return account;
             }
         }
 

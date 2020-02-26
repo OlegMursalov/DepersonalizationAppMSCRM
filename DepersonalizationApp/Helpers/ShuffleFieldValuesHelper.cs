@@ -9,32 +9,37 @@ namespace DepersonalizationApp.Helpers
     /// Класс для перетасовки значений полей сущностей между собой
     /// </summary>
     /// <typeparam name="U">Тип CRM сущности</typeparam>
-    /// <typeparam name="T">Тип CRM поля</typeparam>
-    public class ShuffleFieldValuesHelper<U, T> where U : Entity
+    public class ShuffleFieldValuesHelper<U> where U : Entity
     {
         private Random _random;
-        private List<ValWrpr<T>> _valWrprs;
         private List<U> _needEntities;
-        private string _fieldName;
+        private Dictionary<string, List<ValWrpr>> _fieldNameValWrps;
 
         private const int MinRandRange = int.MinValue;
         private const int MaxRandRange = int.MaxValue;
 
-        public ShuffleFieldValuesHelper(string fieldName)
+        public ShuffleFieldValuesHelper()
         {
             _random = new Random();
-            _valWrprs = new List<ValWrpr<T>>();
             _needEntities = new List<U>();
-            _fieldName = fieldName;
+            _fieldNameValWrps = new Dictionary<string, List<ValWrpr>>();
         }
 
-        public void AddValue(T value)
+        public void AddValue(string fieldName, object value)
         {
-            _valWrprs.Add(new ValWrpr<T>
+            var valWrpr = new ValWrpr
             {
                 Value = value,
                 Prefix = _random.Next(MinRandRange, MaxRandRange)
-            });
+            };
+            if (!_fieldNameValWrps.ContainsKey(fieldName))
+            {
+                _fieldNameValWrps.Add(fieldName, new List<ValWrpr> { valWrpr });
+            }
+            else
+            {
+                _fieldNameValWrps[fieldName].Add(valWrpr);
+            }
         }
 
         public void AddEntity(U entity)
@@ -47,18 +52,23 @@ namespace DepersonalizationApp.Helpers
         /// </summary>
         public IEnumerable<U> Process()
         {
-            var valueArray = _valWrprs.OrderBy(e => e.Prefix).Select(e => e.Value).ToArray();
-            var entities = _needEntities.ToArray();
-            for (int i = 0; i < entities.Length; i++)
+            var shuffledEntities = _needEntities.ToArray();
+            foreach (var block in _fieldNameValWrps)
             {
-                entities[i][_fieldName] = valueArray[i];
+                var nameField = block.Key;
+                var valWrprs = block.Value;
+                var orderedValArr = valWrprs.OrderBy(e => e.Prefix).Select(e => e.Value).ToArray();
+                for (int i = 0; i < shuffledEntities.Length; i++)
+                {
+                    shuffledEntities[i][nameField] = orderedValArr[i];
+                }
             }
-            return entities;
+            return shuffledEntities;
         }
 
-        private class ValWrpr<T>
+        private class ValWrpr
         {
-            public T Value;
+            public object Value;
             public int Prefix;
         }
     }

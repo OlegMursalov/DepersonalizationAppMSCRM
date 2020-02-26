@@ -35,7 +35,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return cmdsoft_part_of_owner;
         }
 
-        protected override void ChangeByRules(IEnumerable<cmdsoft_part_of_owner> cmdsoftPartOfOwners)
+        protected override IEnumerable<cmdsoft_part_of_owner> ChangeByRules(IEnumerable<cmdsoft_part_of_owner> cmdsoftPartOfOwners)
         {
             var amountOfPartOwners = cmdsoftPartOfOwners.Count();
             if (amountOfPartOwners > 0)
@@ -48,6 +48,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     i++;
                 }
             }
+            return cmdsoftPartOfOwners;
         }
 
         protected override Entity GetEntityForUpdate(cmdsoft_part_of_owner partOfOwner)

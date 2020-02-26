@@ -34,30 +34,28 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return contact;
         }
 
-        protected override void ChangeByRules(IEnumerable<Contact> contacts)
+        protected override IEnumerable<Contact> ChangeByRules(IEnumerable<Contact> contacts)
         {
             var random = new Random();
-            var shuffleFirstName = new ShuffleFieldValuesHelper<Contact, string>("firstname");
-            var shuffleLastName = new ShuffleFieldValuesHelper<Contact, string>("lastname");
-            var shuffleMiddleName = new ShuffleFieldValuesHelper<Contact, string>("middlename");
+            var shuffleFieldValues = new ShuffleFieldValuesHelper<Contact>();
 
             foreach (var contact in contacts)
             {
-                shuffleFirstName.AddEntity(contact);
-                shuffleFirstName.AddValue(contact.FirstName);
+                shuffleFieldValues.AddEntity(contact);
+                shuffleFieldValues.AddValue("firstname", contact.FirstName);
 
-                shuffleLastName.AddEntity(contact);
-                shuffleLastName.AddValue(contact.LastName);
+                shuffleFieldValues.AddEntity(contact);
+                shuffleFieldValues.AddValue("lastname", contact.LastName);
 
-                shuffleMiddleName.AddEntity(contact);
-                shuffleMiddleName.AddValue(contact.MiddleName);
+                shuffleFieldValues.AddEntity(contact);
+                shuffleFieldValues.AddValue("middlename", contact.MiddleName);
 
                 contact.mcdsoft_contactnumber = random.Next(10000, 99999).ToString();
             }
 
-            contacts = shuffleFirstName.Process();
-            contacts = shuffleLastName.Process();
-            contacts = shuffleMiddleName.Process();
+            contacts = shuffleFieldValues.Process();
+
+            return contacts;
         }
 
         protected override Entity GetEntityForUpdate(Contact contact)

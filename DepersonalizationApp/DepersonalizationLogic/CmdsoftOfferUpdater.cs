@@ -24,11 +24,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _retrieveSqlQuery = sb.ToString();
         }
 
-        protected override void ChangeByRules(IEnumerable<cmdsoft_offer> offers)
+        protected override IEnumerable<cmdsoft_offer> ChangeByRules(IEnumerable<cmdsoft_offer> offers)
         {
             foreach (var offer in offers)
             {
                 offer.mcdsoft_other_conditions = null;
+                yield return offer;
             }
         }
 

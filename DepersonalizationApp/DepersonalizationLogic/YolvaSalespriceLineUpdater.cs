@@ -24,12 +24,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _retrieveSqlQuery = sb.ToString();
         }
 
-        protected override void ChangeByRules(IEnumerable<yolva_SalesPriceLine> yolvaSalesPriceLines)
+        protected override IEnumerable<yolva_SalesPriceLine> ChangeByRules(IEnumerable<yolva_SalesPriceLine> yolvaSalesPriceLines)
         {
             var randomHelper = new RandomHelper();
             foreach (var yolvaSalesPriceLine in yolvaSalesPriceLines)
             {
                 yolvaSalesPriceLine.yolva_amount = randomHelper.GetDecimal(1000, 1000);
+                yield return yolvaSalesPriceLine;
             }
         }
 

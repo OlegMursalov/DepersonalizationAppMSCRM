@@ -88,10 +88,10 @@ namespace UpdaterApp.DepersonalizationLogic
             return opportunity;
         }
 
-        protected override void ChangeByRules(IEnumerable<Opportunity> opportunities)
+        protected override IEnumerable<Opportunity> ChangeByRules(IEnumerable<Opportunity> opportunities)
         {
             var randomHelper = new RandomHelper();
-            var shuffleReasonsForTheLoss = new ShuffleFieldValuesHelper<Opportunity, string>("mcdsoft_reason_for_the_loss");
+            var shuffleFieldValues = new ShuffleFieldValuesHelper<Opportunity>();
 
             foreach (var opportunity in opportunities)
             {
@@ -110,13 +110,15 @@ namespace UpdaterApp.DepersonalizationLogic
                 // потом из этой таблицы случайным образом вставить(переписать) значения в другой проект(то есть перетасовать в проигранных проектах «Причины проигрыша»)
                 if (opportunity.cmdsoft_Result != null && opportunity.cmdsoft_Result.Value == 289540002)
                 {
-                    shuffleReasonsForTheLoss.AddEntity(opportunity);
-                    shuffleReasonsForTheLoss.AddValue(opportunity.mcdsoft_reason_for_the_loss);
+                    shuffleFieldValues.AddEntity(opportunity);
+                    shuffleFieldValues.AddValue("mcdsoft_reason_for_the_loss", opportunity.mcdsoft_reason_for_the_loss);
                 }
             }
 
             // B. Дополнение (см. выше)
-            opportunities = shuffleReasonsForTheLoss.Process();
+            opportunities = shuffleFieldValues.Process();
+
+            return opportunities;
         }
 
         protected override Entity GetEntityForUpdate(Opportunity opportunity)

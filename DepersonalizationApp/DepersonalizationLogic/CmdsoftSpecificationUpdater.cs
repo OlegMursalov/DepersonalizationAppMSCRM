@@ -38,8 +38,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return cmdsoft_specification;
         }
 
-        protected override void ChangeByRules(IEnumerable<cmdsoft_specification> cmdsoftSpecifications)
+        protected override IEnumerable<cmdsoft_specification> ChangeByRules(IEnumerable<cmdsoft_specification> cmdsoftSpecifications)
         {
+            return cmdsoftSpecifications;
         }
 
         protected override Entity GetEntityForUpdate(cmdsoft_specification cmdsoftSpecification)
