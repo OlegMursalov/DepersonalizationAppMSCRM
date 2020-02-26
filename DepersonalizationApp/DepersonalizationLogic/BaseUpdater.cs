@@ -24,19 +24,50 @@ namespace UpdaterApp.DepersonalizationLogic
         /// </summary>
         protected abstract Entity GetEntityForUpdate(T record);
 
+        protected IEnumerable<T> _allRetrievedEntities;
+        protected IEnumerable<T> _allUpdatesEntities;
+
+        /// <summary>
+        /// Возвращает все извлеченные записи после отработки Process
+        /// </summary>
+        public IEnumerable<T> AllRetrievedEntities => _allRetrievedEntities;
+
+        /// <summary>
+        /// Возвращает все обновленные записи после отработки Process
+        /// </summary>
+        public IEnumerable<T> AllUpdatesEntities => _allUpdatesEntities;
+
         public BaseUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
         }
 
         /// <summary>
-        /// Обновляет записи через CRM сервис и возвращает IEnumerable<Guid> успшно обновленных записей
+        /// Обновляет необезличенные записи через CRM сервис и возвращает IEnumerable<Guid> успшно обновленных записей
         /// </summary>
-        public IEnumerable<T> Process()
+        public void Process()
         {
-            var retrievedEntiies = FastRetrieveAllItems();
-            var changedEntities = ChangeByRules(retrievedEntiies);
-            var updatedEntities = UpdateAll(changedEntities);
-            return updatedEntities;
+            _allRetrievedEntities = FastRetrieveAllItems();
+            var filteredEntities = GetOnlyUndepersonalizationEntities(_allRetrievedEntities);
+            var changedEntities = ChangeByRules(filteredEntities);
+            _allUpdatesEntities = UpdateAll(changedEntities);
+        }
+
+        /// <summary>
+        /// Метод возвращает только необезличенные записи
+        /// </summary>
+        private IEnumerable<T> GetOnlyUndepersonalizationEntities(IEnumerable<T> entities)
+        {
+            foreach (var entity in entities)
+            {
+                if (entity.Attributes.Contains(_commonDepersonalizationNameField))
+                {
+                    var yolvaIsDepersonalized = entity.Attributes[_commonDepersonalizationNameField] as bool?;
+                    if (yolvaIsDepersonalized != null && yolvaIsDepersonalized.Value)
+                    {
+                        yield return entity;
+                    }
+                }
+            }
         }
 
         protected IEnumerable<T> UpdateAll(IEnumerable<T> entities)
