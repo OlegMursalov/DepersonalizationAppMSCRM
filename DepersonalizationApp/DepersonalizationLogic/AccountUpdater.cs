@@ -20,8 +20,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("select acc.AccountId, acc.Name, acc.Telephone1, acc.EMailAddress1, acc.WebSiteURL,");
             sb.AppendLine($" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId, acc.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.Account as acc");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", ids);
+            sb.AppendLine(" where acc.AccountId in (select accIn.AccountId");
+            sb.AppendLine("  from dbo.Account as orLnNavIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("accIn.AccountId", ids);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("accIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 

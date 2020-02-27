@@ -22,8 +22,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("select ordNav.cmdsoft_ordernavId, ordNav.cmdsoft_namecustomotgr, ordNav.cmdsoft_namecustomsales, ordNav.cmdsoft_namecustomorder,");
             sb.AppendLine($" ordNav.cmdsoft_totalamount, ordNav.cmdsoft_totamontvat, ordNav.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_ordernav as ordNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_ordernavId", ids);
+            sb.AppendLine(" where ordNav.cmdsoft_ordernavId in (select ordNavIn.cmdsoft_ordernavId");
+            sb.AppendLine("  from dbo.cmdsoft_ordernav as ordNavIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNavIn.cmdsoft_ordernavId", ids);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("ordNavIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 

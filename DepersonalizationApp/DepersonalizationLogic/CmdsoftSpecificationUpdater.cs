@@ -19,8 +19,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine($"select sp.cmdsoft_specificationId, sp.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_specification as sp");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("sp.cmdsoft_specificationId", ids);
+            sb.AppendLine(" where spIn.cmdsoft_specificationId in (select spIn.cmdsoft_specificationId");
+            sb.AppendLine("  from dbo.cmdsoft_specification as spIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("spIn.cmdsoft_specificationId", ids);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("spIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
         
