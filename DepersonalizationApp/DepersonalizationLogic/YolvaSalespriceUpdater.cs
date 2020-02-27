@@ -19,7 +19,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine($"select ySlPrc.yolva_salespriceId, ySlPrc.yolva_description, ySlPrc.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from yolva_salesprice as ySlPrc");
-            sb.AppendLine(" where offer.yolva_salespriceId in (select ySlPrcIn.yolva_salespriceId");
+            sb.AppendLine(" where ySlPrc.yolva_salespriceId in (select ySlPrcIn.yolva_salespriceId");
             sb.AppendLine("  from dbo.yolva_salesprice as ySlPrcIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("ySlPrcIn.yolva_salespriceId", ids);
             sb.AppendLine(where);
