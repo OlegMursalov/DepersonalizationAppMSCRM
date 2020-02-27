@@ -80,8 +80,17 @@ namespace DepersonalizationApp.Helpers
         public static string ChangeSqlQueryPagination(string query, int offset, int fetchNext)
         {
             var parts = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            parts[parts.Length - 2] = Regex.Replace(parts[parts.Length - 2], "\\d+", offset.ToString());
-            parts[parts.Length - 1] = Regex.Replace(parts[parts.Length - 1], "\\d+", fetchNext.ToString());
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i].IndexOf("offset") != -1)
+                {
+                    parts[i] = Regex.Replace(parts[i], "\\d+", offset.ToString());
+                }
+                if (parts[i].IndexOf("fetch") != -1)
+                {
+                    parts[i] = Regex.Replace(parts[i], "\\d+", fetchNext.ToString());
+                }
+            }
             return string.Join(Environment.NewLine, parts);
         }
     }
