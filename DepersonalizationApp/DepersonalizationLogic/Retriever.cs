@@ -42,19 +42,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 if (retrievedOrderNavIds != null && retrievedOrderNavIds.Count() > 0)
                 {
                     allRetrieved["cmdsoft_ordernav"].AddRange(retrievedOrderNavIds);
-                }
 
-                if (retrievedOrderNavIds != null && retrievedOrderNavIds.Count() > 0)
-                {
                     var orderLineNavRetriever = new CmdsoftOrderLineNavRetriever(_sqlConnection, retrievedOrderNavIds);
                     var retrievedOrderLineNavIds = orderLineNavRetriever.Process();
 
                     if (retrievedOrderLineNavIds != null && retrievedOrderLineNavIds.Count() > 0)
                     {
-                        allRetrieved["cmdsoft_ordernav"].AddRange(retrievedOrderNavIds);
+                        allRetrieved["cmdsoft_orderlinenav"].AddRange(retrievedOrderLineNavIds);
                     }
                 }
-                
+
                 var accountRetriever = new AccountRetriever(_sqlConnection, retrievedOpportunityLinks);
                 var retrievedAccountLinks = accountRetriever.Process();
 
@@ -108,7 +105,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
                         if (retrievedSalespriceLineIds != null && retrievedSalespriceLineIds.Count() > 0)
                         {
-                            allRetrieved["yolva_salespriceline"].AddRange(retrievedSalesPriceIds);
+                            allRetrieved["yolva_salespriceline"].AddRange(retrievedSalespriceLineIds);
                         }
                     }
                 }
@@ -123,16 +120,38 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
                 var eventsParticipantsRetriever = new YolvaEventsParticipantsRetriever(_sqlConnection, retrievedEventIds);
                 var retrievedEventsParticipantsLinks = eventsParticipantsRetriever.Process();
-                var retrievedEventsParticipantsIds = retrievedEventsParticipantsLinks.Select(e => e.Id)
-                allRetrieved["yolva_events_participants"].AddRange(retrievedEventsParticipantsIds);
+
+                if (retrievedEventsParticipantsLinks != null && retrievedEventsParticipantsLinks.Count() > 0)
+                {
+                    var retrievedEventsParticipantsIds = retrievedEventsParticipantsLinks.Select(e => e.Id);
+                    allRetrieved["yolva_events_participants"].AddRange(retrievedEventsParticipantsIds);
+
+                    var accountRetriever = new AccountRetriever(_sqlConnection, retrievedEventsParticipantsLinks);
+                    var retrievedAccountLinks = accountRetriever.Process();
+
+                    if (retrievedAccountLinks != null && retrievedAccountLinks.Count() > 0)
+                    {
+                        allRetrieved["account"].AddRange(retrievedAccountLinks.Select(e => e.Id));
+                        allRetrieved["contact"].AddRange(retrievedAccountLinks.Where(e => e.PrimaryContactId != null).Select(e => e.PrimaryContactId.Value));
+                    }
+
+                    var contactRetriever = new ContactRetriever(_sqlConnection, retrievedEventsParticipantsLinks);
+                    var retrievedContactLinks = contactRetriever.Process();
+
+                    if (retrievedContactLinks != null && retrievedContactLinks.Count() > 0)
+                    {
+                        allRetrieved["contact"].AddRange(retrievedContactLinks.Select(e => e.Id));
+                        allRetrieved["account"].AddRange(retrievedContactLinks.Where(e => e.ParentCustomerId != null).Select(e => e.ParentCustomerId.Value));
+                    }
+                }
             }
 
             var salesAppealRetriever = new McdsoftSalesAppealRetriever(_sqlConnection);
             var salesAppealLinks = salesAppealRetriever.Process();
 
-            if ()
+            if (salesAppealLinks != null && salesAppealLinks.Count() > 0)
             {
-
+                
             }
         }
     }

@@ -11,9 +11,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
         public CmdsoftOrderLineNavRetriever(SqlConnection sqlConnection, IEnumerable<Guid> orderNavIds) : base(sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select ordNav.cmdsoft_ordernavId");
-            sb.AppendLine(" from dbo.cmdsoft_ordernav as ordNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_navid", orderNavIds);
+            sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId");
+            sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_navid", orderNavIds);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

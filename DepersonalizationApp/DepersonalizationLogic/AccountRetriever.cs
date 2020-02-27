@@ -19,10 +19,23 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class AccountRetriever : Base<AccountLink>
     {
+        public AccountRetriever(SqlConnection sqlConnection, IEnumerable<YolvaEventsParticipantsLink> yolvaEventsParticipantsLinks) : base(sqlConnection)
+        {
+            var accountIds = new List<Guid>();
+            foreach (var yolvaEventsParticipantsLink in yolvaEventsParticipantsLinks)
+            {
+                if (yolvaEventsParticipantsLink.YolvaOrganization != null)
+                {
+                    accountIds.Add(yolvaEventsParticipantsLink.YolvaOrganization.Value);
+                }
+            }
+            var accountIdsDistinct = accountIds.Distinct();
+            _retrieveSqlQuery = SetQuery(accountIdsDistinct);
+        }
+
         public AccountRetriever(SqlConnection sqlConnection, IEnumerable<OpportunityLink> opportunityLinks) : base(sqlConnection)
         {
             var accountIds = new List<Guid>();
-
             foreach (var opportunityLink in opportunityLinks)
             {
                 if (opportunityLink.CustomerId != null)
@@ -42,18 +55,21 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     accountIds.Add(opportunityLink.CmdsoftGeneralContractor.Value);
                 }
             }
+            var accountIdsDistinct = accountIds.Distinct();
+            _retrieveSqlQuery = SetQuery(accountIdsDistinct);
+        }
 
-            var accountIdsDistinct = accountIds.Distinct().ToArray();
-
+        private string SetQuery(IEnumerable<Guid> accountIdsDistinct)
+        {
             var sb = new StringBuilder();
             sb.AppendLine("select acc.AccountId, acc.PrimaryContactId");
             sb.AppendLine(" from dbo.Account as acc");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", accountIdsDistinct);
             sb.AppendLine(where);
-            _retrieveSqlQuery = sb.ToString();
+            return sb.ToString();
         }
 
-        public List<AccountLink> Process()
+        public IEnumerable<AccountLink> Process()
         {
             return FastRetrieveAllItems();
         }

@@ -19,10 +19,23 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class ContactRetriever : Base<ContactLink>
     {
+        public ContactRetriever(SqlConnection sqlConnection, IEnumerable<YolvaEventsParticipantsLink> yolvaEventsParticipantsLinks) : base(sqlConnection)
+        {
+            var contactIds = new List<Guid>();
+            foreach (var yolvaEventsParticipantsLink in yolvaEventsParticipantsLinks)
+            {
+                if (yolvaEventsParticipantsLink.YolvaContact != null)
+                {
+                    contactIds.Add(yolvaEventsParticipantsLink.YolvaContact.Value);
+                }
+            }
+            var contactIdsDistinct = contactIds.Distinct();
+            _retrieveSqlQuery = SetQuery(contactIdsDistinct);
+        }
+
         public ContactRetriever(SqlConnection sqlConnection, IEnumerable<OpportunityLink> opportunityLinks) : base(sqlConnection)
         {
             var contactIds = new List<Guid>();
-
             foreach (var opportunityLink in opportunityLinks)
             {
                 if (opportunityLink.CmdsoftManagerProject != null)
@@ -42,15 +55,18 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     contactIds.Add(opportunityLink.McdsoftRefContact.Value);
                 }
             }
+            var contactIdsDistinct = contactIds.Distinct();
+            _retrieveSqlQuery = SetQuery(contactIdsDistinct);
+        }
 
-            var contactIdsDistinct = contactIds.Distinct().ToArray();
-
+        private string SetQuery(IEnumerable<Guid> contactIdsDistinct)
+        {
             var sb = new StringBuilder();
             sb.AppendLine("select c.ContactId, c.ParentCustomerId");
             sb.AppendLine(" from dbo.Contact as c");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", contactIdsDistinct);
             sb.AppendLine(where);
-            _retrieveSqlQuery = sb.ToString();
+            return sb.ToString();
         }
 
         public IEnumerable<ContactLink> Process()
