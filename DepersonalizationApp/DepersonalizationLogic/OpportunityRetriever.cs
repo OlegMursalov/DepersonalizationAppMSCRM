@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -25,6 +26,17 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
     public class OpportunityRetriever : Base<OpportunityLink>
     {
+        public OpportunityRetriever(SqlConnection sqlConnection, IEnumerable<Guid> opportunitiesIds) : base(sqlConnection)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("select opp.OpportunityId, opp.customerid, opp.cmdsoft_project_agency, opp.mcdsoft_ref_account, opp.cmdsoft_generalcontractor,");
+            sb.AppendLine(" opp.cmdsoft_Managerproject, opp.cmdsoft_Dealer, opp.cmdsoft_contact_project_agency, opp.mcdsoft_ref_contact");
+            sb.AppendLine(" from Opportunity as opp");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("opp.OpportunityId", opportunitiesIds);
+            sb.AppendLine(where);
+            _retrieveSqlQuery = sb.ToString();
+        }
+
         public OpportunityRetriever(SqlConnection sqlConnection) : base(sqlConnection)
         {
             var sb = new StringBuilder();

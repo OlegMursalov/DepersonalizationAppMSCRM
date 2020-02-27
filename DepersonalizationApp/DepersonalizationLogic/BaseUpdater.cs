@@ -24,19 +24,6 @@ namespace UpdaterApp.DepersonalizationLogic
         /// </summary>
         protected abstract Entity GetEntityForUpdate(T recordForUpdate);
 
-        protected IEnumerable<T> _allRetrievedEntities;
-        protected IEnumerable<T> _allUpdatesEntities;
-
-        /// <summary>
-        /// Возвращает все извлеченные записи после отработки Process
-        /// </summary>
-        public IEnumerable<T> AllRetrievedEntities => _allRetrievedEntities;
-
-        /// <summary>
-        /// Возвращает все обновленные записи после отработки Process
-        /// </summary>
-        public IEnumerable<T> AllUpdatesEntities => _allUpdatesEntities;
-
         public BaseUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
         {
         }
@@ -44,17 +31,18 @@ namespace UpdaterApp.DepersonalizationLogic
         /// <summary>
         /// Обновляет необезличенные записи через CRM сервис и возвращает IEnumerable<Guid> успшно обновленных записей
         /// </summary>
-        public void Process()
+        public IEnumerable<T> Process()
         {
             var entityName = typeof(T).Name;
-            _allRetrievedEntities = FastRetrieveAllItems();
-            if (_allRetrievedEntities != null && _allRetrievedEntities.Count() > 0)
+            var updatedList = new List<T>();
+            var allRetrievedEntities = FastRetrieveAllItems();
+            if (allRetrievedEntities != null && allRetrievedEntities.Count() > 0)
             {
-                var filteredEntities = GetOnlyUndepersonalizationEntities(_allRetrievedEntities);
+                var filteredEntities = GetOnlyUndepersonalizationEntities(allRetrievedEntities);
                 if (filteredEntities != null && filteredEntities.Count() > 0)
                 {
                     var changedEntities = ChangeByRules(filteredEntities);
-                    _allUpdatesEntities = UpdateAll(changedEntities);
+                    updatedList.AddRange(UpdateAll(changedEntities));
                 }
                 else
                 {
@@ -65,6 +53,7 @@ namespace UpdaterApp.DepersonalizationLogic
             {
                 _logger.Info($"Records '{entityName}' are not found for filtering by {_isDepersonalizationFieldName} field");
             }
+            return updatedList;
         }
 
         /// <summary>

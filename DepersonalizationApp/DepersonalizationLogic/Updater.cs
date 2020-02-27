@@ -21,15 +21,25 @@ namespace DepersonalizationApp.DepersonalizationLogic
         /// <summary>
         /// Обновление всех сущностей. Возвращает словарь из Guid'ов всех обновленных записей
         /// </summary>
-        public Dictionary<string, Guid[]> Execute()
+        public void Execute(Dictionary<string, Guid[]> allRetrieved)
         {
             var allUpdated = new Dictionary<string, Guid[]>();
 
-            // D. 1. Обновляем проекты
-            var opportunityUpdater = new OpportunityUpdater(_orgService, _sqlConnection);
-            opportunityUpdater.Process();
-            var allRetrievedOpportunityIds = opportunityUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
-            allUpdated.Add("opportunity", allRetrievedOpportunityIds);
+            foreach (var part in allRetrieved)
+            {
+                var entityName = part.Key;
+                var ids = part.Value;
+                if (entityName == "opportunity")
+                {
+                    var opportunityUpdater = new OpportunityUpdater(_orgService, _sqlConnection, ids);
+                    opportunityUpdater.Process();
+                }
+                if (entityName == "cmdsoft_part_of_owner")
+                {
+                    var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, ids);
+                    partOfOwnerUpdater.Process();
+                }
+            }
 
             // D. 2. Меняем связанные с изменяемыми проектами записи сущности «Доля ответственного» (cmdsoft_part_of_owner), 
             // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
@@ -37,8 +47,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
             if (allRetrievedOpportunityIds.Length > 0)
             {
-                var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, allRetrievedOpportunityIds);
-                partOfOwnerUpdater.Process();
+                
 
                 // 3. Продажи
                 // Меняем связанные с изменяемыми проектами записи сущности «Продажи»(cmdsoft_ordernav)по полю «Название проекта»(cmdsoft_ordernav.cmdsoft_navid).

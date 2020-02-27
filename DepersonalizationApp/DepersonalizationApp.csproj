@@ -100,6 +100,7 @@
     <Compile Include="DepersonalizationLogic\Deleter.cs" />
     <Compile Include="DepersonalizationLogic\McdsoftEventRetriever.cs" />
     <Compile Include="DepersonalizationLogic\McdsoftEventUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\McdsoftOrderLineNavRetriever.cs" />
     <Compile Include="DepersonalizationLogic\McdsoftSalesAppealRetriever.cs" />
     <Compile Include="DepersonalizationLogic\McdsoftSalesAppealUpdater.cs" />
     <Compile Include="DepersonalizationLogic\OpportunityRetriever.cs" />

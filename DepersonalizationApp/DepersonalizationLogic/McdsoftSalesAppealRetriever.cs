@@ -36,7 +36,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select sApp.mcdsoft_sales_appealId, sApp.mcdsoft_ref_contact, sApp.mcdsoft_ref_dealer_account,");
             sb.AppendLine(" sApp.mcdsoft_ref_account_client, sApp.mcdsoft_ref_account_asc, sApp.cmdsoft_ref_orderlinenav");
-            sb.AppendLine($" sApp.mcdsoft_ref_opportunity, sApp.mcdsoft_ref_orderlinenav, sApp.mcdsoft_ref_contact_asc, sApp.mcdsoft_ref_contact_asc");
+            sb.AppendLine($" sApp.mcdsoft_ref_opportunity, sApp.mcdsoft_ref_orderlinenav, sApp.mcdsoft_ref_contact_asc");
             sb.AppendLine(" from dbo.mcdsoft_sales_appeal as sApp");
             sb.AppendLine("  where sApp.mcdsoft_sales_appealId in (select sAppIn.mcdsoft_sales_appealId");
             sb.AppendLine("  from dbo.mcdsoft_sales_appeal as sAppIn");
@@ -56,7 +56,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
             return new McdsoftSalesAppealLink
             {
                 Id = (Guid)sqlReader.GetValue(0),
-                
+                McdsoftRefContact = sqlReader.GetValue(1) as Guid?,
+                McdsoftRefDealerAccount = sqlReader.GetValue(2) as Guid?,
+                McdsoftRefAccountClient = sqlReader.GetValue(3) as Guid?,
+                McdsoftRefAccountAsc = sqlReader.GetValue(4) as Guid?,
+                CmdsoftRefOrderlinenav = sqlReader.GetValue(5) as Guid?,
+                McdsoftRefOpportunity = sqlReader.GetValue(6) as Guid?,
+                McdsoftRefOrderlinenav = sqlReader.GetValue(7) as Guid?,
+                McdsoftRefContactAsc = sqlReader.GetValue(8) as Guid?
             };
         }
     }

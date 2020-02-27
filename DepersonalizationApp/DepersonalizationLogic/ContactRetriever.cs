@@ -19,6 +19,24 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class ContactRetriever : Base<ContactLink>
     {
+        public ContactRetriever(SqlConnection sqlConnection, IEnumerable<McdsoftSalesAppealLink> salesAppealLinks) : base(sqlConnection)
+        {
+            var contactIds = new List<Guid>();
+            foreach (var salesAppealLink in salesAppealLinks)
+            {
+                if (salesAppealLink.McdsoftRefContact != null)
+                {
+                    contactIds.Add(salesAppealLink.McdsoftRefContact.Value);
+                }
+                if (salesAppealLink.McdsoftRefContactAsc != null)
+                {
+                    contactIds.Add(salesAppealLink.McdsoftRefContactAsc.Value);
+                }
+            }
+            var contactIdsDistinct = contactIds.Distinct();
+            _retrieveSqlQuery = SetQuery(contactIdsDistinct);
+        }
+
         public ContactRetriever(SqlConnection sqlConnection, IEnumerable<YolvaEventsParticipantsLink> yolvaEventsParticipantsLinks) : base(sqlConnection)
         {
             var contactIds = new List<Guid>();

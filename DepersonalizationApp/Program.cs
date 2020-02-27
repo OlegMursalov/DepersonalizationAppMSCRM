@@ -32,12 +32,12 @@ namespace UpdaterApp
                             var sqlConnection = sqlConnectionState.SqlConnection;
 
                             // Извлечение
-                            var retriever = new Retriever(orgService, sqlConnection);
-                            var x = retriever.Process();
+                            var retriever = new Retriever(sqlConnection);
+                            var allRetrieved = retriever.Execute();
 
                             // Обновление
                             var updater = new Updater(orgService, sqlConnection);
-                            var allUpdated = updater.Execute();
+                            updater.Execute(allRetrieved);
 
                             // Удаление
                             var deleter = new Deleter(orgService, sqlConnection);
