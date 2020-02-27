@@ -8,38 +8,38 @@ using System.Text;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class ContactSimple
+    public class ContactLink
     {
-        public Guid ContactId { get; set; }
+        public Guid Id { get; set; }
         public Guid? ParentCustomerId { get; set; }
     }
 
     /// <summary>
     /// Извлекаем связанные с Opportunity контакты
     /// </summary>
-    public class ContactRetriever : Base<ContactSimple>
+    public class ContactRetriever : Base<ContactLink>
     {
-        public ContactRetriever(SqlConnection sqlConnection, IEnumerable<Opportunity> opportunities) : base(sqlConnection)
+        public ContactRetriever(SqlConnection sqlConnection, IEnumerable<OpportunityLink> opportunityLinks) : base(sqlConnection)
         {
             var contactIds = new List<Guid>();
 
-            foreach (var opportunity in opportunities)
+            foreach (var opportunityLink in opportunityLinks)
             {
-                if (opportunity.cmdsoft_Managerproject != null)
+                if (opportunityLink.CmdsoftManagerProject != null)
                 {
-                    contactIds.Add(opportunity.cmdsoft_Managerproject.Id);
+                    contactIds.Add(opportunityLink.CmdsoftManagerProject.Value);
                 }
-                if (opportunity.cmdsoft_Dealer != null)
+                if (opportunityLink.CmdsoftDealer != null)
                 {
-                    contactIds.Add(opportunity.cmdsoft_Dealer.Id);
+                    contactIds.Add(opportunityLink.CmdsoftDealer.Value);
                 }
-                if (opportunity.cmdsoft_contact_project_agency != null)
+                if (opportunityLink.CmdsoftContactProjectAgency != null)
                 {
-                    contactIds.Add(opportunity.cmdsoft_contact_project_agency.Id);
+                    contactIds.Add(opportunityLink.CmdsoftContactProjectAgency.Value);
                 }
-                if (opportunity.mcdsoft_ref_contact != null)
+                if (opportunityLink.McdsoftRefContact != null)
                 {
-                    contactIds.Add(opportunity.mcdsoft_ref_contact.Id);
+                    contactIds.Add(opportunityLink.McdsoftRefContact.Value);
                 }
             }
 
@@ -53,16 +53,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _retrieveSqlQuery = sb.ToString();
         }
 
-        public IEnumerable<ContactSimple> Process()
+        public IEnumerable<ContactLink> Process()
         {
             return FastRetrieveAllItems();
         }
 
-        protected override ContactSimple ConvertSqlDataReaderItem(SqlDataReader sqlReader)
+        protected override ContactLink ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            return new ContactSimple
+            return new ContactLink
             {
-                ContactId = (Guid)sqlReader.GetValue(0),
+                Id = (Guid)sqlReader.GetValue(0),
                 ParentCustomerId = sqlReader.GetValue(1) as Guid?
             };
         }

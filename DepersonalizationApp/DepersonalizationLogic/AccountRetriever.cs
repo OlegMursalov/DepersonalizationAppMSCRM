@@ -8,38 +8,38 @@ using System.Text;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class AccountSimple
+    public class AccountLink
     {
-        public Guid AccountId { get; set; }
+        public Guid Id { get; set; }
         public Guid? PrimaryContactId { get; set; }
     }
 
     /// <summary>
     /// Извлекаем связанные с Opportunity организации
     /// </summary>
-    public class AccountRetriever : Base<AccountSimple>
+    public class AccountRetriever : Base<AccountLink>
     {
-        public AccountRetriever(SqlConnection sqlConnection, IEnumerable<Opportunity> opportunities) : base(sqlConnection)
+        public AccountRetriever(SqlConnection sqlConnection, IEnumerable<OpportunityLink> opportunityLinks) : base(sqlConnection)
         {
             var accountIds = new List<Guid>();
 
-            foreach (var opportunity in opportunities)
+            foreach (var opportunityLink in opportunityLinks)
             {
-                if (opportunity.CustomerId != null)
+                if (opportunityLink.CustomerId != null)
                 {
-                    accountIds.Add(opportunity.CustomerId.Id);
+                    accountIds.Add(opportunityLink.CustomerId.Value);
                 }
-                if (opportunity.cmdsoft_project_agency != null)
+                if (opportunityLink.CmdsoftProjectAgency != null)
                 {
-                    accountIds.Add(opportunity.cmdsoft_project_agency.Id);
+                    accountIds.Add(opportunityLink.CmdsoftProjectAgency.Value);
                 }
-                if (opportunity.mcdsoft_ref_account != null)
+                if (opportunityLink.McdsoftRefAccount != null)
                 {
-                    accountIds.Add(opportunity.mcdsoft_ref_account.Id);
+                    accountIds.Add(opportunityLink.McdsoftRefAccount.Value);
                 }
-                if (opportunity.cmdsoft_GeneralContractor != null)
+                if (opportunityLink.CmdsoftGeneralContractor != null)
                 {
-                    accountIds.Add(opportunity.cmdsoft_GeneralContractor.Id);
+                    accountIds.Add(opportunityLink.CmdsoftGeneralContractor.Value);
                 }
             }
 
@@ -53,16 +53,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _retrieveSqlQuery = sb.ToString();
         }
 
-        public IEnumerable<AccountSimple> Process()
+        public List<AccountLink> Process()
         {
             return FastRetrieveAllItems();
         }
 
-        protected override AccountSimple ConvertSqlDataReaderItem(SqlDataReader sqlReader)
+        protected override AccountLink ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            return new AccountSimple
+            return new AccountLink
             {
-                AccountId = (Guid)sqlReader.GetValue(0),
+                Id = (Guid)sqlReader.GetValue(0),
                 PrimaryContactId = sqlReader.GetValue(1) as Guid?
             };
         }

@@ -31,6 +31,10 @@ namespace UpdaterApp
                             var orgService = (IOrganizationService)crmConnectionState.Proxy;
                             var sqlConnection = sqlConnectionState.SqlConnection;
 
+                            // Извлечение
+                            var retriever = new Retriever(orgService, sqlConnection);
+                            var x = retriever.Process();
+
                             // Обновление
                             var updater = new Updater(orgService, sqlConnection);
                             var allUpdated = updater.Execute();

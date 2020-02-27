@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -16,19 +18,20 @@ namespace DepersonalizationApp.Helpers
             return sb.ToString();
         }
 
-        public static string GetPartOfQueryWhereIn<T>(string column, T[] items)
+        public static string GetPartOfQueryWhereIn<T>(string column, IEnumerable<T> items)
         {
+            var array = items.ToArray();
             var sb = new StringBuilder();
             sb.AppendLine($" where {column} in (");
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < array.Length; i++)
             {
                 if (i == 0)
                 {
-                    sb.Append($"'{items[i]}'");
+                    sb.Append($"'{array[i]}'");
                 }
                 else
                 {
-                    sb.Append($", '{items[i]}'");
+                    sb.Append($", '{array[i]}'");
                 }
             }
             sb.Append(")");
