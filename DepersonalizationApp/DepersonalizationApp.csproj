@@ -124,6 +124,7 @@
     <Compile Include="DepersonalizationLogic\YolvaEventsParticipantsUpdater.cs" />
     <Compile Include="DepersonalizationLogic\YolvaSalespriceLineUpdater.cs" />
     <Compile Include="DepersonalizationLogic\YolvaSalespriceLineRetriever.cs" />
+    <Compile Include="Helpers\EnumerableDeviderHelper.cs" />
     <Compile Include="Helpers\CommonObjsHelper.cs" />
     <Compile Include="Helpers\RandomByMaskHelper.cs" />
     <Compile Include="Helpers\RandomEmailByMaskHelper.cs" />

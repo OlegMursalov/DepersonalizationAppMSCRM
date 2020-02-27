@@ -1,9 +1,11 @@
 ﻿using DepersonalizationApp.DepersonalizationLogic;
+using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace UpdaterApp.DepersonalizationLogic
 {
@@ -42,7 +44,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 if (filteredEntities != null && filteredEntities.Count() > 0)
                 {
                     var changedEntities = ChangeByRules(filteredEntities);
-                    updatedList.AddRange(UpdateAll(changedEntities));
+                    updatedList.AddRange(UpdateAllInParallel(changedEntities, 3));
                 }
                 else
                 {
@@ -85,6 +87,37 @@ namespace UpdaterApp.DepersonalizationLogic
         {
             entity[_isDepersonalizationFieldName] = true;
             return entity;
+        }
+
+        protected IEnumerable<T> UpdateAllInParallel(IEnumerable<T> entities, int amounOfTasks)
+        {
+            int i = 0;
+            var updatedList = new List<T>();
+            var tasks = new Task<IEnumerable<T>>[amounOfTasks];
+            var partsOfEntities = EnumerableDeviderHelper.Split<T>(entities.ToArray(), amounOfTasks);
+            foreach (var entitiesPart in partsOfEntities)
+            {
+                var task = new Task<IEnumerable<T>>(() =>
+                {
+                    return UpdateAll(entitiesPart);
+                });
+                task.Start();
+                tasks[i] = task;
+                i++;
+            }
+            Task.WaitAll(tasks);
+            for (int j = 0; j < tasks.Length; j++)
+            {
+                try
+                {
+                    updatedList.AddRange(tasks[j].Result);
+                }
+                catch (AggregateException aggrEx)
+                {
+                    _logger.Error($"UpdateAllInParallel error [{j}]", aggrEx);
+                }
+            }
+            return updatedList;
         }
 
         protected IEnumerable<T> UpdateAll(IEnumerable<T> entities)
