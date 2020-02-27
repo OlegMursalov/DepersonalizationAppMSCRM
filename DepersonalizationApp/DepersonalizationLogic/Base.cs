@@ -68,6 +68,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     sqlCommand.Dispose();
                 }
             }
+
+            if (items.Count > 0)
+            {
+                _logger.Info($"FastRetrieveAllItems - {items.Count} records of type '{typeof(T).Name}' are successful retrieved");
+            }
+
             return items;
         }
 
@@ -80,7 +86,6 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 while (true)
                 {
                     var items = ExecuteRetrieveAllItems(sqlQuery);
-                    _logger.Info($"FastRetrieveAllItems - {items.Count()} records of entity {typeof(T).Name} are successful retrieved");
                     allItems.AddRange(items);
                     if (items.Count() > 0)
                     {
