@@ -16,6 +16,16 @@ namespace DepersonalizationApp.DepersonalizationLogic
             _sqlConnection = sqlConnection;
         }
 
+        private Dictionary<string, List<Guid>> AllDistinct(Dictionary<string, List<Guid>> allRetrieved)
+        {
+            var allRetrievedDistinct = new Dictionary<string, List<Guid>>();
+            foreach (var item in allRetrieved)
+            {
+                allRetrievedDistinct.Add(item.Key, item.Value.Distinct().ToList());
+            }
+            return allRetrievedDistinct;
+        }
+
         private void ExecuteForOpportunity_Part1(Dictionary<string, List<Guid>> allRetrieved, IEnumerable<Guid> opportunityIds = null)
         {
             var opportunityRetriever = opportunityIds != null ? new OpportunityRetriever(_sqlConnection, opportunityIds) : new OpportunityRetriever(_sqlConnection);
@@ -227,7 +237,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
             ExecuteForMcdsoftSalesAppeal_Part3(allRetrieved);
 
-            return allRetrieved;
+            return AllDistinct(allRetrieved);
         }
     }
 }
