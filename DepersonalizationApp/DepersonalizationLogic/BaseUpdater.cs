@@ -44,7 +44,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 if (filteredEntities != null && filteredEntities.Count() > 0)
                 {
                     var changedEntities = ChangeByRules(filteredEntities);
-                    updatedList.AddRange(UpdateAllInParallel(changedEntities, 3));
+                    updatedList.AddRange(UpdateAll(changedEntities));
                 }
                 else
                 {
