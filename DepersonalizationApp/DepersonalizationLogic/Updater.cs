@@ -44,14 +44,14 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 // Меняем связанные с изменяемыми проектами записи сущности «Продажи»(cmdsoft_ordernav)по полю «Название проекта»(cmdsoft_ordernav.cmdsoft_navid).
                 var orderNavUpdater = new CmdsoftOrderNavUpdater(_orgService, _sqlConnection, allRetrievedOpportunityIds);
                 orderNavUpdater.Process();
-                var orderNavUpdatedIds = orderNavUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
+                var orderNavRetrievedIds = orderNavUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
 
                 // 4. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
                 // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
                 // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
-                if (orderNavUpdatedIds.Length > 0)
+                if (orderNavRetrievedIds.Length > 0)
                 {
-                    var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavUpdatedIds);
+                    var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavRetrievedIds);
                     orderlineNavUpdater.Process();
                 }
 
@@ -99,22 +99,22 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 // Поля не меняем.
                 var specificationUpdater = new CmdsoftSpecificationUpdater(_orgService, _sqlConnection, allRetrievedOpportunityIds);
                 specificationUpdater.Process();
-                var updatedSpecificationIds = specificationUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
+                var retrievedSpecificationIds = specificationUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
 
                 // 8. Состав спецификации»(cmdsoft_listspecification)
                 // Меняем связанные с изменяемыми записями «спецификация» записи сущности «Состав спецификации»(cmdsoft_listspecification), 
                 // связь по полю «Спецификация(Состав спецификации)» (cmdsoft_listspecification.cmdsoft_specification).
                 // Поля не меняем.
-                if (updatedSpecificationIds.Length > 0)
+                if (retrievedSpecificationIds.Length > 0)
                 {
-                    var listSpecificationUpdater = new CmdsoftListSpecificationUpdater(_orgService, _sqlConnection, updatedSpecificationIds);
+                    var listSpecificationUpdater = new CmdsoftListSpecificationUpdater(_orgService, _sqlConnection, retrievedSpecificationIds);
                     listSpecificationUpdater.Process();
 
                     // 9. «Коммерческой предложение»(cmdsoft_offer)
                     // Меняем связанные с изменяемыми записями «спецификация» записи сущности «Коммерческой предложение»(cmdsoft_offer), 
                     // связь по полю «Спецификация(Коммерческой предложение)» (cmdsoft_offer.mcdsoft_offer2).
                     // Очистить поле «Прочие условия», все остальные поля не меняем.
-                    var offerUpdater = new CmdsoftOfferUpdater(_orgService, _sqlConnection, updatedSpecificationIds);
+                    var offerUpdater = new CmdsoftOfferUpdater(_orgService, _sqlConnection, retrievedSpecificationIds);
                     offerUpdater.Process();
 
                     var allRetrievedSpecifications = specificationUpdater.AllRetrievedEntities;
@@ -126,15 +126,15 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     var salespricenavIds = allRetrievedSpecifications.Where(e => e.yolva_salespricenav != null).Select(e => e.yolva_salespricenav.Id).ToArray();
                     var yolvaSalespriceUpdater = new YolvaSalespriceUpdater(_orgService, _sqlConnection, salespricenavIds);
                     yolvaSalespriceUpdater.Process();
-                    var updatedYolvaSalespriceIds = yolvaSalespriceUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
+                    var retrievedYolvaSalespriceIds = yolvaSalespriceUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
 
                     // 11. «Строка Прайс-Листа»(yolva_salespriceline)
                     // Меняем связанные с изменяемыми записями «Прайс - лист NAV» записи сущности «Строка Прайс-Листа»(yolva_salespriceline), 
                     // связь по полю «Прайс - лист(Строка Прайс - Листа)»(yolva_salespriceline.yolva_salespriceid).
                     // Меняем только поле «Сумма»(yolva_salespriceline.yolva_amount) = Random(число с плавающей точкой, точность – 2, значения 1000 - 1000)
-                    if (updatedYolvaSalespriceIds.Length > 0)
+                    if (retrievedYolvaSalespriceIds.Length > 0)
                     {
-                        var yolvaSalespriceLineUpdater = new YolvaSalespriceLineUpdater(_orgService, _sqlConnection, updatedYolvaSalespriceIds);
+                        var yolvaSalespriceLineUpdater = new YolvaSalespriceLineUpdater(_orgService, _sqlConnection, retrievedYolvaSalespriceIds);
                         yolvaSalespriceLineUpdater.Process();
                     }
                 }
@@ -157,7 +157,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             // Берем последние по дате создания(поле «СreatedOn»)  500 записей сущности «Сервисное обращение»(mcdsoft_sales_appeal), и «обезличиваем» по заданному алгоритму ниже.
             var salesAppealUpdater = new McdsoftSalesAppealUpdater(_orgService, _sqlConnection);
             salesAppealUpdater.Process();
-
+            
             return allUpdated;
         }
     }
