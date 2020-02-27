@@ -9,7 +9,7 @@ namespace DepersonalizationApp.Helpers
         {
             for (var i = 0; i < (float)array.Length / size; i++)
             {
-                yield return array.Skip(i * size).Take(size);
+                yield return array.Skip(i * size).Take(size).ToArray();
             }
         }
     }

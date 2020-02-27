@@ -44,7 +44,7 @@ namespace UpdaterApp.DepersonalizationLogic
                 if (filteredEntities != null && filteredEntities.Count() > 0)
                 {
                     var changedEntities = ChangeByRules(filteredEntities);
-                    updatedList.AddRange(UpdateAllInParallel(changedEntities, 3));
+                    updatedList.AddRange(UpdateAll(changedEntities));
                 }
                 else
                 {
@@ -93,8 +93,9 @@ namespace UpdaterApp.DepersonalizationLogic
         {
             int i = 0;
             var updatedList = new List<T>();
-            var tasks = new Task<IEnumerable<T>>[amounOfTasks];
-            var partsOfEntities = EnumerableDeviderHelper.Split<T>(entities.ToArray(), amounOfTasks);
+            var inputEntities = entities.ToArray();
+            var partsOfEntities = EnumerableDeviderHelper.Split<T>(inputEntities, inputEntities.Length / amounOfTasks);
+            var tasks = new Task<IEnumerable<T>>[partsOfEntities.Count()];
             foreach (var entitiesPart in partsOfEntities)
             {
                 var task = new Task<IEnumerable<T>>(() =>
