@@ -21,7 +21,6 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine(" from Opportunity as opp");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("opp.OpportunityId", ids);
             sb.AppendLine(where);
-            sb.AppendLine(" where opp.OpportunityId in ");
             _retrieveSqlQuery = sb.ToString();
         }
 

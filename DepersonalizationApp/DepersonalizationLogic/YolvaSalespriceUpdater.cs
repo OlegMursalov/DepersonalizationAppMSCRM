@@ -14,12 +14,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class YolvaSalespriceUpdater : BaseUpdater<yolva_salesprice>
     {
-        public YolvaSalespriceUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] specificationIds) : base(orgService, sqlConnection)
+        public YolvaSalespriceUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"select ySlPrc.yolva_salespriceId, ySlPrc.yolva_description, ySlPrc.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from yolva_salesprice as ySlPrc");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ySlPrc.yolva_salespriceId", specificationIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ySlPrc.yolva_salespriceId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

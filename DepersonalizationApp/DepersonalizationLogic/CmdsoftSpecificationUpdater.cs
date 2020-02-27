@@ -14,12 +14,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class CmdsoftSpecificationUpdater : BaseUpdater<cmdsoft_specification>
     {
-        public CmdsoftSpecificationUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
+        public CmdsoftSpecificationUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"select sp.cmdsoft_specificationId, sp.yolva_salespricenav, sp.{_isDepersonalizationFieldName}");
+            sb.AppendLine($"select sp.cmdsoft_specificationId, sp.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_specification as sp");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("sp.cmdsoft_spprojectnumber", opprotunityIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("sp.cmdsoft_specificationId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
@@ -29,13 +29,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var cmdsoft_specification = new cmdsoft_specification
             {
                 Id = (Guid)sqlReader.GetValue(0),
-                yolva_is_depersonalized = sqlReader.GetValue(2) as bool?
+                yolva_is_depersonalized = sqlReader.GetValue(1) as bool?
             };
-            var yolva_salespricenavId = sqlReader.GetValue(1) as Guid?;
-            if (yolva_salespricenavId != null)
-            {
-                cmdsoft_specification.yolva_salespricenav = new EntityReference("yolva_salesprice", yolva_salespricenavId.Value);
-            }
             return cmdsoft_specification;
         }
 

@@ -1,4 +1,5 @@
 ﻿using CRMEntities;
+using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class McdsoftEventUpdater : BaseUpdater<mcdsoft_event>
     {
-        public McdsoftEventUpdater(IOrganizationService orgService, SqlConnection sqlConnection) : base(orgService, sqlConnection)
+        public McdsoftEventUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"select ev.mcdsoft_eventId, ev.new_expenses, ev.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.mcdsoft_event as ev");
-            sb.AppendLine(" where ev.mcdsoft_eventId in (select evIn.mcdsoft_eventId");
-            sb.AppendLine("  from dbo.mcdsoft_event as evIn");
-            sb.AppendLine("  order by evIn.CreatedOn desc");
-            sb.AppendLine("  offset 0 rows");
-            sb.AppendLine("  fetch next 500 rows only)");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ev.mcdsoft_eventId", ids);
+            sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
 

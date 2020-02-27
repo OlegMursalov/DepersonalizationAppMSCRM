@@ -8,7 +8,7 @@ namespace DepersonalizationApp.Helpers
 {
     public static class SqlQueryHelper
     {
-        public static string GetQueryOfActivityGuidsByRegardingObjectIds(string tableName, Guid[] regardingObjectIds)
+        public static string GetQueryOfActivityGuidsByRegardingObjectIds(string tableName, IEnumerable<Guid> regardingObjectIds)
         {
             var sb = new StringBuilder();
             sb.AppendLine("select distinct item.ActivityId");

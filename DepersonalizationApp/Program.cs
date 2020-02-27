@@ -38,7 +38,7 @@ namespace UpdaterApp
                             // Обновление
                             var updater = new Updater(orgService, sqlConnection);
                             var allUpdated = updater.Execute(allRetrieved);
-
+                            
                             // Удаление
                             var deleter = new Deleter(orgService, sqlConnection);
                             deleter.Execute(allUpdated);

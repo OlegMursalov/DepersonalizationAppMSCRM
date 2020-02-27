@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace DepersonalizationApp.DepersonalizationLogic
@@ -11,9 +12,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         private IOrganizationService _orgService;
         private SqlConnection _sqlConnection;
-        private Guid[] _regardingObjectIds;
+        private IEnumerable<Guid> _regardingObjectIds;
 
-        public RelatedActivityDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] regardingObjectIds)
+        public RelatedActivityDeleter(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> regardingObjectIds)
         {
             _orgService = orgService;
             _sqlConnection = sqlConnection;

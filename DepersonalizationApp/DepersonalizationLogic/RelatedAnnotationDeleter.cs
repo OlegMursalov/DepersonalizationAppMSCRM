@@ -2,6 +2,7 @@
 using DepersonalizationApp.Helpers;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class RelatedAnnotationDeleter : BaseDeleter<Annotation>
     {
-        public RelatedAnnotationDeleter(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] objectIds) : base(orgService, sqlConnection)
+        public RelatedAnnotationDeleter(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> objectIds) : base(orgService, sqlConnection)
         {
             _entityLogicalName = "annotation";
             var sb = new StringBuilder();

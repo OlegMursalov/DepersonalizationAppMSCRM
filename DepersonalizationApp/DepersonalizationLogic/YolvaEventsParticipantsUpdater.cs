@@ -16,12 +16,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         private static int _globalCounterBySessionApp = 1;
 
-        public YolvaEventsParticipantsUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] mcdsoftEventIds) : base(orgService, sqlConnection)
+        public YolvaEventsParticipantsUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"select evPart.yolva_events_participantsId, evPart.yolva_name, evPart.yolva_contact, evPart.yolva_organization, evPart.{_isDepersonalizationFieldName}");
+            sb.AppendLine($"select evPart.yolva_events_participantsId, evPart.yolva_name, evPart.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from yolva_events_participants as evPart");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("evPart.yolva_event", mcdsoftEventIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("evPart.yolva_events_participantsId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
@@ -42,18 +42,8 @@ namespace DepersonalizationApp.DepersonalizationLogic
             {
                 Id = (Guid)sqlReader.GetValue(0),
                 yolva_name = sqlReader.GetValue(1) as string,
-                yolva_is_depersonalized = sqlReader.GetValue(4) as bool?
+                yolva_is_depersonalized = sqlReader.GetValue(2) as bool?
             };
-            var yolva_contactId = sqlReader.GetValue(2) as Guid?;
-            if (yolva_contactId != null)
-            {
-                yolva_events_participants.yolva_contact = new EntityReference("contact", yolva_contactId.Value);
-            }
-            var yolva_organizationId = sqlReader.GetValue(3) as Guid?;
-            if (yolva_organizationId != null)
-            {
-                yolva_events_participants.yolva_organization = new EntityReference("account", yolva_organizationId.Value);
-            }
             return yolva_events_participants;
         }
 

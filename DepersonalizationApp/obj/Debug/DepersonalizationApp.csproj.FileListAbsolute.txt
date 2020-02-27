@@ -21,4 +21,3 @@ C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\De
 C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.runner.visualstudio.testadapter.dll
 C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.runner.reporters.net452.dll
 C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\bin\Debug\xunit.runner.utility.net452.dll
-C:\Users\omursalov\source\repos\DepersonalizationApp\DepersonalizationApp\obj\Debug\DepersonalizationApp.csprojAssemblyReference.cache

@@ -14,12 +14,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class CmdsoftListSpecificationUpdater : BaseUpdater<cmdsoft_listspecification>
     {
-        public CmdsoftListSpecificationUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] specificationIds) : base(orgService, sqlConnection)
+        public CmdsoftListSpecificationUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"select listSp.cmdsoft_listspecificationId, listSp.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_listspecification as listSp");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("listSp.cmdsoft_specification", specificationIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("listSp.cmdsoft_listspecificationId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

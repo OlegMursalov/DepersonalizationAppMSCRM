@@ -19,7 +19,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         /// <summary>
         /// Удаление всего, что нужно
         /// </summary>
-        public void Execute(Dictionary<string, Guid[]> data)
+        public void Execute(Dictionary<string, IEnumerable<Guid>> data)
         {
             foreach (var item in data)
             {
