@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
         private void ExecuteForOpportunity_Part1(Dictionary<string, List<Guid>> allRetrieved, IEnumerable<Guid> opportunityIds = null)
         {
-            var opportunityRetriever = opportunityIds != null ? new OpportunityRetriever(_sqlConnection) : new OpportunityRetriever(_sqlConnection, opportunityIds);
+            var opportunityRetriever = opportunityIds != null ? new OpportunityRetriever(_sqlConnection, opportunityIds) : new OpportunityRetriever(_sqlConnection);
             var retrievedOpportunityLinks = opportunityRetriever.Process();
 
             if (retrievedOpportunityLinks != null && retrievedOpportunityLinks.Count() > 0)
