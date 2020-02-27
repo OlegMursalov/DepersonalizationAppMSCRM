@@ -23,7 +23,7 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine("  from dbo.Opportunity as oppIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("oppIn.OpportunityId", ids);
             sb.AppendLine(where);
-            var pagination = SqlQueryHelper.GetPagination("oppIn.CreatedOn", "desc", 0, 250);
+            var pagination = SqlQueryHelper.GetPagination("oppIn.CreatedOn", "desc", 0, 500);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
