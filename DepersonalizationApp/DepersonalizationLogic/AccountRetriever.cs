@@ -90,7 +90,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("  from dbo.Account as accIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("accIn.AccountId", accountIdsDistinct);
             sb.AppendLine(where);
-            var pagination = SqlQueryHelper.GetPagination("accIn.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("accIn.CreatedOn", "desc", 0, 250);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             return sb.ToString();

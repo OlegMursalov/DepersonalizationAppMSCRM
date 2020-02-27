@@ -19,8 +19,13 @@ namespace UpdaterApp.DepersonalizationLogic
             sb.AppendLine("select opp.OpportunityId, opp.mcdsoft_discount, opp.cmdsoft_standartdiscount, opp.mcdsoft_standartdiscount_chiller,");
             sb.AppendLine($" opp.cmdsoft_warranty, opp.cmdsoft_Result, opp.mcdsoft_reason_for_the_loss, opp.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from Opportunity as opp");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("opp.OpportunityId", ids);
+            sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
+            sb.AppendLine("  from dbo.Opportunity as oppIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("oppIn.OpportunityId", ids);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("oppIn.CreatedOn", "desc", 0, 250);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 

@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("  from dbo.yolva_salespriceline as ySlPrcLineIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("ySlPrcLineIn.yolva_salespriceid", yolvaSalesPriceIds);
             sb.AppendLine(where);
-            var pagination = SqlQueryHelper.GetPagination("ySlPrcLineIn.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("ySlPrcLineIn.CreatedOn", "desc", 0, 250);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();

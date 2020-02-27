@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("  from dbo.cmdsoft_listspecification as listSpIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("listSpIn.cmdsoft_specification", specificationIds);
             sb.AppendLine(where);
-            var pagination = SqlQueryHelper.GetPagination("listSpIn.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("listSpIn.CreatedOn", "desc", 0, 250);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();

@@ -50,15 +50,31 @@ namespace DepersonalizationApp.Helpers
         public static int GetOffsetNumber(string query)
         {
             var array = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var parts = array[array.Length - 2].Trim().Split(new[] { ' ' });
-            return int.Parse(parts[1]);
+            var offsetPartStr = array.FirstOrDefault(e => e.IndexOf("offset") != -1);
+            if (!string.IsNullOrEmpty(offsetPartStr))
+            {
+                var parts = offsetPartStr.Trim().Split(new[] { ' ' });
+                return int.Parse(parts[1]);
+            }
+            else
+            {
+                throw new ArgumentException("Query doesn't have 'offset' parameter");
+            }
         }
 
         public static int GetFetchNumber(string query)
         {
             var array = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var parts = array[array.Length - 1].Trim().Split(new[] { ' ' });
-            return int.Parse(parts[2]);
+            var fetchPartStr = array.FirstOrDefault(e => e.IndexOf("fetch") != -1);
+            if (!string.IsNullOrEmpty(fetchPartStr))
+            {
+                var parts = fetchPartStr.Trim().Split(new[] { ' ' });
+                return int.Parse(parts[2]);
+            }
+            else
+            {
+                throw new ArgumentException("Query doesn't have 'fetch' parameter");
+            }
         }
 
         public static string ChangeSqlQueryPagination(string query, int offset, int fetchNext)

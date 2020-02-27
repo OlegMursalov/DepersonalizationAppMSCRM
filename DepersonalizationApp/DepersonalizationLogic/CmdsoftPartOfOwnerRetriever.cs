@@ -18,7 +18,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine("  from dbo.cmdsoft_part_of_owner as partOwnIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("partOwnIn.cmdsoft_ref_opportunity", opprotunityIds);
             sb.AppendLine(where);
-            var pagination = SqlQueryHelper.GetPagination("partOwnIn.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("partOwnIn.CreatedOn", "desc", 0, 250);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();

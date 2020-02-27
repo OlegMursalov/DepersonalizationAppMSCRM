@@ -231,11 +231,11 @@ namespace DepersonalizationApp.DepersonalizationLogic
             allRetrieved.Add("yolva_events_participants", new List<Guid>());
             allRetrieved.Add("mcdsoft_sales_appeal", new List<Guid>());
 
-            // ExecuteForOpportunity_Part1(allRetrieved);
+            ExecuteForOpportunity_Part1(allRetrieved);
 
-            ExecuteForMcdsoftEvent_Part2(allRetrieved);
+            // ExecuteForMcdsoftEvent_Part2(allRetrieved);
 
-            ExecuteForMcdsoftSalesAppeal_Part3(allRetrieved);
+            // ExecuteForMcdsoftSalesAppeal_Part3(allRetrieved);
 
             return AllDistinct(allRetrieved);
         }

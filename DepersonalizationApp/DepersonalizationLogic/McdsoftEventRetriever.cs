@@ -16,7 +16,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine(" from dbo.mcdsoft_event as ev");
             sb.AppendLine(" where ev.mcdsoft_eventId in (select evIn.mcdsoft_eventId");
             sb.AppendLine("  from dbo.mcdsoft_event as evIn");
-            var pagination = SqlQueryHelper.GetPagination("evIn.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("evIn.CreatedOn", "desc", 0, 250);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();

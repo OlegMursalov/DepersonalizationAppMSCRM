@@ -41,7 +41,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine(" from dbo.mcdsoft_sales_appeal as sApp");
             sb.AppendLine("  where sApp.mcdsoft_sales_appealId in (select sAppIn.mcdsoft_sales_appealId");
             sb.AppendLine("  from dbo.mcdsoft_sales_appeal as sAppIn");
-            var pagination = SqlQueryHelper.GetPagination("sAppIn.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("sAppIn.CreatedOn", "desc", 0, 250);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
