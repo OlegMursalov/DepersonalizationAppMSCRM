@@ -92,6 +92,8 @@
     <Compile Include="DepersonalizationLogic\ContactRetriever.cs" />
     <Compile Include="DepersonalizationLogic\ContactUpdater.cs" />
     <Compile Include="DepersonalizationLogic\Deleter.cs" />
+    <Compile Include="DepersonalizationLogic\McdsoftEventUpdater.cs" />
+    <Compile Include="DepersonalizationLogic\McdsoftSalesAppealUpdater.cs" />
     <Compile Include="DepersonalizationLogic\RelatedActivityDeleter.cs" />
     <Compile Include="DepersonalizationLogic\RelatedAnnotationDeleter.cs" />
     <Compile Include="DepersonalizationLogic\Base.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="DepersonalizationLogic\CmdsoftOrderNavUpdater.cs" />
     <Compile Include="DepersonalizationLogic\CmdsoftListSpecificationUpdater.cs" />
     <Compile Include="DepersonalizationLogic\Updater.cs" />
+    <Compile Include="DepersonalizationLogic\YolvaEventsParticipantsUpdater.cs" />
     <Compile Include="DepersonalizationLogic\YolvaSalespriceLineUpdater.cs" />
     <Compile Include="Helpers\CommonObjsHelper.cs" />
     <Compile Include="Helpers\RandomByMaskHelper.cs" />

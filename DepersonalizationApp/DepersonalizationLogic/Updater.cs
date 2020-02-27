@@ -35,7 +35,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
             // В изменяемых записях меняем значения поля «Доля %»(cmdsoft_part) = Random(Тип - integer, 0 - 100), 
             // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
-            if (allRetrievedOpportunityIds.Count() > 0)
+            if (allRetrievedOpportunityIds.Length > 0)
             {
                 var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, allRetrievedOpportunityIds);
                 partOfOwnerUpdater.Process();
@@ -139,6 +139,24 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     }
                 }
             }
+
+            // 12. «Мероприятия»(mcdsoft_event)
+            // Берем последние по дате создания(поле «СreatedOn») 500 записей сущности «Мероприятие»(mcdsoft_event), и «обезличиваем» по заданному алгоритму ниже.
+            var eventUpdater = new McdsoftEventUpdater(_orgService, _sqlConnection);
+            eventUpdater.Process();
+            var allRetrievedMcdsoftEventIds = eventUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
+
+            // В связанных записях сущности «участник мероприятия», по полю «Мероприятие(участник мероприятия)»(yolva_events_participants.yolva_event), поменять поля...
+            if (allRetrievedMcdsoftEventIds.Length > 0)
+            {
+                var eventsParticipantsUpdater = new YolvaEventsParticipantsUpdater(_orgService, _sqlConnection, allRetrievedMcdsoftEventIds);
+                eventsParticipantsUpdater.Process();
+            }
+
+            // 14. «Сервисное обращение»(mcdsoft_sales_appeal)
+            // Берем последние по дате создания(поле «СreatedOn»)  500 записей сущности «Сервисное обращение»(mcdsoft_sales_appeal), и «обезличиваем» по заданному алгоритму ниже.
+            var salesAppealUpdater = new McdsoftSalesAppealUpdater(_orgService, _sqlConnection);
+            salesAppealUpdater.Process();
 
             return allUpdated;
         }

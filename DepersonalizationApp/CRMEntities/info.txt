@@ -1,1 +1,1 @@
-﻿CrmSvcUtil.exe /url:"https://mitsubishidev.yolva-it.ru:5555/MitsubishiElectric/XRMServices/2011/Organization.svc" /out:Entities.cs /namespace:CRMEntities /username:omursalov /password:******* /domain:testcrm /serviceContextName:OrganizationServiceCtx
+﻿CrmSvcUtil.exe /url:"https://mitsubishidev.yolva-it.ru:5555/MitsubishiElectric/XRMServices/2011/Organization.svc" /out:Entities.cs /namespace:CRMEntities /username:omursalov /password:***** /domain:testcrm /serviceContextName:OrganizationServiceCtx
