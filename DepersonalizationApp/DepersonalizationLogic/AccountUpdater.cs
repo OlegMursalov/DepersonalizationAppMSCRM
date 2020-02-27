@@ -14,13 +14,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         private static int _globalCounterBySessionApp = 1;
 
-        public AccountUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] accountIds) : base(orgService, sqlConnection)
+        public AccountUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine("select acc.AccountId, acc.Name, acc.Telephone1, acc.EMailAddress1, acc.WebSiteURL,");
             sb.AppendLine($" acc.Address1_PostalCode, acc.Description, acc.cmdsoft_inn, acc.ParentAccountId, acc.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.Account as acc");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", accountIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("acc.AccountId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
@@ -37,7 +37,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 Address1_PostalCode = sqlReader.GetValue(5) as string,
                 Description = sqlReader.GetValue(6) as string,
                 cmdsoft_inn = sqlReader.GetValue(7) as string,
-                yolva_is_depersonalized = sqlReader.GetValue(8) as bool?
+                yolva_is_depersonalized = sqlReader.GetValue(9) as bool?
             };
             var parentAccountId = sqlReader.GetValue(8) as Guid?;
             if (parentAccountId != null)

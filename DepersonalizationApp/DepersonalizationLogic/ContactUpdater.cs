@@ -11,12 +11,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
 {
     public class ContactUpdater : BaseUpdater<Contact>
     {
-        public ContactUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] contactIds) : base(orgService, sqlConnection)
+        public ContactUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"select c.ContactId, c.FirstName, c.LastName, c.MiddleName, c.mcdsoft_contactnumber, c.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.Contact as c");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", contactIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

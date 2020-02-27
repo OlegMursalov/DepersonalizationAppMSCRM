@@ -16,13 +16,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
     {
         private static int _globalCounterBySessionApp = 1;
 
-        public CmdsoftOrderNavUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
+        public CmdsoftOrderNavUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine("select ordNav.cmdsoft_ordernavId, ordNav.cmdsoft_namecustomotgr, ordNav.cmdsoft_namecustomsales, ordNav.cmdsoft_namecustomorder,");
             sb.AppendLine($" ordNav.cmdsoft_totalamount, ordNav.cmdsoft_totamontvat, ordNav.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_ordernav as ordNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_navid", opprotunityIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("ordNav.cmdsoft_ordernavId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

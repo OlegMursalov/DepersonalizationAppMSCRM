@@ -14,13 +14,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class CmdsoftOrderlineNavUpdater : BaseUpdater<cmdsoft_orderlinenav>
     {
-        public CmdsoftOrderlineNavUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] orderNavUpdatedIds) : base(orgService, sqlConnection)
+        public CmdsoftOrderlineNavUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId, orLnNav.mcdsoft_price_discount_with_VAT, orLnNav.mcdsoft_price_discount_without_VAT,");
             sb.AppendLine($" orLnNav.mcdsoft_price_without_vat, orLnNav.cmdsoft_amountsalesvat, orLnNav.cmdsoft_amountsale, orLnNav.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_navid", orderNavUpdatedIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_orderlinenavId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }

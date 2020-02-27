@@ -197,7 +197,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 var mcdsoftRefOrderlinenavIds = retrievedSalesAppealLinks.Where(e => e.McdsoftRefOrderlinenav != null).Select(e => e.McdsoftRefOrderlinenav.Value).Distinct();
                 if (mcdsoftRefOrderlinenavIds != null && mcdsoftRefOrderlinenavIds.Count() > 0)
                 {
-                    
+                    // Надо добивать
                 }
             }
         }

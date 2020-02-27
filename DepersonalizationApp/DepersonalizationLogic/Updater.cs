@@ -21,76 +21,55 @@ namespace DepersonalizationApp.DepersonalizationLogic
         /// <summary>
         /// Обновление всех сущностей. Возвращает словарь из Guid'ов всех обновленных записей
         /// </summary>
-        public void Execute(Dictionary<string, Guid[]> allRetrieved)
+        public Dictionary<string, IEnumerable<Guid>> Execute(Dictionary<string, IEnumerable<Guid>> allRetrieved)
         {
-            var allUpdated = new Dictionary<string, Guid[]>();
+            var allUpdated = new Dictionary<string, IEnumerable<Guid>>();
 
-            foreach (var part in allRetrieved)
+            if (allRetrieved.ContainsKey("opportunity"))
             {
-                var entityName = part.Key;
-                var ids = part.Value;
-                if (entityName == "opportunity")
-                {
-                    var opportunityUpdater = new OpportunityUpdater(_orgService, _sqlConnection, ids);
-                    opportunityUpdater.Process();
-                }
-                if (entityName == "cmdsoft_part_of_owner")
-                {
-                    var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, ids);
-                    partOfOwnerUpdater.Process();
-                }
+                var opportunityUpdater = new OpportunityUpdater(_orgService, _sqlConnection, allRetrieved["opportunity"]);
+                var updatedOpportunities = opportunityUpdater.Process();
+                allUpdated.Add("opportunity", updatedOpportunities.Select(e => e.Id));
+            }
+            if (allRetrieved.ContainsKey("cmdsoft_part_of_owner"))
+            {
+                var partOfOwnerUpdater = new CmdsoftPartOfOwnerUpdater(_orgService, _sqlConnection, allRetrieved["cmdsoft_part_of_owner"]);
+                var updatedPartOfOwners = partOfOwnerUpdater.Process();
+                allUpdated.Add("cmdsoft_part_of_owner", updatedPartOfOwners.Select(e => e.Id));
+            }
+            if (allRetrieved.ContainsKey("cmdsoft_ordernav"))
+            {
+                var cmdsoftOrderNavUpdater = new CmdsoftOrderNavUpdater(_orgService, _sqlConnection, allRetrieved["cmdsoft_ordernav"]);
+                var updatedCmdsoftOrderNavs = cmdsoftOrderNavUpdater.Process();
+                allUpdated.Add("cmdsoft_ordernav", updatedCmdsoftOrderNavs.Select(e => e.Id));
+            }
+            if (allRetrieved.ContainsKey("cmdsoft_orderlinenav"))
+            {
+                var cmdsoftOrderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, allRetrieved["cmdsoft_orderlinenav"]);
+                var updatedCmdsoftOrderlineNavs = cmdsoftOrderlineNavUpdater.Process();
+                allUpdated.Add("cmdsoft_orderlinenav", updatedCmdsoftOrderlineNavs.Select(e => e.Id));
+            }
+            if (allRetrieved.ContainsKey("account"))
+            {
+                var accountUpdater = new AccountUpdater(_orgService, _sqlConnection, allRetrieved["account"]);
+                var updatedAccounts = accountUpdater.Process();
+                allUpdated.Add("account", updatedAccounts.Select(e => e.Id));
+            }
+            if (allRetrieved.ContainsKey("contact"))
+            {
+                var contactUpdater = new ContactUpdater(_orgService, _sqlConnection, allRetrieved["contact"]);
+                var updatedContacts = contactUpdater.Process();
+                allUpdated.Add("contact", updatedContacts.Select(e => e.Id));
+            }
+            if ()
+            {
+
             }
 
-            // D. 2. Меняем связанные с изменяемыми проектами записи сущности «Доля ответственного» (cmdsoft_part_of_owner), 
-            // связь по полю cmdsoft_part_of_owner.cmdsoft_ref_opportunity:
-            // В изменяемых записях меняем значения поля «Доля %»(cmdsoft_part) = Random(Тип - integer, 0 - 100), 
-            // таким образом, чтобы по каждому проекту сумма Полей «Доля» СУММА(cmdsoft_part_of_owner.cmdsoft_part по каждому проекту) = 100.
-            if (allRetrievedOpportunityIds.Length > 0)
-            {
-                
+            return allUpdated;
 
-                // 3. Продажи
-                // Меняем связанные с изменяемыми проектами записи сущности «Продажи»(cmdsoft_ordernav)по полю «Название проекта»(cmdsoft_ordernav.cmdsoft_navid).
-                var orderNavUpdater = new CmdsoftOrderNavUpdater(_orgService, _sqlConnection, allRetrievedOpportunityIds);
-                orderNavUpdater.Process();
-                var orderNavRetrievedIds = orderNavUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray();
 
-                // 4. Меняем связанные с изменяемыми проектами записи сущности Составы продаж (cmdsoft_orderlinenav), меняем поля:
-                // С каждой записью «Составы продаж», взять Var_Rand_n = Random(Тип – Целое число, 0 - 9) и поделить все 
-                // изменяемые поля на это число(важно, чтобы случайное число у каждой отдельной записи «Состава продаж» было одно)...
-                if (orderNavRetrievedIds.Length > 0)
-                {
-                    var orderlineNavUpdater = new CmdsoftOrderlineNavUpdater(_orgService, _sqlConnection, orderNavRetrievedIds);
-                    orderlineNavUpdater.Process();
-                }
 
-                var allRetrievedOpportunities = opportunityUpdater.AllRetrievedEntities;
-
-                // Сущности Проекты (Opportunity), организации (Account) и контакты (Contact) перевязаны друг с другом, достаем разницу
-                var accountRetriever = new AccountRetriever(_sqlConnection, allRetrievedOpportunities);
-                var accountSimples = accountRetriever.Process();
-
-                var contactRetriever = new ContactRetriever(_sqlConnection, allRetrievedOpportunities);
-                var contactSimples = contactRetriever.Process();
-
-                var accountGuids = new List<Guid>();
-                accountGuids.AddRange(accountSimples.Select(accS => accS.AccountId));
-                accountGuids.AddRange(contactSimples.Where(conS => conS.ParentCustomerId != null).Select(conS => conS.ParentCustomerId.Value));
-                var uniqueAccountGuids = accountGuids.Distinct().ToArray();
-
-                var contactGuids = new List<Guid>();
-                contactGuids.AddRange(contactSimples.Select(conS => conS.ContactId));
-                contactGuids.AddRange(accountSimples.Where(accS => accS.PrimaryContactId != null).Select(accS => accS.PrimaryContactId.Value));
-                var uniqueContactGuids = contactGuids.Distinct().ToArray();
-
-                // 5. Меняем связанные с изменяемыми проектами записи сущности «Организация»(account), связи по полям «Заказчик»(customerid) и 
-                // «Проектная Организация»(cmdsoft_project_agency), «Эксплуатирующая организация»(mcdsoft_ref_account), «Ген. подрядчик»(cmdsoft_generalcontractor)...
-                if (uniqueAccountGuids.Length > 0)
-                {
-                    var accountUpdater = new AccountUpdater(_orgService, _sqlConnection, uniqueAccountGuids);
-                    accountUpdater.Process();
-                    allUpdated.Add("account", accountUpdater.AllRetrievedEntities.Select(e => e.Id).ToArray());
-                }
 
                 // 6. Контакты(contact)
                 // Меняем связанные с изменяемыми проектами и организациями записи сущности «Контакты», 

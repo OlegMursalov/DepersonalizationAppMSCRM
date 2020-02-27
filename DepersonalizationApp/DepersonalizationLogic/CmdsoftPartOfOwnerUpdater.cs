@@ -15,12 +15,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
     /// </summary>
     public class CmdsoftPartOfOwnerUpdater : BaseUpdater<cmdsoft_part_of_owner>
     {
-        public CmdsoftPartOfOwnerUpdater(IOrganizationService orgService, SqlConnection sqlConnection, Guid[] opprotunityIds) : base(orgService, sqlConnection)
+        public CmdsoftPartOfOwnerUpdater(IOrganizationService orgService, SqlConnection sqlConnection, IEnumerable<Guid> ids) : base(orgService, sqlConnection)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"select partOwn.cmdsoft_part_of_ownerId, partOwn.cmdsoft_part, partOwn.{_isDepersonalizationFieldName}");
             sb.AppendLine(" from dbo.cmdsoft_part_of_owner as partOwn");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("partOwn.cmdsoft_ref_opportunity", opprotunityIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("partOwn.cmdsoft_part_of_ownerId", ids);
             sb.AppendLine(where);
             _retrieveSqlQuery = sb.ToString();
         }
