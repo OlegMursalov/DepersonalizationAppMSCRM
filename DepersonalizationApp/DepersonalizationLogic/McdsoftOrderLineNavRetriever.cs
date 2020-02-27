@@ -6,26 +6,43 @@ using System.Text;
 
 namespace DepersonalizationApp.DepersonalizationLogic
 {
-    public class McdsoftOrderLineNavRetriever : Base<Guid>
+    public class McdsoftOrderLineNavLink
     {
-        public McdsoftOrderLineNavRetriever(SqlConnection sqlConnection, IEnumerable<Guid> orderNavIds) : base(sqlConnection)
+        public Guid Id { get; set; }
+
+        // Сервисное обращение (mcdsoft_sales_appeal)
+        public Guid? CmdsoftRefOrderlineNav { get; set; }
+    }
+
+    public class McdsoftOrderLineNavRetriever : Base<McdsoftOrderLineNavLink>
+    {
+        public McdsoftOrderLineNavRetriever(SqlConnection sqlConnection, IEnumerable<Guid> mcdsoftOrderLineNavIds) : base(sqlConnection)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId");
+            sb.AppendLine("select orLnNav.mcdsoft_orderlinenavId, orLnNav.cmdsoft_ref_orderlinenav");
             sb.AppendLine(" from dbo.mcdsoft_orderlinenav as orLnNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.mcdsoft_navid", orderNavIds);
+            sb.AppendLine(" where orLnNav.mcdsoft_orderlinenavId in (select orLnNavIn.mcdsoft_orderlinenavId");
+            sb.AppendLine("  from dbo.mcdsoft_orderlinenav as orLnNavIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNavIn.cmdsoft_ref_navid", mcdsoftOrderLineNavIds);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("orLnNavIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 
-        public IEnumerable<Guid> Process()
+        public IEnumerable<McdsoftOrderLineNavLink> Process()
         {
             return FastRetrieveAllItems();
         }
 
-        protected override Guid ConvertSqlDataReaderItem(SqlDataReader sqlReader)
+        protected override McdsoftOrderLineNavLink ConvertSqlDataReaderItem(SqlDataReader sqlReader)
         {
-            return (Guid)sqlReader.GetValue(0);
+            return new McdsoftOrderLineNavLink
+            {
+                Id = (Guid)sqlReader.GetValue(0),
+                CmdsoftRefOrderlineNav = sqlReader.GetValue(0) as Guid?
+            };
         }
     }
 }

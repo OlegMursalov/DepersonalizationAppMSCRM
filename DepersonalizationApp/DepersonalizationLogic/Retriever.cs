@@ -52,11 +52,12 @@ namespace DepersonalizationApp.DepersonalizationLogic
                     allRetrieved["cmdsoft_ordernav"].AddRange(retrievedOrderNavIds);
 
                     var cmdsoftOrderLineNavRetriever = new CmdsoftOrderLineNavRetriever(_sqlConnection, retrievedOrderNavIds);
-                    var retrievedCmdsoftOrderLineNavIds = cmdsoftOrderLineNavRetriever.Process().Distinct();
+                    var retrievedCmdsoftOrderLineNavLinks = cmdsoftOrderLineNavRetriever.Process().Distinct();
 
-                    if (retrievedCmdsoftOrderLineNavIds != null && retrievedCmdsoftOrderLineNavIds.Count() > 0)
+                    if (retrievedCmdsoftOrderLineNavLinks != null && retrievedCmdsoftOrderLineNavLinks.Count() > 0)
                     {
-                        allRetrieved["cmdsoft_orderlinenav"].AddRange(retrievedCmdsoftOrderLineNavIds);
+                        allRetrieved["cmdsoft_orderlinenav"].AddRange(retrievedCmdsoftOrderLineNavLinks.Select(e => e.Id).Distinct());
+                        allRetrieved["mcdsoft_sales_appeal"].AddRange(retrievedCmdsoftOrderLineNavLinks.Where(e => e.McdsoftRefOrderlineNav != null).Select(e => e.McdsoftRefOrderlineNav.Value).Distinct());
                     }
                 }
 
@@ -196,19 +197,30 @@ namespace DepersonalizationApp.DepersonalizationLogic
                 if (cmdsoftRefOrderlinenavIds != null && cmdsoftRefOrderlinenavIds.Count() > 0)
                 {
                     var cmdsoftOrderLineNavRetriever = new CmdsoftOrderLineNavRetriever(_sqlConnection, cmdsoftRefOrderlinenavIds);
-                    var retrievedCmdsoftOrderLineNavIds = cmdsoftOrderLineNavRetriever.Process().Distinct();
+                    var retrievedCmdsoftOrderLineNavLinks = cmdsoftOrderLineNavRetriever.Process().Distinct();
 
-                    if (retrievedCmdsoftOrderLineNavIds != null && retrievedCmdsoftOrderLineNavIds.Count() > 0)
+                    if (retrievedCmdsoftOrderLineNavLinks != null && retrievedCmdsoftOrderLineNavLinks.Count() > 0)
                     {
-                        allRetrieved["cmdsoft_orderlinenav"].AddRange(retrievedCmdsoftOrderLineNavIds);
+                        allRetrieved["cmdsoft_orderlinenav"].AddRange(retrievedCmdsoftOrderLineNavLinks.Select(e => e.Id).Distinct());
+                        allRetrieved["mcdsoft_sales_appeal"].AddRange(retrievedCmdsoftOrderLineNavLinks.Where(e => e.McdsoftRefOrderlineNav != null).Select(e => e.McdsoftRefOrderlineNav.Value).Distinct());
                     }
                 }
 
                 var mcdsoftRefOrderlinenavIds = retrievedSalesAppealLinks.Where(e => e.McdsoftRefOrderlinenav != null).Select(e => e.McdsoftRefOrderlinenav.Value).Distinct();
                 if (mcdsoftRefOrderlinenavIds != null && mcdsoftRefOrderlinenavIds.Count() > 0)
                 {
-                    // Надо добивать
+                    var mcdsoftOrderLineNavRetriever = new McdsoftOrderLineNavRetriever(_sqlConnection, cmdsoftRefOrderlinenavIds);
+                    var retrievedMcdsoftOrderLineNavLinks = mcdsoftOrderLineNavRetriever.Process().Distinct();
+
+                    if (retrievedMcdsoftOrderLineNavLinks != null && retrievedMcdsoftOrderLineNavLinks.Count() > 0)
+                    {
+                        allRetrieved["mcdsoft_orderlinenav"].AddRange(retrievedMcdsoftOrderLineNavLinks.Select(e => e.Id).Distinct());
+                        allRetrieved["cmdsoft_sales_appeal"].AddRange(retrievedMcdsoftOrderLineNavLinks.Where(e => e.CmdsoftRefOrderlineNav != null).Select(e => e.CmdsoftRefOrderlineNav.Value).Distinct());
+                    }
                 }
+
+                var cmdsoftOrderLineNavRetrieverNew = new CmdsoftOrderLineNavRetriever(_sqlConnection, retrievedSalesAppealLinks);
+                var retrievedCmdsoftOrderLineNavNewIds = cmdsoftOrderLineNavRetrieverNew.Process().Distinct();
             }
         }
 
@@ -230,6 +242,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             allRetrieved.Add("mcdsoft_event", new List<Guid>());
             allRetrieved.Add("yolva_events_participants", new List<Guid>());
             allRetrieved.Add("mcdsoft_sales_appeal", new List<Guid>());
+            allRetrieved.Add("mcdsoft_orderlinenav", new List<Guid>());
 
             ExecuteForOpportunity_Part1(allRetrieved);
 
