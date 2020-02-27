@@ -86,7 +86,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select acc.AccountId, acc.PrimaryContactId");
             sb.AppendLine(" from dbo.Account as acc");
-            sb.AppendLine(" where acc.AccountId in (select acc.AccountId");
+            sb.AppendLine(" where acc.AccountId in (select accIn.AccountId");
             sb.AppendLine("  from dbo.Account as accIn");
             var where = SqlQueryHelper.GetPartOfQueryWhereIn("accIn.AccountId", accountIdsDistinct);
             sb.AppendLine(where);
