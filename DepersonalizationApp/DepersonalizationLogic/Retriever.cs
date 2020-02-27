@@ -233,9 +233,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
 
             ExecuteForOpportunity_Part1(allRetrieved);
 
-            // ExecuteForMcdsoftEvent_Part2(allRetrieved);
+            ExecuteForMcdsoftEvent_Part2(allRetrieved);
 
-            // ExecuteForMcdsoftSalesAppeal_Part3(allRetrieved);
+            ExecuteForMcdsoftSalesAppeal_Part3(allRetrieved);
 
             return AllDistinct(allRetrieved);
         }
