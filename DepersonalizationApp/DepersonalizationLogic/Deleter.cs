@@ -19,19 +19,28 @@ namespace DepersonalizationApp.DepersonalizationLogic
         /// <summary>
         /// Удаление всего, что нужно
         /// </summary>
-        public void Execute(Dictionary<string, IEnumerable<Guid>> data)
+        public void Execute(Dictionary<string, List<Guid>> allRetrieved)
         {
-            foreach (var item in data)
+            if (allRetrieved.ContainsKey("opportunity"))
             {
-                var entityName = item.Key;
-                if (entityName == "opportunity" || entityName == "account" || entityName == "contact") // Удаление примечаний и действий для нужных сущностей
-                {
-                    var ids = item.Value;
-                    var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, ids);
-                    relatedActivityDeleter.Process();
-                    var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, ids);
-                    annotationDeleter.Process();
-                }
+                var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, allRetrieved["opportunity"]);
+                relatedActivityDeleter.Process();
+                var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, allRetrieved["opportunity"]);
+                annotationDeleter.Process();
+            }
+            if (allRetrieved.ContainsKey("account"))
+            {
+                var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, allRetrieved["account"]);
+                relatedActivityDeleter.Process();
+                var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, allRetrieved["account"]);
+                annotationDeleter.Process();
+            }
+            if (allRetrieved.ContainsKey("contact"))
+            {
+                var relatedActivityDeleter = new RelatedActivityDeleter(_orgService, _sqlConnection, allRetrieved["contact"]);
+                relatedActivityDeleter.Process();
+                var annotationDeleter = new RelatedAnnotationDeleter(_orgService, _sqlConnection, allRetrieved["contact"]);
+                annotationDeleter.Process();
             }
         }
     }

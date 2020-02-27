@@ -41,7 +41,7 @@ namespace UpdaterApp
                             
                             // Удаление
                             var deleter = new Deleter(orgService, sqlConnection);
-                            deleter.Execute(allUpdated);
+                            deleter.Execute(allRetrieved);
                         }
                     }
                 }
