@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -15,9 +16,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine(" from dbo.mcdsoft_event as ev");
             sb.AppendLine(" where ev.mcdsoft_eventId in (select evIn.mcdsoft_eventId");
             sb.AppendLine("  from dbo.mcdsoft_event as evIn");
-            sb.AppendLine("  order by evIn.CreatedOn desc");
-            sb.AppendLine("  offset 0 rows");
-            sb.AppendLine("  fetch next 500 rows only)");
+            var pagination = SqlQueryHelper.GetPagination("evIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 

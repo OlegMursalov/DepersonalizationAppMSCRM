@@ -18,6 +18,15 @@ namespace DepersonalizationApp.Helpers
             return sb.ToString();
         }
 
+        public static string GetPagination(string orderColumn, string orderType, int offset, int fetchNext)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($" order by {orderColumn} {orderType}");
+            sb.AppendLine($" offset {offset} rows");
+            sb.AppendLine($" fetch next {fetchNext} rows only");
+            return sb.ToString();
+        }
+
         public static string GetPartOfQueryWhereIn<T>(string column, IEnumerable<T> items)
         {
             var array = items.ToArray();

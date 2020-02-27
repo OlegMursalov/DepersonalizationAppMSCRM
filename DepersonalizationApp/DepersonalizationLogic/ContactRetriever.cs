@@ -82,8 +82,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select c.ContactId, c.ParentCustomerId");
             sb.AppendLine(" from dbo.Contact as c");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("c.ContactId", contactIdsDistinct);
+            sb.AppendLine(" where c.ContactId in (select cIn.ContactId");
+            sb.AppendLine("  from dbo.Contact as cIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("cIn.AccountId", contactIdsDistinct);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("cIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             return sb.ToString();
         }
 

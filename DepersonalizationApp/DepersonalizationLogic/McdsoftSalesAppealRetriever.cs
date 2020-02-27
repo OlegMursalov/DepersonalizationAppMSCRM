@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using DepersonalizationApp.Helpers;
+using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -36,13 +37,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select sApp.mcdsoft_sales_appealId, sApp.mcdsoft_ref_contact, sApp.mcdsoft_ref_dealer_account,");
             sb.AppendLine(" sApp.mcdsoft_ref_account_client, sApp.mcdsoft_ref_account_asc, sApp.cmdsoft_ref_orderlinenav,");
-            sb.AppendLine($" sApp.mcdsoft_ref_opportunity, sApp.mcdsoft_ref_orderlinenav, sApp.mcdsoft_ref_contact_asc");
+            sb.AppendLine(" sApp.mcdsoft_ref_opportunity, sApp.mcdsoft_ref_orderlinenav, sApp.mcdsoft_ref_contact_asc");
             sb.AppendLine(" from dbo.mcdsoft_sales_appeal as sApp");
             sb.AppendLine("  where sApp.mcdsoft_sales_appealId in (select sAppIn.mcdsoft_sales_appealId");
             sb.AppendLine("  from dbo.mcdsoft_sales_appeal as sAppIn");
-            sb.AppendLine("  order by sAppIn.CreatedOn desc");
-            sb.AppendLine("  offset 0 rows");
-            sb.AppendLine("  fetch next 500 rows only)");
+            var pagination = SqlQueryHelper.GetPagination("sAppIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 

@@ -13,8 +13,13 @@ namespace DepersonalizationApp.DepersonalizationLogic
             var sb = new StringBuilder();
             sb.AppendLine("select orLnNav.cmdsoft_orderlinenavId");
             sb.AppendLine(" from dbo.cmdsoft_orderlinenav as orLnNav");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNav.cmdsoft_navid", orderNavIds);
+            sb.AppendLine(" where orLnNav.cmdsoft_orderlinenavId in (select orLnNavIn.cmdsoft_orderlinenavId");
+            sb.AppendLine("  from dbo.cmdsoft_orderlinenav as orLnNavIn");
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("orLnNavIn.cmdsoft_orderlinenavId", orderNavIds);
             sb.AppendLine(where);
+            var pagination = SqlQueryHelper.GetPagination("orLnNavIn.CreatedOn", "desc", 0, 500);
+            sb.AppendLine(pagination);
+            sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
         }
 
