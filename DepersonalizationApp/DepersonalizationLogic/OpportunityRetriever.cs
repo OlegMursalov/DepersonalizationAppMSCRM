@@ -34,9 +34,9 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine(" from Opportunity as opp");
             sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
             sb.AppendLine("  from dbo.Opportunity as oppIn");
-            var where = SqlQueryHelper.GetPartOfQueryWhereIn("opp.OpportunityId", opportunitiesIds);
+            var where = SqlQueryHelper.GetPartOfQueryWhereIn("oppIn.OpportunityId", opportunitiesIds);
             sb.AppendLine(where);
-            var pagination = SqlQueryHelper.GetPagination("opp.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("oppIn.CreatedOn", "desc", 0, 500);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
@@ -50,7 +50,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
             sb.AppendLine(" from Opportunity as opp");
             sb.AppendLine(" where opp.OpportunityId in (select oppIn.OpportunityId");
             sb.AppendLine("  from dbo.Opportunity as oppIn");
-            var pagination = SqlQueryHelper.GetPagination("opp.CreatedOn", "desc", 0, 500);
+            var pagination = SqlQueryHelper.GetPagination("oppIn.CreatedOn", "desc", 0, 500);
             sb.AppendLine(pagination);
             sb.AppendLine(")");
             _retrieveSqlQuery = sb.ToString();
