@@ -29,7 +29,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         private void ExecuteForOpportunity_Part1(Dictionary<string, List<Guid>> allRetrieved, IEnumerable<Guid> opportunityIds = null)
         {
             var opportunityRetriever = opportunityIds != null ? new OpportunityRetriever(_sqlConnection, opportunityIds) : new OpportunityRetriever(_sqlConnection);
-            var retrievedOpportunityLinks = opportunityRetriever.Process();
+            var retrievedOpportunityLinks = opportunityRetriever.Process().Take(2000);
 
             if (retrievedOpportunityLinks != null && retrievedOpportunityLinks.Count() > 0)
             {
@@ -124,7 +124,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         private void ExecuteForMcdsoftEvent_Part2(Dictionary<string, List<Guid>> allRetrieved)
         {
             var eventRetriever = new McdsoftEventRetriever(_sqlConnection);
-            var retrievedEventIds = eventRetriever.Process().Distinct();
+            var retrievedEventIds = eventRetriever.Process().Distinct().Take(10);
 
             if (retrievedEventIds != null && retrievedEventIds.Count() > 0)
             {
@@ -162,7 +162,7 @@ namespace DepersonalizationApp.DepersonalizationLogic
         private void ExecuteForMcdsoftSalesAppeal_Part3(Dictionary<string, List<Guid>> allRetrieved)
         {
             var salesAppealRetriever = new McdsoftSalesAppealRetriever(_sqlConnection);
-            var retrievedSalesAppealLinks = salesAppealRetriever.Process();
+            var retrievedSalesAppealLinks = salesAppealRetriever.Process().Take(50);
 
             if (retrievedSalesAppealLinks != null && retrievedSalesAppealLinks.Count() > 0)
             {
